@@ -114,4 +114,4 @@ try{
 check(errors.length===0,'浏览器无JavaScript运行错误');
 const report={checkedAt:new Date().toISOString(),base,draft,checks:checks.length,passed:checks.filter(item=>item.pass).length,failures,errors,details:checks};
 fs.writeFileSync(path.join(root,'browser-audit.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({...report,details:undefined},null,2));
-await browser.close();if(failures.length)process.exitCode=1;
+await context.close();await browser.close();if(failures.length)process.exitCode=1;

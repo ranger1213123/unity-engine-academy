@@ -40,6 +40,7 @@
   <div class="mobile-scrim" id="mobile-scrim" hidden></div>
   <dialog id="search-dialog" class="search-dialog" aria-labelledby="search-title"><form method="dialog" class="search-head"><label class="sr-only" id="search-title" for="search-input">搜索教材</label><input type="search" id="search-input" placeholder="输入生命周期、Rigidbody、资源加载…" autocomplete="off"><button class="icon-button" aria-label="关闭搜索">×</button></form><div id="search-results" class="search-results"></div><div class="search-hint">搜索正文、情景、自测、实验与 API · Esc 关闭</div></dialog>
   <input id="import-file" type="file" accept="application/json,.json" hidden>
+  <dialog id="visual-dialog" class="visual-dialog" aria-labelledby="visual-title"><header><h2 id="visual-title"></h2><button type="button" class="icon-button" data-visual-close aria-label="关闭图片">×</button></header><div class="visual-dialog-tools"><button type="button" class="button secondary small" data-visual-zoom aria-pressed="false">放大读细节</button><span>放大后可横向、纵向滚动；Esc 关闭</span><a class="visual-original" target="_blank" rel="noopener noreferrer">打开官方原页 ↗</a></div><div class="visual-dialog-scroll" tabindex="0" aria-label="图片查看区"><div class="visual-dialog-canvas"><img alt=""></div></div><p class="visual-dialog-caption"></p></dialog>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
   <script>window.COURSE_MODULES = [];</script>
   <script src="content/chapter-01.js"></script>
@@ -63,6 +64,8 @@
   <script src="content/chapter-19.js"></script>
   <script src="content/chapter-20.js"></script>
   <script src="learner-store.js"></script>
+  <script src="official-visuals.js"></script>
+  <script src="visual-reader.js"></script>
   <script src="editor-guide.js"></script>
   <script src="app.js"></script>
 </body>

@@ -4,6 +4,8 @@
 
 **第一次用 Unity？先打开[编辑器操作地图](https://ranger1213123.github.io/unity-engine-academy/#editor)。** 六个窗口在哪里、怎样创建并挂载脚本、运行后在哪里看结果，都有菜单路径和逐步指引。
 
+操作地图与17节基础课程现有14幅Unity官方截图/流程图，配中文读图顺序、示例差异说明和可照做的动作；图片可放大查看，读图说明也能搜索。覆盖窗口、生命周期、Transform、碰撞轮廓、Sprite切片和动画。图片需联网，来源及核对见 [图文补订说明](VISUAL-REVIEW.md)。
+
 中文学习教材，基于 Unity 6.3 LTS 官方手册和脚本 API，面向有少量 C# 基础的学习者。双击 `index.html` 即可离线学习；官方参考链接需要网络。
 
 ![教材学习首页](artifacts/desktop-home.png)
@@ -46,6 +48,8 @@
 `npm run test:learners` 检查访客与档案隔离、旧记录迁移、多标签页合并、按档案恢复、存储受限及损坏数据保护；只使用合成测试记录。`npm run test:learner-browser` 在真实浏览器中检查对应页面操作、独立访问者、移动布局与导出内容。
 
 `npm run test:context-browser` 逐课核对情景、用途、预测背景、自测题设和实验准备的完整呈现及顺序，并检查这些内容可搜索、可打印，以及编辑器地图、混合代码文件和移动布局。
+
+`npm run audit:visuals` 核对插图结构、官方来源、图像响应及来源页确有对应图片；`npm run test:visual-browser` 检查真实图片加载、课内位置、放大、搜索、打印、移动布局及图片失败时的说明。
 
 ## 发布
 

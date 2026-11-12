@@ -4,6 +4,8 @@ window.editorGuideHTML = () => `
   <p class="eyebrow">YOUR FIRST STEPS IN THE EDITOR</p>
   <h1 class="page-title">先找到地方，再开始动手。</h1>
   <p class="page-lede">第一次打开 Unity，先认识下面六个窗口。窗口可以拖动，与你屏幕上的排列不同也没关系：按页签名称找，找不到就从顶部菜单重新打开。本页以 Unity 6.3 LTS 的英文菜单为准，括号内是中文含义。</p>
+  <section class="editor-photo-start"><h2>先看一张真实的编辑器截图</h2><p>图中加了三个蓝色数字，按顺序找Hierarchy、Project、Inspector。先认出它们，再看下面各窗口的近照。图片可以点击放大。</p>${window.officialFigureHTML('editor-overview')}</section>
+  <details class="editor-layout-sketch"><summary>再用简图回顾窗口之间的关系</summary>
   <figure class="editor-map">
     <figcaption>窗口关系示意 · 不是固定布局，也不是编辑器截图</figcaption>
     <div class="editor-map-menu">顶部菜单：File · Edit · Assets · GameObject · Component · Window</div>
@@ -15,7 +17,7 @@ window.editorGuideHTML = () => `
       <div><b>Project · 项目</b><span>Assets 中的文件与文件夹</span></div>
       <div><b>Console · 控制台</b><span>日志、警告和错误</span></div>
     </div>
-  </figure>
+  </figure></details>
   <h2>六个窗口分别在哪里？</h2>
   <p>以下路径都从编辑器顶部菜单开始。例如 <code>Window &gt; General &gt; Console</code>，就是先点 Window，再指向 General，最后点 Console。</p>
   <div class="editor-window-list">
@@ -28,6 +30,11 @@ window.editorGuideHTML = () => `
       ['Console','控制台','查看 Debug.Log 输出、警告和红色错误。Clear 清除旧显示记录，Collapse 把相同消息折叠起来；第一次做日志实验先关闭 Collapse。','Console']
     ].map(([name,translation,description,menu])=>`<section class="editor-window"><h3>${name}<span>${translation}</span></h3><p>${description}</p><p class="editor-path"><strong>打开：</strong><code>Window &gt; General &gt; ${menu}</code></p></section>`).join('')}
   </div>
+  <h2>对着近照，检查你自己的窗口</h2>
+  ${window.officialFigureHTML('hierarchy-window')}
+  ${window.officialFigureHTML('empty-inspector')}
+  ${window.officialFigureHTML('console-window')}
+  ${window.officialFigureHTML('play-controls')}
   <h2>第一个脚本，从文件到运行</h2>
   <ol class="editor-steps">
     <li><strong>准备一个练习场景。</strong>先停止 Play。用 <code>File &gt; New Scene</code> 新建基础或空场景，在 Project 的 Assets 下新建 Scenes 文件夹，再用 <code>File &gt; Save As</code> 保存到其中。不要直接覆盖正在做的游戏场景。</li>
