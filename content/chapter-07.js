@@ -1,4 +1,4 @@
-// 第二版：逐课重写原理与教学引导；代码与来源沿用审定快照。
+// 学者修订：补足具体推导、实验起点及教学边界。
 window.COURSE_MODULES.push({
   "id": "m07",
   "number": 7,
@@ -46,7 +46,8 @@ window.COURSE_MODULES.push({
           "title": "为什么看得见的箱子会穿过地板",
           "paragraphs": [
             "在空场景中创建一个 Cube 和一块地板。Cube 上的 MeshRenderer 负责把网格画出来，BoxCollider 负责描述一个可以碰撞的盒形范围。只有显示组件时，画面里虽然像有个箱子，物理系统却没有可接触的形状。添加 Collider 后，箱子可以被查询到，但仍不会仅仅因此下落。",
-            "再添加 Rigidbody，并保持非运动学、开启重力，物理系统才会计算它的速度与位置。地板通常只需固定的 Collider。由此可见，显示、形状和运动是三项分开的工作；排查问题时要逐项确认，不能凭模型外观推断组件已经齐全。二维的 Rigidbody2D 也不会代替这里的三维 Rigidbody。"
+            "再添加 Rigidbody，并保持非运动学、开启重力，物理系统才会计算它的速度与位置。地板通常只需固定的 Collider。由此可见，显示、形状和运动是三项分开的工作；排查问题时要逐项确认，不能凭模型外观推断组件已经齐全。二维的 Rigidbody2D 也不会代替这里的三维 Rigidbody。",
+            "Unity 菜单创建的 Cube 通常已经带有 BoxCollider。为了真正比较“只有显示”与“显示加形状”，第一组应先移除它。三组都不要挂移动脚本，初始位置也不要与地板重叠；这样是否下落才能归因到 Rigidbody，而非出生时的穿插修正。"
           ]
         },
         {
@@ -94,9 +95,9 @@ window.COURSE_MODULES.push({
           "title": "逐项添加组件",
           "minutes": 60,
           "steps": [
-            "在空场景创建带 BoxCollider 的地板，分别测试只有显示、再加 Collider、再加动态 Rigidbody 的 Cube。",
+            "在新建的三维空场景创建地板并保留 BoxCollider。另建 Cube 作为箱子，先移除它默认自带的 BoxCollider，只留显示组件；复制为三份，第二份加 BoxCollider，第三份再加动态 Rigidbody。三份都放在地板上方，进入 Play 比较。",
             "在 Inspector 切换 Is Kinematic，记录是否下落；把“是否可见”和“是否受模拟推进”分开记录。",
-            "分别关闭 Renderer 与控制脚本，检查碰撞和运动是否仍发生。"
+            "关闭第三个箱子的Renderer，观察显示消失但重力与接触仍存在；再恢复显示并禁用本课的只读状态探针，确认探针停止工作不等于Rigidbody停止模拟。"
           ],
           "result": "一张列出组件组合、可见性、下落和阻挡结果的表。"
         },
@@ -271,7 +272,8 @@ window.COURSE_MODULES.push({
           "title": "把四种 ForceMode 换成可计算的变化",
           "paragraphs": [
             "先关闭重力与阻尼，设质量为2kg、物理步长为0.02s。给 Force 模式传入10N的力，一步速度增量为Δv = 10 × 0.02 ÷ 2 = 0.1m/s。Acceleration 把10当作10m/s²的加速度，同一步得到0.2m/s，不再除以质量。",
-            "Impulse 把输入当作一次冲量，传入10N·s得到速度增量5m/s，不再乘步长。VelocityChange 则直接增加10m/s的速度，不依赖质量。这里比较的是相同输入数值在不同模式下的含义，不能把四个数都当成同一种单位。理解单位后，才知道为什么冲量再乘 fixedDeltaTime 会把一次冲击错误缩小。"
+            "Impulse 把输入当作一次冲量，传入10N·s得到速度增量5m/s，不再乘步长。VelocityChange 则直接增加10m/s的速度，不依赖质量。这里比较的是相同输入数值在不同模式下的含义，不能把四个数都当成同一种单位。理解单位后，才知道为什么冲量再乘 fixedDeltaTime 会把一次冲击错误缩小。",
+            "公式使用10作为便于比较的输入，下面源码却是另一组实验：默认每步施加向右1m/s²的 Acceleration，菜单操作只增加一次向上3N·s的 Impulse。质量为2kg时，一步水平增量约0.02m/s，一次竖直增量约1.5m/s。先用这两个预测核对源码，再在副本中改模式与数值；不要把公式表中的10误认为脚本已经配置好的参数。"
           ]
         },
         {
@@ -312,8 +314,8 @@ window.COURSE_MODULES.push({
           "title": "验证质量和时间的影响",
           "minutes": 60,
           "steps": [
-            "在同一测试场景关闭重力与阻尼，将质量分别设为1kg和2kg，逐个测试四种 ForceMode。",
-            "每次复位位置和速度；持续输入按固定步调用，冲量只调用一次。",
+            "先用原示例验证：质量2kg、步长0.02s、无重力和阻尼时，每步水平速度约增加0.02m/s；执行一次 Queue impulse 后，竖直速度约增加1.5m/s。暂停并逐步观察，不将两种轴向变化混算。",
+            "四模式对照使用独立脚本副本：将持续加速度设为零，在待处理请求被消费的分支中只保留一次 AddForce。每次重新运行并清零初速度，分别输入 Force=10N、Acceleration=10m/s²、Impulse=10N·s、VelocityChange=10m/s。先预测下一模拟步的增量，再读数。",
             "将固定步长减半，先按公式预测一步和一秒后的差别，再记录模拟后的速度。"
           ],
           "result": "包含单位、质量、步长、调用次数和速度增量的对照表。"
@@ -496,7 +498,8 @@ window.COURSE_MODULES.push({
           "title": "一个角色为什么进入了两次",
           "paragraphs": [
             "给角色根对象一个 Rigidbody，在两个子对象各放一个 Collider。角色进入区域时，区域可能分别收到两个形状的进入通知。物理系统报告的是形状接触，而商店想数的是角色，这两种身份并不总是一对一。",
-            "若 Enter 每次把人数加一，角色就被算了两次；若任何一次 Exit 都设置“不在区域”，前面的形状离开时，后面的形状还可能留在里面。可根据所属刚体或明确角色标识归并身份，再维护接触计数。奖励是否只发一次、伤害多久结算一次，则是游戏规则，还需要独立判断。"
+            "若 Enter 每次把人数加一，角色就被算了两次；若任何一次 Exit 都设置“不在区域”，前面的形状离开时，后面的形状还可能留在里面。可根据所属刚体或明确角色标识归并身份，再维护接触计数。奖励是否只发一次、伤害多久结算一次，则是游戏规则，还需要独立判断。",
+            "把记录写成一列状态：脚进入，角色A的计数0→1，人数0→1；身体进入，计数1→2，人数仍为1；脚退出，计数2→1，人数仍为1；身体退出，计数1→0，人数才归零。每一步先认所属刚体，再改该角色的计数。这个小表说明了为什么只维护一个布尔值，无法区分“还剩一个形状”与“已经全部离开”。"
           ]
         },
         {
@@ -540,7 +543,7 @@ window.COURSE_MODULES.push({
           "title": "观察重复接触与异常清理",
           "minutes": 60,
           "steps": [
-            "在一个角色刚体下添加两个子 Collider，缓慢穿过区域并统计每个形状的 Enter 与 Exit。",
+            "在同一个 Rigidbody 下放两个沿运动方向错开的子 BoxCollider，让角色缓慢穿过静态触发区域。每条 Enter/Exit 日志包含碰撞体实例ID、attachedRigidbody 实例ID和该角色当前接触数，按0→1→2→1→0核对。",
             "按角色记录接触数，再测试只离开一个子形状、销毁角色和禁用区域。",
             "将球放在同一斜面上，对照两组摩擦与弹性，保持速度、尺度和刚体设置不变。"
           ],
@@ -711,7 +714,8 @@ window.COURSE_MODULES.push({
           "title": "层编号和层集合不要混用",
           "paragraphs": [
             "一个对象的 layer 是单个编号，例如地面位于第8层。查询的 LayerMask 却表示允许哪些层参加，是一个由多个位组成的集合。编号8和“包含第8层”的掩码不是同一个整数，直接把 layer 传给 mask 参数很容易查错对象。",
-            "初学时优先用 Inspector 的 LayerMask 字段勾选地面与墙。还要明确最大距离和 QueryTriggerInteraction，决定是否考虑感应区。若探测地面时把角色自身也包括进去，就可能永远得到有地面的结果；配置专门的环境层比碰到错误后不断增加例外更容易检查。"
+            "初学时优先用 Inspector 的 LayerMask 字段勾选地面与墙。还要明确最大距离和 QueryTriggerInteraction，决定是否考虑感应区。若探测地面时把角色自身也包括进去，就可能永远得到有地面的结果；配置专门的环境层比碰到错误后不断增加例外更容易检查。",
+            "用数字看区别：第8层对应第8个位，单独选中它的掩码是1 << 8，也就是256；同时选第0层和第8层得到1 | 256 = 257。把编号8直接当掩码，二进制含义却是选中了第3层。Inspector 的勾选框替你组成这些位，理解这组数字则能解释为什么把 gameObject.layer 直接传入查询会查错。"
           ]
         },
         {
@@ -743,7 +747,7 @@ window.COURSE_MODULES.push({
         "filename": "FilteredRayProbe.cs",
         "source": "using UnityEngine;\npublic sealed class FilteredRayProbe : MonoBehaviour\n{\n    [SerializeField] LayerMask targets;\n    [SerializeField, Min(0.01f)] float distance = 10f;\n    void FixedUpdate()\n    {\n        Vector3 origin = transform.position;\n        Vector3 direction = transform.forward;\n        bool hit = Physics.Raycast(origin, direction, out RaycastHit result,\n            distance, targets, QueryTriggerInteraction.Ignore);\n        Debug.DrawRay(origin, direction * distance, hit ? Color.red : Color.green);\n        if (hit) Debug.DrawRay(result.point, result.normal, Color.yellow);\n    }\n}",
         "explanation": [
-          "将探针放在角色之外的空对象，environment 只勾选要检查的环境层，Scene 视图打开 Gizmos。",
+          "将探针放在角色之外的空对象，targets 只勾选要检查的环境层，Scene 视图打开 Gizmos。",
           "对照射线显示的起点、长度和返回命中对象；示例负责观察，不负责完整角色碰撞处理。"
         ]
       },
@@ -754,7 +758,7 @@ window.COURSE_MODULES.push({
           "steps": [
             "在场景建立地板、墙和窄门，分别写下“脚下是否有地面”“身体能否过门”“范围内有谁”三个问题。",
             "为每个问题选择射线、形状投射或重叠查询，画出范围并记录命中对象。",
-            "故意把层编号当掩码，再使用 Inspector 的 LayerMask 修正，解释结果为何不同。"
+            "把环境对象设为第8层。先记录错误掩码8，再用1 << 8得到256，最后在 Inspector 勾选第8层复测；画出实际命中对象，解释层编号与对应位为何不是同一整数。"
           ],
           "result": "每个查询都有明确问题、几何图和过滤设置。"
         },
@@ -935,15 +939,16 @@ window.COURSE_MODULES.push({
         {
           "title": "地面检查为什么需要几何前提",
           "paragraphs": [
-            "从脚底向下发射一条短射线，可以检查某个局部位置是否有地面。设脚底离地0.05个世界单位，查询距离0.1个世界单位，平地时可能命中；若站在边缘，中心射线已经越出地板，而身体一侧仍受支撑，就会出现未命中的情况。",
-            "因此地面判定应说明起点、距离、LayerMask 和允许法线范围。向下命中墙边也不一定表示可以站立。更完整的方案可能结合接触法线或形状查询，但复杂度应由需求推动。先把本课的平地条件验证清楚，不用随意加长射线来掩盖几何问题。"
+            "本例没有使用射线，而是在 groundPoint 的世界位置调用半径0.12的 Physics.CheckSphere，检查这个小球是否与允许层中的形状重叠。假设平地顶面为Y=0，球心Y=0.08，小球向下延伸到-0.04，因而可以与地面重叠。将球心升到0.2而其余不变，小球不再碰到平地，结果就应改变。这里检查的是一个有大小的范围，不是一条向下的线。",
+            "groundLayers 只勾地面层，并把角色自己放在别的层，否则探测球可能查到自己的胶囊，造成始终接地。CheckSphere 只返回有无重叠，不返回表面法线，因此仅靠这行代码无法判断斜面是否足够平缓、墙边是否可站。先限定平地，并在 Scene 中检查探测球的位置和半径；需要坡面规则时，再选择能提供接触方向的查询。"
           ]
         },
         {
           "title": "持续方向可以保留，跳跃请求要消费",
           "paragraphs": [
             "Update 与 FixedUpdate 的调用节奏不相同。某个渲染帧可能没有物理步，之后又可能补做多个物理步。持续移动方向可以缓存，下一物理步继续使用最近的意图；一次跳跃按下则需要保留到运动组件读取，读取后按规则清除。",
-            "若按下后同帧清零，恰好没有物理步时就会漏掉；若一直保持到松键，又可能多次起跳。最简单的待处理标记也要说明：不在地面时拒绝，还是允许短时缓冲？停用、死亡与失焦时是否清空？这些是明确的行为规则，不是输入系统能自动替你作出的选择。"
+            "源码选择了短时缓冲：RequestJump 把请求保留至当前游戏时间加0.15秒；在有效期内遇到接地，才把竖直速度设为 jumpSpeed，并立即消费请求。超过有效期就丢弃。比如按下时离地，0.10秒后落地仍可接受，0.20秒后才落地则已过期。这个规则不同于“空中一律拒绝”，也不意味着允许二段跳。",
+            "清输入缓存不等于清刚体的当前速度。只禁用运动层时，它不再写速度，但动态刚体仍可因已有速度继续滑动，也仍会受重力；重新启用后，下一物理步才按当前输入重新接管水平速度。若只停用输入适配器、运动层仍启用，ClearInput之后下一步会按零方向写水平速度。实验应把缓存、组件启用与身体模拟分开观察，不能看到滑动就断言旧按键仍被保存。"
           ]
         },
         {
@@ -958,11 +963,21 @@ window.COURSE_MODULES.push({
       "code": {
         "title": "设备无关的平地刚体运动层",
         "language": "csharp",
-        "filename": "SimpleGroundMotor.cs",
-        "source": "using UnityEngine;\n[RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider))]\npublic sealed class SimpleGroundMotor : MonoBehaviour\n{\n    [SerializeField] Transform groundPoint;\n    [SerializeField] LayerMask groundLayers;\n    [SerializeField, Min(0f)] float speed = 5f;\n    [SerializeField, Min(0f)] float jumpSpeed = 5f;\n    Rigidbody body;\n    Vector2 move;\n    bool jumpPending;\n    double expires;\n    void Awake() => body = GetComponent<Rigidbody>();\n    public void SetMove(Vector2 value) => move = Vector2.ClampMagnitude(value, 1f);\n    public void RequestJump()\n    {\n        jumpPending = true;\n        expires = Time.timeAsDouble + 0.15;\n    }\n    void FixedUpdate()\n    {\n        if (groundPoint == null) return;\n        Vector3 velocity = body.linearVelocity;\n        velocity.x = move.x * speed;\n        velocity.z = move.y * speed;\n        if (jumpPending && Time.timeAsDouble > expires) jumpPending = false;\n        bool grounded = Physics.CheckSphere(groundPoint.position, 0.12f,\n            groundLayers, QueryTriggerInteraction.Ignore);\n        if (jumpPending && grounded)\n        {\n            jumpPending = false;\n            velocity.y = jumpSpeed;\n        }\n        body.linearVelocity = velocity;\n    }\n    void OnDisable() { move = Vector2.zero; jumpPending = false; }\n}",
         "explanation": [
-          "在平地测试场景使用动态 Rigidbody 与胶囊碰撞体，设置合理地面层并冻结不需要的旋转。",
-          "代码体现输入缓存、地面查询和物理控制的连接。它是有条件的教学控制器，练习时仍要记录坡面、平台与击退等未覆盖需求。"
+          "将两个完整文件分别保存为同名 .cs，并挂在同一胶囊角色根上。第二个文件是实验输入适配器，要求第6章已安装并启用 Input System；它调用运动层的 SetMove 与 RequestJump。只有运动层而没有调用方时，按键不会自动产生移动。",
+          "角色使用动态 Rigidbody，冻结不需要的旋转。新建 Ground 层仅给地板，角色留在其他层；groundLayers 只选 Ground。创建 groundPoint 子对象并拖入字段，让半径0.12的探测球在站立时略微进入地板。",
+          "WASD 在世界XZ平面移动，空格提出一次跳跃请求。速度写入与接地检查仍集中在 SimpleGroundMotor 的 FixedUpdate。此例只保证有明确条件的平地实验，未实现坡度、台阶和移动平台。",
+          "ClearInput同时清除持续方向和待处理跳跃。输入适配器在运动层停用时不再提交意图；无键盘、应用失焦或适配器停用时清空输入。分别测试只禁用运动层、只禁用输入层与关闭整个对象，不把组件停用等同于所有普通方法都不能被调用。"
+        ],
+        "files": [
+          {
+            "filename": "SimpleGroundMotor.cs",
+            "source": "using UnityEngine;\n[RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider))]\npublic sealed class SimpleGroundMotor : MonoBehaviour\n{\n    [SerializeField] Transform groundPoint;\n    [SerializeField] LayerMask groundLayers;\n    [SerializeField, Min(0f)] float speed = 5f;\n    [SerializeField, Min(0f)] float jumpSpeed = 5f;\n    Rigidbody body;\n    Vector2 move;\n    bool jumpPending;\n    double expires;\n    void Awake() => body = GetComponent<Rigidbody>();\n    public void SetMove(Vector2 value) => move = Vector2.ClampMagnitude(value, 1f);\n    public void RequestJump()\n    {\n        jumpPending = true;\n        expires = Time.timeAsDouble + 0.15;\n    }\n    void FixedUpdate()\n    {\n        if (groundPoint == null) return;\n        Vector3 velocity = body.linearVelocity;\n        velocity.x = move.x * speed;\n        velocity.z = move.y * speed;\n        if (jumpPending && Time.timeAsDouble > expires) jumpPending = false;\n        bool grounded = Physics.CheckSphere(groundPoint.position, 0.12f,\n            groundLayers, QueryTriggerInteraction.Ignore);\n        if (jumpPending && grounded)\n        {\n            jumpPending = false;\n            velocity.y = jumpSpeed;\n        }\n        body.linearVelocity = velocity;\n    }\n    public void ClearInput()\n    {\n        move = Vector2.zero;\n        jumpPending = false;\n    }\n    void OnDisable() => ClearInput();\n}"
+          },
+          {
+            "filename": "GroundMotorKeyboardProbe.cs",
+            "source": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\n[RequireComponent(typeof(SimpleGroundMotor))]\npublic sealed class GroundMotorKeyboardProbe : MonoBehaviour\n{\n    SimpleGroundMotor motor;\n\n    void Awake() => motor = GetComponent<SimpleGroundMotor>();\n\n    void Update()\n    {\n        if (!motor.isActiveAndEnabled) return;\n        Keyboard keyboard = Keyboard.current;\n        if (keyboard == null || !Application.isFocused)\n        {\n            motor.ClearInput();\n            return;\n        }\n\n        float x = (keyboard.dKey.isPressed ? 1f : 0f)\n            - (keyboard.aKey.isPressed ? 1f : 0f);\n        float z = (keyboard.wKey.isPressed ? 1f : 0f)\n            - (keyboard.sKey.isPressed ? 1f : 0f);\n        motor.SetMove(new Vector2(x, z));\n        if (keyboard.spaceKey.wasPressedThisFrame) motor.RequestJump();\n    }\n\n    void OnApplicationFocus(bool hasFocus)\n    {\n        if (!hasFocus && motor != null) motor.ClearInput();\n    }\n\n    void OnDisable()\n    {\n        if (motor != null) motor.ClearInput();\n    }\n}"
+          }
         ]
       },
       "lab": [
@@ -970,9 +985,9 @@ window.COURSE_MODULES.push({
           "title": "逐步接通控制流程",
           "minutes": 60,
           "steps": [
-            "先关闭动画，只验证平地水平移动，记录输入向量和刚体速度。",
-            "加入地面探测，显示起点与距离；在地面中心和边缘分别观察结果。",
-            "最后加入一次跳跃请求，检查按下一次是否只消费一次，并保留竖直速度。"
+            "按代码说明保存两个 .cs 文件并挂到同一胶囊根；地面使用 Ground 层，角色使用别的层，groundLayers 只勾 Ground。拖入脚底 groundPoint。先关闭动画，在 Game 窗口取得焦点后用WASD检查XZ平面移动。",
+            "以半径0.12的小球检查 groundPoint：平地Y=0时，分别将球心放在Y=0.08与Y=0.2，记录重叠结果。站到边缘后复测，说明这不是射线，也不能用一个布尔值判断坡度。",
+            "按空格检查一次请求只起跳一次；再比较落地前约0.10秒和更早提出请求，按0.15秒有效期解释是否接受。记录游戏时间、grounded与竖直速度，而非只凭画面判断缓冲。"
           ],
           "result": "一段可以逐项解释输入、判地与速度结果的运行记录。"
         },
@@ -980,11 +995,11 @@ window.COURSE_MODULES.push({
           "title": "验证停止和不支持的情况",
           "minutes": 60,
           "steps": [
-            "按住移动时禁用脚本再启用，检查是否按既定规则清空输入与待处理跳跃。",
+            "分别只禁用SimpleGroundMotor、只禁用GroundMotorKeyboardProbe和关闭整个角色对象。在每种情况下按移动或跳跃再恢复，检查ClearInput已同时清除方向与跳跃请求，适配器没有向停用的运动层重新提交。另测试失焦再返回，确认旧输入不残留。",
             "分别加入墙、斜坡和移动平台，记录可正常工作的条件及失败现象。",
             "列出所有写根位置或速度的组件，关闭多余写入者；比较 CharacterController 时使用独立对象。"
           ],
-          "result": "包含正常流程、停用恢复和能力范围的验收说明。"
+          "result": "分别记录组件开关、缓存与刚体速度；能解释仅停运动层时身体仍可惯性运动，仅停输入层时活动运动层会在下一物理步用零方向接管水平速度，并检查旧跳跃不被消费。"
         }
       ],
       "pitfalls": [
@@ -1092,7 +1107,7 @@ window.COURSE_MODULES.push({
           },
           {
             "title": "只改接管的分量",
-            "text": "将水平速度换成五，保留竖直-3m/s；因为不接地，当前跳跃请求按既定规则拒绝或缓存。"
+            "text": "将水平速度换成5m/s，保留竖直-3m/s；此步不接地，不起跳。源码将请求最多保留0.15秒，期间接地才消费，超时就丢弃。"
           },
           {
             "title": "让模拟继续推进",

@@ -1,6 +1,5 @@
 'use strict';
 (() => {
-  const STORAGE_KEY = 'engine-atlas-v1';
   const modules = (window.COURSE_MODULES || []).sort((a, b) => a.number - b.number);
   const lessons = modules.flatMap(module => module.lessons.map(lesson => ({...lesson, module})));
   const byId = new Map(lessons.map(lesson => [lesson.id, lesson]));
@@ -32,7 +31,9 @@
     clean.updatedAt = typeof value.updatedAt === 'string' ? value.updatedAt : null;
     return clean;
   }
-  try {const saved = localStorage.getItem(STORAGE_KEY);state = saved ? normalizeState(JSON.parse(saved)) : defaults();} catch {state=defaults();storageAvailable=false;}
+  const learners = window.createLearnerStore({defaults, normalizeState});
+  state = learners.load();
+  storageAvailable = learners.available;
   let currentLesson = null;
   let timerRunning = false;
   let lastTick = Date.now();
@@ -75,9 +76,23 @@
     const element=$('#toast');element.textContent=message;element.hidden=false;
     clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>{element.hidden=true;},4200);
   }
-  function save() {
+  function save(options) {
     state.updatedAt = new Date().toISOString();
-    try {localStorage.setItem(STORAGE_KEY,JSON.stringify(state));storageAvailable=true;} catch {if(storageAvailable) toast('浏览器未能保存进度，请使用“导出进度”备份。');storageAvailable=false;}
+    state = learners.save(state, options);
+    if(storageAvailable && !learners.available) toast('浏览器未能保存记录，请使用“导出进度”备份。');
+    storageAvailable = learners.available;
+    updateLearnerLabel();
+  }
+  function updateLearnerLabel() {
+    $('#learner-name').textContent = learners.name;
+    $('#storage-status').hidden = storageAvailable && !learners.message;
+    $('#storage-status').textContent = learners.message || '当前浏览器无法持久保存记录。离开前请导出备份。';
+  }
+  function switchLearner(id) {
+    tick();timerRunning=false;clearTimeout(noteTimeout);save();currentLesson=null;
+    state=learners.select(id);storageAvailable=learners.available;lastTick=Date.now();
+    applyTheme();route();
+    toast('已切换到“'+learners.name+'”。');
   }
   function totalSeconds() {return Object.values(state.seconds).reduce((sum,value)=>sum+value,0);}
   function formatTime(seconds) {return `${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(Math.floor(seconds%60)).padStart(2,'0')}`;}
@@ -205,7 +220,16 @@
   function notesPage() {
     const noted=lessons.filter(lesson=>state.notes[lesson.id]?.trim());
     const bookmarks=lessons.filter(lesson=>state.bookmarks.includes(lesson.id));
-    return `<p class="eyebrow">YOUR FIELD NOTES</p><h1 class="page-title">经验，要留下可回看的证据。</h1><p class="page-lede">笔记、收藏和学习进度存储在当前浏览器。建议每周导出一次备份，换设备时导入恢复。专注时间只统计本网页中主动开启的可见阅读时间，不代表全部实作时长。</p><div class="metrics"><div class="metric"><strong>${state.completed.length}<span>课</span></strong><small>通过自测与实作验收</small></div><div class="metric"><strong>${noted.length}<span>篇</span></strong><small>已留下的学习记录</small></div><div class="metric"><strong>${(totalSeconds()/3600).toFixed(1)}<span>小时</span></strong><small>实际记录的网页专注时间</small></div></div><div class="hero-buttons"><button class="button secondary small" id="notes-export">导出全部学习记录 ↗</button><button class="button secondary small" id="notes-import">导入学习记录</button></div><section class="notes-section"><h2>收藏的课程</h2>${bookmarks.length?bookmarks.map(lesson=>`<a href="#lesson/${lesson.id}" class="lesson-row"><span class="num">${number(lessonNumber(lesson))}</span><span class="title">${escapeHTML(lesson.title)}</span><span class="status">继续阅读 →</span></a>`).join(''):'<p class="empty-state">在课程页点击“收藏本课”，把需要反复阅读的原理留在这里。</p>'}</section><section class="notes-section"><h2>实验与思考</h2>${noted.map(lesson=>`<article class="note-entry"><h3><a href="#lesson/${lesson.id}">${number(lessonNumber(lesson))} · ${escapeHTML(lesson.title)} ↗</a></h3><p>${escapeHTML(state.notes[lesson.id])}</p></article>`).join('')||'<p class="empty-state">每课底部都有笔记区。先记录一个与你预期不一致的结果，学习就从这里开始。</p>'}</section>`;
+    return `<p class="eyebrow">YOUR FIELD NOTES</p><h1 class="page-title">经验，要留下可回看的证据。</h1><p class="page-lede">当前档案：<strong>${escapeHTML(learners.name)}</strong>。笔记、收藏和学习进度仅保存在这个浏览器的这份档案中。<a href="#learners">切换或新建学习档案 →</a> 建议每周导出备份，换设备时导入恢复。专注时间只统计主动开启的可见阅读时间，不代表全部实作时长。</p><div class="metrics"><div class="metric"><strong>${state.completed.length}<span>课</span></strong><small>通过自测与实作验收</small></div><div class="metric"><strong>${noted.length}<span>篇</span></strong><small>已留下的学习记录</small></div><div class="metric"><strong>${(totalSeconds()/3600).toFixed(1)}<span>小时</span></strong><small>实际记录的网页专注时间</small></div></div><div class="hero-buttons"><button class="button secondary small" id="notes-export">导出当前档案 ↗</button><button class="button secondary small" id="notes-import">导入学习记录</button></div><section class="notes-section"><h2>收藏的课程</h2>${bookmarks.length?bookmarks.map(lesson=>`<a href="#lesson/${lesson.id}" class="lesson-row"><span class="num">${number(lessonNumber(lesson))}</span><span class="title">${escapeHTML(lesson.title)}</span><span class="status">继续阅读 →</span></a>`).join(''):'<p class="empty-state">在课程页点击“收藏本课”，把需要反复阅读的原理留在这里。</p>'}</section><section class="notes-section"><h2>实验与思考</h2>${noted.map(lesson=>`<article class="note-entry"><h3><a href="#lesson/${lesson.id}">${number(lessonNumber(lesson))} · ${escapeHTML(lesson.title)} ↗</a></h3><p>${escapeHTML(state.notes[lesson.id])}</p></article>`).join('')||'<p class="empty-state">每课底部都有笔记区。先记录一个与你预期不一致的结果，学习就从这里开始。</p>'}</section>`;
+  }
+  function learnersPage() {
+    return `<p class="eyebrow">YOUR LEARNING SPACE</p><h1 class="page-title">每个人，留下一份自己的学习记录。</h1><p class="page-lede">每个浏览器分别保存自己的记录。多人共用同一个浏览器时，请各建一份学习档案，并在学习前切换到自己的档案，分别记录进度、笔记、收藏、自测和专注时间。</p><section class="learner-panel"><h2>当前浏览器中的学习档案</h2><p class="learner-hint">当前：<strong>${escapeHTML(learners.name)}</strong>。切换档案会保存当前记录，并暂停专注计时。</p><div class="learner-list">${learners.list().map(profile=>`<article class="learner-card"><div><h3>${escapeHTML(profile.name)}</h3><p>${profile.id===learners.activeId?'正在使用这份学习档案':'独立保存的学习记录'}</p></div>${profile.id===learners.activeId?'<span class="learner-current">当前档案</span>':`<button class="button secondary small" data-learner="${escapeHTML(profile.id)}">切换到此档案</button>`}</article>`).join('')}</div><form id="create-learner" class="learner-form"><label for="new-learner-name">创建一份空白档案</label><div><input id="new-learner-name" name="name" maxlength="40" required placeholder="例如：小林的引擎笔记" autocomplete="off"><button class="button small" type="submit">创建并切换</button></div><small>只需一个便于区分的名称，无需填写真实姓名。</small></form><form id="rename-learner" class="learner-form"><label for="rename-learner-name">修改当前档案名称</label><div><input id="rename-learner-name" name="name" maxlength="40" required value="${escapeHTML(learners.name)}" autocomplete="off"><button class="button secondary small" type="submit">保存名称</button></div></form></section><aside class="learning-note"><span class="note-symbol" aria-hidden="true">存</span><div><h2>记录保存在这里，也由你带走。</h2><p>学习档案是本机记录，不是登录账号。同一浏览器的使用者可以切换这些档案；请使用各自的浏览器用户配置来隔开私人内容。</p><p>网站不会把笔记与进度上传到 GitHub。清除网站数据、使用无痕窗口、换浏览器或换设备后，需通过备份恢复。<strong>目前不提供账号登录或跨设备自动同步。</strong>学习记录也不会自动从本地文件迁移到在线地址。</p><div class="hero-buttons"><button class="button secondary small" id="learner-export">导出当前档案</button><button class="button secondary small" id="learner-import">从备份恢复到当前档案</button></div></div></aside>`;
+  }
+  function attachLearners() {
+    $$('[data-learner]').forEach(button=>button.addEventListener('click',()=>switchLearner(button.dataset.learner)));
+    $('#create-learner').addEventListener('submit',event=>{event.preventDefault();try{const id=learners.create($('#new-learner-name').value);switchLearner(id);}catch(error){toast(error.message);}});
+    $('#rename-learner').addEventListener('submit',event=>{event.preventDefault();try{learners.rename($('#rename-learner-name').value);route();toast('已更新档案名称。');}catch(error){toast(error.message);}});
+    $('#learner-export').addEventListener('click',exportProgress);$('#learner-import').addEventListener('click',importProgress);
   }
   function componentsPage(){
     return `<p class="eyebrow">THE COMPONENT FIELD GUIDE</p><h1 class="page-title">每个组件，具体负责什么？</h1><p class="page-lede">一个角色可以同时有负责显示的 SpriteRenderer、负责运动的 Rigidbody2D 和负责动画的 Animator。这里先用几句话说明每个组件的工作，再指出常见问题；点击相关课程，可以继续看完整例子和实验。</p><div class="reference-filter"><label class="sr-only" for="component-search">搜索组件</label><input type="search" id="component-search" class="filter-input" placeholder="输入组件名、职责或问题…"><label for="component-domain" class="sr-only">组件领域</label><select id="component-domain" class="filter-input"><option value="全部">全部领域</option>${['通用','2D','3D','UI','反馈','可选包'].map(domain=>`<option>${domain}</option>`).join('')}</select></div><div class="component-grid" id="component-list"></div><aside class="learning-note"><span class="note-symbol" aria-hidden="true">辨</span><div><h3>分清场景中的播放器和它使用的素材。</h3><p>例如 AudioSource 是对象上的播放组件，AudioClip 是它播放的声音资源。同样，SpriteRenderer 使用 Sprite，Animator 使用控制器和动画片段。GameObject 则把这些组件组织在一起。拖拽资源时，要先找到接收这类资源的字段。</p></div></aside>`;
@@ -264,14 +288,14 @@
     $$('.search-result',result).forEach(anchor=>anchor.addEventListener('click',()=>{const target=anchor.getAttribute('href');$('#search-dialog').close();if(location.hash===target){document.getElementById('main').focus();window.scrollTo(0,0);}}));
   }
   function openSearch(){if(!$('#search-dialog').open)$('#search-dialog').showModal();$('#search-input').focus();search($('#search-input').value);}
-  function exportProgress(){tick();save();const blob=new Blob([JSON.stringify({...state,exportedAt:new Date().toISOString(),book:'引擎之内 · Unity 500 小时'},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),anchor=document.createElement('a');anchor.href=url;anchor.download=`unity-engine-progress-${new Date().toISOString().slice(0,10)}.json`;anchor.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('已导出进度、笔记、自测与专注时间。');}
+  function exportProgress(){tick();save();const blob=new Blob([JSON.stringify({...state,learnerName:learners.name,exportedAt:new Date().toISOString(),book:'引擎之内 · Unity 500 小时'},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),anchor=document.createElement('a');anchor.href=url;anchor.download=`unity-engine-progress-${learners.activeId.slice(0,8)}-${new Date().toISOString().slice(0,10)}.json`;anchor.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('已导出“'+learners.name+'”的进度、笔记、自测与专注时间。');}
   function importProgress(){ $('#import-file').click(); }
-  async function receiveImport(event){const file=event.target.files?.[0];if(!file)return;event.target.value='';try{if(file.size>8*1024*1024)throw new Error('进度文件过大，请选择本教材导出的 JSON。');const imported=normalizeState(JSON.parse(await file.text()));if(!confirm('导入将替换当前浏览器的学习记录。建议先导出当前进度备份。继续导入？'))return;timerRunning=false;state=imported;save();applyTheme();route();toast('已恢复学习记录。');}catch(error){toast('导入失败：'+error.message);}}
+  async function receiveImport(event){const file=event.target.files?.[0];if(!file)return;event.target.value='';const targetId=learners.activeId;try{if(file.size>8*1024*1024)throw new Error('进度文件过大，请选择本教材导出的 JSON。');const imported=normalizeState(JSON.parse(await file.text()));if(targetId!==learners.activeId)throw new Error('读取文件期间已切换档案，请在目标档案中重新导入。');if(!confirm('导入将替换“'+learners.name+'”的学习记录，其他档案不受影响。建议先导出当前档案备份。继续导入？'))return;tick();timerRunning=false;clearTimeout(noteTimeout);currentLesson=null;state=imported;save({replace:true});applyTheme();route();toast(storageAvailable?'已恢复学习记录。':'已在本次页面恢复记录，浏览器无法持久保存，请导出备份。');}catch(error){toast('导入失败：'+error.message);}}
   function applyTheme(){document.documentElement.classList.toggle('dark',state.theme==='dark');$('#theme-toggle').setAttribute('aria-label',state.theme==='dark'?'切换浅色阅读':'切换深色阅读');}
   function tick(){const now=Date.now(),elapsed=Math.min(5,Math.max(0,(now-lastTick)/1000));lastTick=now;if(timerRunning&&currentLesson&&!document.hidden){state.seconds[currentLesson.id]=(state.seconds[currentLesson.id]||0)+elapsed;refreshTimerUI();}}
   function closeMobile(){document.body.classList.remove('menu-open');$('#menu-toggle').setAttribute('aria-expanded','false');$('#mobile-scrim').hidden=true;}
   function route(){
-    tick();timerRunning=false;currentLesson=null;document.body.classList.remove('reading-focus');closeMobile();
+    tick();timerRunning=false;clearTimeout(noteTimeout);currentLesson=null;document.body.classList.remove('reading-focus');closeMobile();
     if($('#search-dialog').open)$('#search-dialog').close();
     const [name='home',id]=location.hash.slice(1).split('/');const main=$('#main');
     if(!lessons.length){main.innerHTML='<section class="error-page"><h1>课程内容尚未加载</h1><p>请确认 content 目录与 index.html 位于同一文件夹，且章节文件完整。</p></section>';return;}
@@ -279,6 +303,7 @@
     else if(name==='roadmap'){main.innerHTML=roadmap();$('#breadcrumb').innerHTML='学习空间 <span>/</span> 500 小时学习路线';document.title='完整学习路线 · 引擎之内';}
     else if(name==='references'){main.innerHTML=referencesPage();renderSources();$('#reference-search').addEventListener('input',event=>renderSources(event.target.value));$('#breadcrumb').innerHTML='学习空间 <span>/</span> 官方文档索引';document.title='官方文档索引 · 引擎之内';}
     else if(name==='notes'){main.innerHTML=notesPage();$('#notes-export').addEventListener('click',exportProgress);$('#notes-import').addEventListener('click',importProgress);$('#breadcrumb').innerHTML='学习空间 <span>/</span> 我的学习笔记';document.title='我的学习笔记 · 引擎之内';}
+    else if(name==='learners'){main.innerHTML=learnersPage();attachLearners();$('#breadcrumb').innerHTML='学习空间 <span>/</span> 我的学习档案';document.title='我的学习档案 · 引擎之内';}
     else if(name==='components'){main.innerHTML=componentsPage();renderComponents();$('#component-search').addEventListener('input',renderComponents);$('#component-domain').addEventListener('change',renderComponents);$('#breadcrumb').innerHTML='学习空间 <span>/</span> 常用组件速查';document.title='常用组件速查 · 引擎之内';}
     else if(name==='lab'){main.innerHTML=labsPage(id);if(id==='physics')attachPhysics();else attachLifecycle();$('#breadcrumb').innerHTML='学习空间 <span>/</span> 引擎交互实验室';document.title='引擎交互实验室 · 引擎之内';}
     else if(name==='home'||name===''){main.innerHTML=home();$('#breadcrumb').innerHTML='学习空间 <span>/</span> 总览';document.title='引擎之内 · Unity 引擎原理与实践';$$('[data-phase]').forEach(button=>button.addEventListener('click',()=>{activePhase=Number(button.dataset.phase);const phase=phases[activePhase];$('#module-grid').innerHTML=modules.filter(module=>module.number>=phase.range[0]&&module.number<=phase.range[1]).map(moduleRow).join('');$('#module-grid').setAttribute('aria-labelledby','phase-tab-'+activePhase);$$('[data-phase]').forEach(tab=>{tab.classList.toggle('active',tab===button);tab.setAttribute('aria-selected',String(tab===button));});}));}
@@ -298,5 +323,5 @@
   setInterval(()=>{tick();if(timerRunning)save();},1000);
   applyTheme();route();
   // 供本地验收检查读取的公开只读摘要，不暴露或上传个人笔记。
-  window.ENGINE_ATLAS=Object.freeze({version:'1.0.0',modules:modules.length,lessons:lessons.length,hours:lessons.reduce((sum,lesson)=>sum+lesson.hours,0)});
+  window.ENGINE_ATLAS=Object.freeze({version:'1.2.0',modules:modules.length,lessons:lessons.length,hours:lessons.reduce((sum,lesson)=>sum+lesson.hours,0)});
 })();

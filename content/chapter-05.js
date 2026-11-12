@@ -52,7 +52,8 @@ window.COURSE_MODULES.push({
           "title": "deltaTime 表示当前阶段的时间增量",
           "paragraphs": [
             "常见 Update 中，deltaTime 用于按缩放游戏时间推进，例如速度乘秒数得到位移。正常速度下两帧间隔约0.02秒，timeScale=0.5时缩放增量约0.01秒，角色按同一每游戏秒速度运行，在真实时间里看起来变慢。",
-            "它不是永远恒定的数字。固定步相关阶段使用的时间语义也不同，不能把某一帧的观察推广到任意回调。用时间值前，应明确代码在哪个阶段执行，以及需要按游戏时间还是非缩放时间推进。"
+            "它不是永远恒定的数字。固定步相关阶段使用的时间语义也不同，不能把某一帧的观察推广到任意回调。用时间值前，应明确代码在哪个阶段执行，以及需要按游戏时间还是非缩放时间推进。",
+            "还有一个调用位置差别：在 FixedUpdate 内读取 deltaTime 时，它返回固定步语义的时间增量，不能拿它测两次真实调用之间的墙钟间隔。严重卡顿后，maximumDeltaTime 又可能限制缩放时间推进，而 unscaledDeltaTime 反映的时间间隔更大。因此“deltaTime总等于真实间隔乘timeScale”只是普通帧下的近似理解，不是跨所有阶段、所有卡顿的恒等式。"
           ]
         },
         {
@@ -207,6 +208,14 @@ window.COURSE_MODULES.push({
         {
           "label": "Time.fixedDeltaTime",
           "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-fixedDeltaTime.html"
+        },
+        {
+          "label": "Time.deltaTime",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-deltaTime.html"
+        },
+        {
+          "label": "Time.maximumDeltaTime",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-maximumDeltaTime.html"
         }
       ],
       "summary": [
@@ -296,7 +305,8 @@ window.COURSE_MODULES.push({
           "title": "不同等待对象表达不同要求",
           "paragraphs": [
             "WaitForSecondsRealtime 忽略timeScale，适合部分暂停期间仍要计时的流程，但恢复仍依赖游戏循环。WaitForFixedUpdate 关注固定步相关阶段，不等于创建一个独立物理线程。选择依据应是需要的时钟或阶段。",
-            "等待一个 ready 条件，则表示流程尚未满足完成要求。固定等0.5秒只能赌它差不多准备好，不能替代真正状态。优先说明等待什么，再选择对应方式，而不是为了让代码短就给所有初始化都塞一个延时。"
+            "等待一个 ready 条件，则表示流程尚未满足完成要求。固定等0.5秒只能赌它差不多准备好，不能替代真正状态。优先说明等待什么，再选择对应方式，而不是为了让代码短就给所有初始化都塞一个延时。",
+            "WaitUntil 的条件检查也有具体阶段：Unity 每帧在 Update 之后、LateUpdate 之前调用条件委托。若 ready 在 Update 里设为true，本轮后面的条件检查就可能看到；若它到 LateUpdate 才变为true，就要等后续检查。条件函数应只做简短判断，不在里面反复发奖励或启动加载，否则等待期间每次检查都可能重复产生副作用。"
           ]
         },
         {
@@ -533,7 +543,8 @@ window.COURSE_MODULES.push({
           "title": "启用期和销毁期不同",
           "paragraphs": [
             "组件只是enabled=false时，对象仍可能存在，销毁令牌不会因此替你覆盖启用边界。如果任务只应在面板显示时运行，就需要额外管理启用期间的CancellationTokenSource，并在禁用时发出取消。",
-            "重新启用通常要开始新的流程，不能继续使用已经取消的令牌源。谁创建、谁发出取消、谁释放，都应对应清楚。否则快速开关可能叠加多个异步流程，即使每个方法单独看都很简单，结果也会重复出现。"
+            "重新启用通常要开始新的流程，不能继续使用已经取消的令牌源。谁创建、谁发出取消、谁释放，都应对应清楚。否则快速开关可能叠加多个异步流程，即使每个方法单独看都很简单，结果也会重复出现。",
+            "取消请求与释放令牌源是两步。Cancel 通知合作的等待停止；Dispose 释放 CancellationTokenSource 本身的资源，不应被当成取消命令。若旧任务还有 finally 清理，快速重新启用时它可能尚未收尾；每轮应保存自己的令牌源和任务身份，避免旧 finally 清空了新一轮刚建立的字段。需要等待旧任务彻底结束时，还要明确等待其完成。"
           ]
         },
         {
@@ -763,7 +774,8 @@ window.COURSE_MODULES.push({
           "title": "读懂示例最后的取余",
           "paragraphs": [
             "示例在达到上限后，如果还剩至少一个完整周期，就对周期取余。这保留不足一个周期的零头，却丢掉额外完整周期。若积累10.2秒、周期1秒、上限4，处理4次后最后保留约0.2秒，另外6次不再补发。",
-            "这是一项明确的丢弃策略，适合教学观察，不能当作所有计费或战斗逻辑的默认算法。正式系统可以记录丢弃次数，或将未处理的总量合并计算。选择必须与功能允许的误差一致。"
+            "这是一项明确的丢弃策略，适合教学观察，不能当作所有计费或战斗逻辑的默认算法。正式系统可以记录丢弃次数，或将未处理的总量合并计算。选择必须与功能允许的误差一致。",
+            "此处10.2秒是人工传入的算法测试量，不代表默认设置下真实卡住10.2秒，下一次 Update 就会收到同样大的 deltaTime。Unity 还会按 maximumDeltaTime 限制游戏时间增量。因此要验证“超过补发上限”的分支，应将这段规则提取为接收 dt 的方法并直接传大增量；先测自己的规则，再另测引擎实际提供了什么时间，才不会把两层上限混为一谈。"
           ]
         },
         {
@@ -897,6 +909,10 @@ window.COURSE_MODULES.push({
         {
           "label": "Time.deltaTime",
           "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-deltaTime.html"
+        },
+        {
+          "label": "Time.maximumDeltaTime",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-maximumDeltaTime.html"
         }
       ],
       "summary": [
@@ -986,7 +1002,8 @@ window.COURSE_MODULES.push({
           "title": "平滑常以落后一点为代价",
           "paragraphs": [
             "用过去与当前已知样本插值，画面通常落后最新模拟状态约一个步长范围。这个延迟换来不必预测未来的平滑。它可能适合远处对象，却不一定适合需要极低输入延迟的控制体验。",
-            "外推则根据速度等估计未来状态，能够减少一部分落后，却可能猜错并需要修正。两者没有一个永远最佳。比较时要同时看连续性、响应延迟和突变时的表现，不能只凭看起来顺滑就认定系统更准确。"
+            "外推则根据速度等估计未来状态，能够减少一部分落后，却可能猜错并需要修正。两者没有一个永远最佳。比较时要同时看连续性、响应延迟和突变时的表现，不能只凭看起来顺滑就认定系统更准确。",
+            "用匀速例子算一遍延迟：从t=0开始，步长0.1秒，在累计t=0.25秒时已得到previous=0.1、current=0.2，余量0.05，显示为0.15。它比最新样本0.2落后0.05单位；若拿连续匀速运动在t=0.25时应到达的0.25作参照，则落后0.1单位，恰好一整步。比较“落后多少”前，必须先说明参照的是最新样本还是当前连续时间。"
           ]
         },
         {

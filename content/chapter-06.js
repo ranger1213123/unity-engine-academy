@@ -52,7 +52,8 @@ window.COURSE_MODULES.push({
           "title": "动作类型和值类型要对应",
           "paragraphs": [
             "Value类型动作适合连续数值，例如移动方向；Button适合按钮类操作；PassThrough有不同通知规则，不能只按名字选择。值类型Vector2说明读取的是两个分量，绑定和ReadValue也应匹配。",
-            "键盘二维复合可以把上下左右组合成向量，手柄摇杆本身提供二维值。若动作配置为按钮却要求读取Vector2，不能靠移动公式修好。应先核对Action类型、预期值和绑定控件，再检查消费者如何使用结果。"
+            "键盘二维复合可以把上下左右组合成向量，手柄摇杆本身提供二维值。若动作配置为按钮却要求读取Vector2，不能靠移动公式修好。应先核对Action类型、预期值和绑定控件，再检查消费者如何使用结果。",
+            "同一个 Value 动作绑定多个控件时，也不能默认把所有值直接相加。系统会按动作规则处理哪个控件驱动当前值。例如两个摇杆分别给出(0.5,0.5)和(0.25,0.25)，较弱的第二个输入不会简单叠加成(0.75,0.75)。PassThrough 又有不同规则。多设备同时操作的实验应记录实际驱动控件与值，避免把动作层的选择误诊为移动公式丢数据。"
           ]
         },
         {
@@ -207,6 +208,10 @@ window.COURSE_MODULES.push({
         {
           "label": "Reading device state directly",
           "url": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/using-direct-workflow.html"
+        },
+        {
+          "label": "InputActionType",
+          "url": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/api/UnityEngine.InputSystem.InputActionType.html"
         }
       ],
       "summary": [
@@ -282,7 +287,8 @@ window.COURSE_MODULES.push({
           "title": "动作阶段来自动作和交互规则",
           "paragraphs": [
             "started、performed、canceled描述动作过程。默认按钮、Hold和Tap有不同完成条件。Hold可能先开始，持续满足时间后才performed；提前放开可能取消。因此performed不能被无条件翻译为物理按键刚压下。",
-            "若修改交互后攻击“变迟”，先看是不是预期的完成时间，而不是立即去改Update。把动作阶段与实际按下、保持、松开时刻一起记录，能解释配置如何改变通知过程。阶段名字有共同形式，但具体触发条件要看设置。"
+            "若修改交互后攻击“变迟”，先看是不是预期的完成时间，而不是立即去改Update。把动作阶段与实际按下、保持、松开时刻一起记录，能解释配置如何改变通知过程。阶段名字有共同形式，但具体触发条件要看设置。",
+            "Hold 很适合把两种语义并排观察：按钮刚跨过按下阈值时，WasPressedThisFrame 可以为true，但保持时间还没到，所以 performed 尚未发生。若玩法要“开始蓄力”，应关心开始阶段或按下变化；若要“蓄满后发射”，应关心达到保持条件。选择来自行为定义，不是把任何返回true的接口都当作同一触发器。"
           ]
         },
         {
@@ -536,7 +542,8 @@ window.COURSE_MODULES.push({
           "title": "UI、时间与光标需要另行安排",
           "paragraphs": [
             "uGUI通常还需EventSystem和InputSystemUIInputModule，并配置相应UI动作。更换Map不等于自动连接这个模块。timeScale、鼠标锁定和菜单显示也由不同设置控制，应在模式转换流程中分别调用。",
-            "这些职责可以由一个入口组织，但不必混为一个神奇开关。列出每个步骤和负责组件，失败时逐项检查。否则“菜单出现了”会被误当成所有暂停与输入切换均已正确，实际却可能仍有点击穿透。"
+            "这些职责可以由一个入口组织，但不必混为一个神奇开关。列出每个步骤和负责组件，失败时逐项检查。否则“菜单出现了”会被误当成所有暂停与输入切换均已正确，实际却可能仍有点击穿透。",
+            "如果 UI 应由某个 PlayerInput 管理的动作驱动，应检查它的 UI Input Module 字段，关联相应的 InputSystemUIInputModule，使模块使用该玩家的动作配置。仅在 Project 中给两处拖入同一个资源，并不能证明运行中它们仍引用同一份玩家动作。调试时分别检查 PlayerInput.actions、当前Map和模块的动作来源，尤其不要在多人场景里用全局设备读取绕过玩家归属。"
           ]
         },
         {
@@ -731,7 +738,8 @@ window.COURSE_MODULES.push({
           "title": "保留默认值再叠加个人选择",
           "paragraphs": [
             "默认Fire绑定空格，玩家想改成Enter，不必把开发者资源文件直接改掉。binding override在原绑定之上提供覆盖值，让实际使用路径变化，同时保留默认配置，以后可以清除覆盖恢复。",
-            "path表示默认路径，overridePath表示覆盖，effectivePath表示当前实际使用路径。显示改键结果时应依据有效绑定，不要继续硬写“空格”。默认配置和个人设置分开，也方便版本更新时保留玩家偏好，而不是让每次改键都改变项目源资源。"
+            "path表示默认路径，overridePath表示覆盖，effectivePath表示当前实际使用路径。显示改键结果时应依据有效绑定，不要继续硬写“空格”。默认配置和个人设置分开，也方便版本更新时保留玩家偏好，而不是让每次改键都改变项目源资源。",
+            "还要分清覆盖为空字符串和没有覆盖：overridePath=null 表示不覆盖，继续使用默认路径；overridePath为空字符串则可用于禁用这条绑定。恢复默认应移除覆盖，不要简单写入空字符串，否则界面看似清空设置，实际可能让默认空格也不再触发。保存格式要能保留这两种不同状态。"
           ]
         },
         {
@@ -985,8 +993,9 @@ window.COURSE_MODULES.push({
         {
           "title": "使用同一种时钟比较时间",
           "paragraphs": [
-            "输入系统事件时间与Time.time不是可以不加条件混算的两个数。示例在采样时用Time.timeAsDouble记录，在相同游戏时间思路下比较，使单位与缩放选择明确。更精密输入需要另外说明时间基准转换。",
-            "选择游戏时间意味着暂停时窗口行为与游戏时间一起变化；菜单切换是否清掉请求，则还要另行决定。不要只调整timeScale就假定所有缓存都已清空。组件禁用时本例明确清pending，避免重新启用后执行旧输入。"
+            "输入事件的时间戳与 Time.timeAsDouble 不应未经换算就混用。本例在 Update 采样时记游戏时间，但同一属性在 FixedUpdate 中返回的是 fixedTimeAsDouble，即当前固定步时间，并非输入采样瞬间的同一个读数。因此截止判断按固定步检查，会有时间离散和两个阶段的偏移；这是短缓冲教学例，不是毫秒级精确的输入回放方案。",
+            "选择游戏时间意味着暂停时窗口行为与游戏时间一起变化；菜单切换是否清掉请求，则还要另行决定。不要只调整timeScale就假定所有缓存都已清空。组件禁用时本例明确清pending，避免重新启用后执行旧输入。",
+            "如果项目需要严格定义“收到后0.15个游戏秒”，还应先选择统一的计时域，再决定输入时间怎样映射到模拟步。可以按固定步编号保存请求、按明确步数截止，或建立从输入事件时钟到模拟时间的转换。前一种容易复现但精度受步长限制，后一种保留更多时序信息但需要更完整的设计；更改时钟会改变暂停规则，不能只换一个属性名。"
           ]
         },
         {
@@ -1028,9 +1037,9 @@ window.COURSE_MODULES.push({
           "title": "比较窗口内外",
           "minutes": 60,
           "steps": [
-            "令canConsume为false，按键后在0.15秒窗口内开放条件，观察处理。",
-            "再次按键但在窗口外才开放条件，确认旧请求被丢弃。",
-            "测试暂停与菜单切换，写清时钟和清理选择，并区分缓冲与土狼时间。"
+            "先把 bufferSeconds 临时设为2秒，令canConsume=false，按键约1秒后开放条件，观察一次处理。较长窗口便于人工操作，不能用手动点击宣称已精确测试0.15秒边界。",
+            "重新开始并在约3秒后才开放条件，确认请求过期；再用脚本安排窗口内、窗口外和边界处的条件变化，恢复0.15秒，记录采样游戏时间、固定步时间与实际处理步。",
+            "测试暂停与菜单切换，写清时钟和清理选择。把输入提前于落地的缓冲与离地后仍可跳的土狼时间分开，不用同一条日志推断两者都正确。"
           ],
           "result": "缓冲仅提供有限宽容，不永久排队。"
         }
@@ -1116,6 +1125,10 @@ window.COURSE_MODULES.push({
         {
           "label": "Input System settings",
           "url": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/Settings.html"
+        },
+        {
+          "label": "Time.timeAsDouble",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-timeAsDouble.html"
         }
       ],
       "summary": [

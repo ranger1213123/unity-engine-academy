@@ -29,7 +29,7 @@ window.COURSE_MODULES.push({
         {
           "title": "SerializedObject 让界面接入序列化编辑流程",
           "paragraphs": [
-            "serializedObject 代表当前编辑目标的序列化数据，SerializedProperty 则定位其中一个属性，例如 speed。典型过程是 Update 获取当前状态，通过属性绘制和修改，再用 ApplyModifiedProperties 应用变化。这样界面不是绕开 Unity 数据编辑机制，随手给 target 的字段赋值。",
+            "可以把这段流程看成一次有明确起点和提交点的字段编辑。serializedObject 表示当前目标的序列化数据，FindProperty(\"speed\") 找到 speed 对应的 SerializedProperty；这里的 property 是序列化属性，并不是要求你新增一个 C# get/set 属性。先调用 Update 取得当前状态，再用 PropertyField 让用户编辑，最后 ApplyModifiedProperties 应用变化。若只写 target.speed=新值，就绕开了这条流程，需要自行处理相应编辑行为。",
             "本课示例按字段名字查找属性，因此字段重命名后也要检查工具是否仍能找到它。通过这个流程编辑，有助于维护撤销和实例覆盖，但仍需实际验证。不要把“使用了 SerializedObject”当作所有副作用都已自动正确的保证，尤其额外按钮若直接操作对象，还需要单独处理。"
           ]
         },
@@ -242,15 +242,15 @@ window.COURSE_MODULES.push({
         {
           "title": "一次对齐操作，怎样才能一步撤销",
           "paragraphs": [
-            "场景里选中两个不同高度的物体，点击工具把它们移到同一高度。如果 Undo 一次只能恢复一个，或者根本恢复不了，工具就没有按用户理解的“一次操作”记录变化。先明确这次操作影响哪些 Transform，以及修改前各自的位置，再决定怎样记录和分组。",
-            "本课工具只作用于当前选择的可编辑场景对象，不创建、不删除对象，也过滤不该直接修改的持久资源。缩小范围后，你可以逐项验证：选择外对象不变、一次撤销恢复所有被改对象、重做重新应用。先把这条简单流程做可靠，再扩展复杂工具。"
+            "场景中甲的位置是 (2,1,0)，乙是 (-4,3,0)。本课菜单 Align Selected X 把两者的世界 X 都设为 0，结果应为甲 (0,1,0)、乙 (0,3,0)；Y 和 Z 保持原值，它并不是把两者移到同一高度。如果一次 Undo 只能恢复一个，或者恢复不了，工具就没有按用户理解的“一次操作”记录变化。先把修改对象、修改分量和原数值列清楚，再决定怎样记录撤销。",
+            "本课先使用两个互不为父子的可编辑场景对象，工具只修改所选 Transform，不创建、删除对象，也过滤持久资源。这个前提有实际原因：若父子同时被选中，移动父对象还会带动子对象，逐项写世界坐标就可能依赖处理顺序。扩展嵌套选择前，应另定只处理最上层选择，还是缓存全部目标世界位置后按层级处理。先缩小样本范围，再逐项验证未选对象、撤销与重做，才不会把一个最小工具误当成所有层级都已支持。"
           ]
         },
         {
           "title": "先记录，再赋新值",
           "paragraphs": [
             "Undo.RecordObject 或 RecordObjects 要在修改之前调用，用来记录修改前可比较的状态。若先把位置全部赋成目标值，再要求保存原来位置，引擎已无法从当前字段推断你刚才覆盖掉的数据。实验故意交换顺序，就能看到记录时机不是格式偏好，而影响恢复含义。",
-            "多个对象属于一次动作时，使用有意义的操作名称和适当分组，让历史显示“对齐高度”而不是十几条不明记录。涉及创建、删除或父子结构变化时，还要使用对应的 Undo API；记录一个普通字段的办法不能自动覆盖所有结构操作。"
+            "多个对象属于一次动作时，要给操作一个有意义的名称，例如示例中的 Align Selected X，并用合适记录或分组让用户一次撤销整组变化。这样历史中的这一项，才对应刚才同时处理甲、乙的动作，而不是十几条不明记录。涉及创建、删除或父子结构变化时，则要使用对应的 Undo API；记录一个普通字段的办法，不能自动覆盖所有结构操作。"
           ]
         },
         {
@@ -261,10 +261,10 @@ window.COURSE_MODULES.push({
           ]
         },
         {
-          "title": "修改实例，不要误改所有共享者",
+          "title": "在实例子对象上观察普通属性覆盖",
           "paragraphs": [
-            "两个场景对象来自同一 Prefab。用户只选择甲调整位置，乙和源资产都应保持原样。甲相对于源的差异需要正确记录为实例覆盖，直接修改的工具应使用相应 PrefabUtility 方法。否则当下位置似乎正确，之后 Revert、保存或重开时却可能不符合预期。",
-            "反过来，编辑源资产会影响共享它的实例，属于不同任务。工具应明确自己接受的是场景实例、Prefab 编辑内容，还是项目资源，不要用同一入口悄悄混改。本例先排除持久资源，便于验证场景操作；若扩展其他范围，需要单独设计并测试。"
+            "Prefab 实例的根位置和旋转有特殊规则：它们是为了把各个实例摆到场景中而保留的默认变换，并不是通常在 Overrides 中列出的显式覆盖。因此本课不拿“移动 Prefab 根后 Revert 回源位置”验证普通覆盖，而选择 Root/Marker 子对象。设源 Prefab 中 Marker 的 localPosition.x=1，场景实例甲的根位于世界 x=2，旋转不变、缩放为1；此时 Marker 世界 x=3。选中甲的 Marker 执行工具，世界 x 变为0，对应局部 x=-2，这才是可以观察的子对象属性覆盖。",
+            "另放一个来自同一 Prefab 的实例乙，保持它的 Marker 局部 x=1。只修改甲的 Marker 后，乙和源资产都应不变；在甲的子对象上对该位置覆盖执行 Revert，局部 x 应恢复为1，因此世界 x 又成为3，而甲的根仍位于世界 x=2。这里撤回的是子对象相对源的差异，不是把整个实例搬回源资产的原点。修改实例、编辑源资产以及根变换的特殊默认行为是三种情况，要分别说明范围，不能只看位置一度正确就认定覆盖流程已验证。"
           ]
         },
         {
@@ -281,8 +281,9 @@ window.COURSE_MODULES.push({
         "filename": "Editor/AlignSelectedTools.cs",
         "source": "using UnityEditor;\nusing UnityEngine;\n\npublic static class AlignSelectedTools\n{\n    [MenuItem(\"Engine Lab/Align Selected X\")]\n    private static void Align()\n    {\n        Transform[] targets = System.Array.FindAll(Selection.transforms, t => !EditorUtility.IsPersistent(t));\n        if (targets.Length == 0) return;\n        Undo.RecordObjects(targets, \"Align Selected X\");\n        foreach (Transform target in targets)\n        {\n            Vector3 p = target.position;\n            target.position = new Vector3(0f, p.y, p.z);\n            if (PrefabUtility.IsPartOfPrefabInstance(target))\n                PrefabUtility.RecordPrefabInstancePropertyModifications(target);\n        }\n    }\n}",
         "explanation": [
-          "保存到正确的 Editor 范围，先在实验场景选择 Transform。示例过滤持久资源，只修改选择范围内的场景对象。",
-          "工具只改已有对象的位置。若要创建、删除或改变父子关系，需要改用对应的 Undo 方式并重新验证。"
+          "保存到正确的 Editor 范围。在实验场景选取两个互不为父子的 Transform；本例过滤持久资源，只直接写入选择范围。父子嵌套选择会受层级联动与处理顺序影响，扩展前需单独制定选择和赋值策略。",
+          "工具只改已有对象的位置。若要创建、删除或改变父子关系，需要改用对应的 Undo 方式并重新验证。",
+          "Prefab 覆盖实验使用实例内的 Marker 子 Transform。Prefab 根的 Position/Rotation 属于特殊默认变换，不能用它们代替普通显式属性覆盖的 Revert 实验。"
         ]
       },
       "lab": [
@@ -290,7 +291,7 @@ window.COURSE_MODULES.push({
           "title": "撤销顺序实验",
           "minutes": 60,
           "steps": [
-            "在实验场景选择两个原位置不同的对象，记录坐标后执行对齐工具，检查未选对象不变。",
+            "创建两个互不为父子的场景对象：甲放到 (2,1,0)、乙放到 (-4,3,0)。同时选中两者执行 Align Selected X；核对只有世界 X 变为 0，未选对象不变。",
             "一次撤销应恢复两者原位置，重做再次对齐。",
             "故意把 RecordObjects 移到赋值之后，在副本实验比较。",
             "恢复正确代码并检查无选择时无动作。"
@@ -301,12 +302,12 @@ window.COURSE_MODULES.push({
           "title": "Prefab 覆盖验证",
           "minutes": 60,
           "steps": [
-            "从同一 Prefab 放两个实例到场景，只选择其中一个执行工具，分别检查实例与源资产。",
-            "查看覆盖信息，确认另一个实例不变。",
-            "执行 Revert，确认恢复源资产状态。",
-            "保存重开实验场景，核对覆盖与撤销日志说明。"
+            "创建 Root/Marker 的 Prefab，令 Marker 的 localPosition=(1,0,0)。场景放甲、乙两个实例，根旋转保持零、缩放为1；甲根的世界X设为2，记录甲子对象世界X=3。",
+            "只选甲的 Marker 子 Transform 执行 Align Selected X，不同时选其父级。记录世界X=0、局部X=-2，检查乙子对象及源资产仍保持原值。",
+            "查看甲子对象的位置覆盖并对它执行 Revert，核对局部X恢复1、世界X恢复3，而甲根仍在世界X=2。不要用 Prefab 根的 Position/Rotation 作普通显式覆盖对照。",
+            "再执行一次对子对象的修改，保存并重开实验场景，核对该覆盖仍在；结合第一组独立场景对象实验，分别说明 Undo 与 Revert 恢复的来源。"
           ],
-          "result": "没有误写共享源资产。"
+          "result": "子对象覆盖可保存并恢复到源资产局部值；根变换的默认行为与普通显式覆盖分别解释，源资产和其他实例未被误改。"
         }
       ],
       "pitfalls": [
@@ -387,6 +388,10 @@ window.COURSE_MODULES.push({
         {
           "label": "PrefabUtility.RecordPrefabInstancePropertyModifications",
           "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/PrefabUtility.RecordPrefabInstancePropertyModifications.html"
+        },
+        {
+          "label": "Prefab instance overrides：Transform overrides",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/Manual/PrefabInstanceOverrides.html"
         }
       ],
       "summary": [
@@ -417,16 +422,16 @@ window.COURSE_MODULES.push({
         }
       ],
       "teaching": {
-        "question": "工具把两个物体对齐后，为什么 Undo 可能找不回原来的高度？",
+        "question": "把两个对象的世界 X 都设为 0 后，为什么 Undo 可能找不回它们原来的位置？",
         "keyIdea": "撤销需要在修改前记录状态，并明确一次操作包含哪些对象。保存、脏标记和 Prefab 覆盖也要分别处理。",
         "walkthrough": [
           {
             "title": "记录修改对象",
-            "text": "选择两个场景 Transform，先保存它们的原位置，并在赋值前调用 Undo 记录。"
+            "text": "甲原为 (2,1,0)，乙为 (-4,3,0)；同时选中两者，并在赋值前记录两个 Transform 的 Undo。"
           },
           {
             "title": "应用一次操作",
-            "text": "只对这两个对象设置目标高度，给操作一个易懂名称，并记录实例需要的 Prefab 覆盖。"
+            "text": "运行 Align Selected X：甲变成 (0,1,0)，乙变成 (0,3,0)。只改 X，不改两者高度，并记录需要的 Prefab 实例覆盖。"
           },
           {
             "title": "检查恢复范围",
@@ -462,7 +467,7 @@ window.COURSE_MODULES.push({
         {
           "title": "从已知尺子开始验证空间",
           "paragraphs": [
-            "先放一个已知尺寸的单位立方体，作为距离参考。把对象移到原点外，设置 radius=2，确认可视半径与尺子对应。只在原点和无父级状态测试，很容易让世界与局部坐标错误互相抵消，看起来像是正确的。移动到非零位置可以先排除这一层巧合。",
+            "先用明确坐标代替“看着差不多”：令圆心的世界位置为 (10,0,0)，radius=2，那么沿世界 X 轴的两个球面边界就是 x=8 和 x=12。示例画的是三维球形范围，在 Scene 视图中可看到它的线框圆。旁边放单位立方体作尺子，再移动或旋转父对象，核对圆心跟随目标世界位置、半径仍为 2。只在原点、无父级时测试，局部与世界坐标的错误可能碰巧抵消，因此不能只凭那一组结果判断正确。",
             "接着旋转父对象，再设置不相同的轴向缩放。因为本课半径以世界单位定义，画出的距离不应跟着某个缩放轴任意改变。再用相同圆心和半径做物理查询，把命中的位置与图形比较。图形漂亮不够，作者需要相信它显示的是运行时实际使用的空间规则。"
           ]
         },
@@ -514,7 +519,7 @@ window.COURSE_MODULES.push({
             "在 Scene 视图放已知尺寸的单位立方体作尺子，把目标移到原点外后设置世界半径。",
             "在原点外拖半径，观察绘制与数值对应。",
             "加入旋转和非均匀缩放父级，确认仍是世界半径。",
-            "用同一半径做物理查询，与可视范围比较。"
+            "明确使用三维 Physics.OverlapSphere，以相同世界圆心和半径做查询；在球面内外各放一个带 3D Collider 的测试对象，比较命中与可视范围。不要用 2D 查询来验证这个三维球。"
           ],
           "result": "查询与图形使用同一世界空间定义。"
         },
@@ -677,7 +682,7 @@ window.COURSE_MODULES.push({
           "title": "先限定哪些图片才是像素精灵",
           "paragraphs": [
             "项目中同时有像素角色、UI 图标和三维材质纹理。若导入工具把所有 PNG 都设成 Point Sprite，角色也许清晰了，其他资源却可能被错误处理。自动导入规则首先要说明用途和范围，例如只处理指定实验目录里的小像素图，而不是根据扩展名猜所有图片用途相同。",
-            "AssetPostprocessor 可以在导入过程中设置相应 importer。它处理的是资源如何转换为 Unity 可用结果，不是修改原图就一定能得到同样效果。把路径条件放在操作之前，准备目录内与目录外对照图，才能直接验证规则有没有越界。"
+            "示例把范围写在入口的路径判断中：只有路径以 Assets/EngineLab/PixelArt/ 开头，才继续设置 TextureImporter。于是 Assets/EngineLab/PixelArt/Hero.png 会命中，Assets/UI/Hero.png 不会；Assets/EngineLab/PixelArtwork/Hero.png 也不应因为名字相近就命中。这里判断的是项目资源路径，末尾斜杠有助于表达完整目录边界。AssetPostprocessor 随导入过程运行，修改的是导入配置；把这几类路径放在一起作对照，才能验证自动规则真正处理了谁。"
           ]
         },
         {
@@ -896,7 +901,7 @@ window.COURSE_MODULES.push({
         {
           "title": "一条报告要让人知道去哪里、看什么",
           "paragraphs": [
-            "好的诊断包括对象上下文、具体原因和下一步建议。例如“对象 Player 存在缺失脚本，检查脚本文件和组件引用”，比“发现 1 个错误”更可操作。可以提供定位对象的方法，让作者从报告回到实际场景，不必在很多同名对象中猜测。",
+            "一条报告至少要回答“谁、什么问题、去哪看”。例如先显示“检查 2 个选中对象，发现 1 个缺失脚本”，再用带对象上下文的警告指出具体是 Player。示例把 GameObject 作为 Debug.LogWarning 的 context 参数，作者可从 Console 的该条消息定位对象；仅有窗口中的汇总数字还不够。多个对象同名时，应继续补充层级或资源位置，让使用者无需逐个猜测。建议应针对缺失脚本的原因，而不是直接替用户删除组件。",
             "规则也要说明前提。有 SpriteRenderer 但没有 Animator，可能是漏配置的角色，也可能是合法静态装饰。若工具不知道作者意图，就应标成需检查的提示，而不是确定错误。动画诊断应逐层核对必要条件，不能只凭一个组件缺失就宣判所有对象有问题。"
           ]
         },
@@ -1034,6 +1039,10 @@ window.COURSE_MODULES.push({
         {
           "label": "Selection.gameObjects",
           "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Selection-gameObjects.html"
+        },
+        {
+          "label": "Debug.LogWarning：对象上下文",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Debug.LogWarning.html"
         }
       ],
       "summary": [

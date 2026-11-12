@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-11-12T05:35:56.013Z",
-  "total": 168,
-  "ok": 168,
+  "checkedAt": "2026-11-12T07:34:25.032Z",
+  "total": 176,
+  "ok": 176,
   "failed": 0,
   "note": "HTTP和标题检查表示当时链接可用，不代表逐行人工核实了全部文档。excerpt是核对来源的短摘录；教材正文为原创解释。",
   "sources": [
@@ -69,6 +69,30 @@
       "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Unity 6.3 User Manual Optimization Graphics performance and profiling Collect rendering performance data Frame Debugger Introduction to the Frame Debugger Understand how"
     },
     {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/Manual/GPUInstancing.html",
+      "label": "Introduction to GPU instancing",
+      "lessons": [
+        "l083"
+      ],
+      "checkedAt": "2026-11-12T07:21:21.843Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/analysis/graphics-performance-profiling/reduce-draw-calls/gpuinstancing/gpuinstancing",
+      "title": "Introduction to GPU instancing • GPU instancing • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Unity 6.3 User Manual Optimization Graphics performance and profiling Optimize rendering lots of objects GPU instancing Introduction to GPU instancing Learn about the GP"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/Manual/PrefabInstanceOverrides.html",
+      "label": "Prefab instance overrides：Transform overrides",
+      "lessons": [
+        "l087"
+      ],
+      "checkedAt": "2026-11-12T07:34:20.361Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/working-with-gameobjects/prefabs/override/prefab-instance-overrides",
+      "title": "Override prefab instances • Overriding prefab instance data • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Unity 6.3 User Manual GameObjects Prefabs Overriding prefab instance data Override prefab instances Modify properties, components, or child GameObjects on individual pre"
+    },
+    {
       "url": "https://docs.unity3d.com/6000.3/Documentation/Manual/Prefabs.html",
       "label": "Prefabs",
       "lessons": [
@@ -94,6 +118,18 @@
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/analysis/profiler",
       "title": "Unity Profiler • Optimization • 6000.3 • Unity Editor",
       "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Unity 6.3 User Manual Optimization Unity Profiler Analyze the performance of your application with the Profiler. Read time 1 minute Last updated 2 months ago The Unity P"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/Manual/SRPBatcher.html",
+      "label": "Scriptable Render Pipeline Batcher in URP",
+      "lessons": [
+        "l083"
+      ],
+      "checkedAt": "2026-11-12T07:21:21.842Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/analysis/graphics-performance-profiling/in-urp/reduce-draw-calls-urp/srpbatcher/srpbatcher",
+      "title": "Scriptable Render Pipeline Batcher in URP • Scriptable Render Pipeline (SRP) Batcher in URP • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Unity 6.3 User Manual Optimization Graphics performance and profiling Graphics performance and profiling in URP Optimizing draw calls in URP Scriptable Render Pipeline ("
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AI.NavMeshAgent.SetDestination.html",
@@ -574,6 +610,18 @@
       "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Component GetComponent The non-generic version of this method. Read time 3 minutes Last updated 2 months ago Definition Type: Method Namespa"
     },
     {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponentInChildren.html",
+      "label": "Component.GetComponentInChildren",
+      "lessons": [
+        "l008"
+      ],
+      "checkedAt": "2026-11-12T07:21:21.797Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/component/getcomponentinchildren",
+      "title": "GetComponentInChildren • Component • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Component GetComponentInChildren This is the non-generic version of this method. Read time 4 minutes Last updated 2 months ago Definition Ty"
+    },
+    {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Debug.Log.html",
       "label": "Debug.Log",
       "lessons": [
@@ -596,6 +644,18 @@
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/debug/logerror",
       "title": "LogError • Debug • 6000.3 • Unity Editor",
       "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Debug LogError A variant of Debug.Log that logs an error message to the console. Read time 2 minutes Last updated 2 months ago Definition Ty"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Debug.LogWarning.html",
+      "label": "Debug.LogWarning：对象上下文",
+      "lessons": [
+        "l090"
+      ],
+      "checkedAt": "2026-11-12T07:21:22.802Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/debug/logwarning",
+      "title": "LogWarning • Debug • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Debug LogWarning A variant of Debug.Log that logs a warning message to the console. Read time 2 minutes Last updated 2 months ago Definition"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/DefaultExecutionOrder.html",
@@ -632,6 +692,18 @@
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/editorwindow",
       "title": "EditorWindow • UnityEditor • 6000.3 • Unity Editor",
       "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor EditorWindow Derive from this class to create a custom Editor window. Read time 8 minutes Last updated 2 months ago Definition Type: Class N"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Events.UnityEvent.AddListener.html",
+      "label": "UnityEvent.AddListener：相同监听的调用规则",
+      "lessons": [
+        "l058"
+      ],
+      "checkedAt": "2026-11-12T07:21:21.842Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/events/unityevent/addlistener",
+      "title": "AddListener(UnityAction) • UnityEvent • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine UnityEngine.Events UnityEvent AddListener(UnityAction) Adds a runtime listener to the UnityEvent. Read time 1 minute Last updated 2 months a"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/GameObject-activeInHierarchy.html",
@@ -1532,6 +1604,7 @@
       "label": "Time.deltaTime",
       "lessons": [
         "l010",
+        "l021",
         "l024"
       ],
       "checkedAt": "2026-11-12T04:51:27.604Z",
@@ -1565,10 +1638,25 @@
       "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Time fixedTime The time at which the last MonoBehaviour.FixedUpdate() started in seconds since the start of the game (Read Only). Read time "
     },
     {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-maximumDeltaTime.html",
+      "label": "Time.maximumDeltaTime",
+      "lessons": [
+        "l012",
+        "l021",
+        "l024"
+      ],
+      "checkedAt": "2026-11-12T07:21:21.840Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/time/maximumdeltatime",
+      "title": "maximumDeltaTime • Time • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Time maximumDeltaTime The maximum value of Time.deltaTime in any given frame. This is a time in seconds that limits the increase of Time.tim"
+    },
+    {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-timeAsDouble.html",
       "label": "Time.timeAsDouble",
       "lessons": [
-        "l024"
+        "l024",
+        "l030"
       ],
       "checkedAt": "2026-11-12T05:10:34.751Z",
       "status": 200,
@@ -1665,6 +1753,7 @@
       "label": "Transform.TransformPoint",
       "lessons": [
         "l016",
+        "l020",
         "l088"
       ],
       "checkedAt": "2026-11-12T05:10:25.832Z",
@@ -1953,6 +2042,18 @@
       "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/api/UnityEngine.InputSystem.InputActionRebindingExtensions.html",
       "title": "Class InputActionRebindingExtensions | Input System | 1.20.1",
       "excerpt": "Class InputActionRebindingExtensions | Input System | 1.20.1 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents Class InputActionRebindingExtensions Extensions to help with dynamically rebinding InputAction s in various ways. Inheritance object InputActionRebindi"
+    },
+    {
+      "url": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/api/UnityEngine.InputSystem.InputActionType.html",
+      "label": "InputActionType",
+      "lessons": [
+        "l026"
+      ],
+      "checkedAt": "2026-11-12T07:21:21.841Z",
+      "status": 200,
+      "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/api/UnityEngine.InputSystem.InputActionType.html",
+      "title": "Enum InputActionType | Input System | 1.20.1",
+      "excerpt": "Enum InputActionType | Input System | 1.20.1 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents Enum InputActionType Determines the behavior with which an InputAction triggers. Namespace : UnityEngine . InputSystem Assembly : Unity.InputSystem.dll Syntax public e"
     },
     {
       "url": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/api/UnityEngine.InputSystem.PlayerInput.html",

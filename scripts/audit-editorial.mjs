@@ -6,6 +6,10 @@ const baselinePath=path.join(root,'artifacts','editorial-baseline.json');
 const modules=loadContent();
 const hash=value=>crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const stable=lesson=>({id:lesson.id,hours:lesson.hours,prerequisites:lesson.prerequisites,timePlan:lesson.timePlan,code:{language:lesson.code?.language,files:lesson.code?.files||(lesson.code?.source?[{filename:lesson.code.filename,source:lesson.code.source}]:[])},references:lesson.references.map(ref=>ref.url),labMinutes:lesson.lab.map(item=>item.minutes),rubric:lesson.exercise.rubric.map(item=>item.points),quizAnswers:lesson.quiz.map(item=>item.answer)});
+// Later technical corrections need a documented exact before/after hash, rather than
+// silently weakening the original language-editing protection.
+const reviewedPath=path.join(root,'scholar-reviewed-changes.json');
+const reviewedChanges=fs.existsSync(reviewedPath)?JSON.parse(fs.readFileSync(reviewedPath,'utf8')).changes:[];
 if(process.argv.includes('--snapshot')){
   if(fs.existsSync(baselinePath))throw new Error('语言修订基线已存在，不能覆盖');
   fs.mkdirSync(path.dirname(baselinePath),{recursive:true});
@@ -26,14 +30,15 @@ if(process.argv.includes('--snapshot')){
     const currentParagraphs=new Set(lesson.theory.flatMap(section=>section.paragraphs));
     const retainedParagraphs=originalParagraphs.filter(paragraph=>currentParagraphs.has(paragraph)).length;
     const stableContent=hash(stable(old))===hash(stable(lesson));
+    const reviewedCorrection=!stableContent&&reviewedChanges.some(change=>change.lesson===lesson.id&&change.before===hash(stable(old))&&change.after===hash(stable(lesson))&&change.reason?.length>=20&&change.references?.length);
     const complete=!!(guide?.question?.length>=12&&guide?.keyIdea?.length>=35&&guide?.walkthrough?.length>=3&&guide.walkthrough.every(step=>step.title&&step.text?.length>=30)&&guide?.prediction?.question&&guide.prediction.answer?.length>=30);
     if(!rewritten)errors.push(lesson.id+' 原理正文未修订');
     if(rewritten&&retainedParagraphs/originalParagraphs.length>.25)errors.push(lesson.id+' 仍保留过多未改写段落，需人工复读');
     if(!complete)errors.push(lesson.id+' 缺少完整导读、推导例题或预测解析');
-    if(!stableContent)errors.push(lesson.id+' 代码、引用、评分或课程结构变化，需复核');
-    results.push({id:lesson.id,rewritten,retainedParagraphs,guideComplete:complete,stableContent});
+    if(!stableContent&&!reviewedCorrection)errors.push(lesson.id+' 代码、引用、评分或课程结构变化，缺少与当前内容匹配的技术复核记录');
+    results.push({id:lesson.id,rewritten,retainedParagraphs,guideComplete:complete,stableContent,reviewedCorrection});
   }
-  const report={checkedAt:new Date().toISOString(),lessons:results.length,rewritten:results.filter(item=>item.rewritten).length,guides:results.filter(item=>item.guideComplete).length,stable:results.filter(item=>item.stableContent).length,errors,results};
+  const report={checkedAt:new Date().toISOString(),lessons:results.length,rewritten:results.filter(item=>item.rewritten).length,guides:results.filter(item=>item.guideComplete).length,stable:results.filter(item=>item.stableContent).length,reviewedCorrections:results.filter(item=>item.reviewedCorrection).length,errors,results};
   fs.writeFileSync(path.join(root,'editorial-audit.json'),JSON.stringify(report,null,2));
   console.log(JSON.stringify({...report,results:undefined},null,2));if(errors.length)process.exitCode=1;
 }

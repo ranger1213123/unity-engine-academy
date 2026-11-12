@@ -1,0 +1,169 @@
+{
+  "reviewedAt": "2026-11-12T07:34:19.546Z",
+  "baseline": "artifacts/editorial-baseline.json",
+  "scope": "逐项登记的技术纠错与支持性官方引用；哈希不匹配的后续变化必须重新复核。",
+  "changes": [
+    {
+      "lesson": "l008",
+      "fields": [
+        "references"
+      ],
+      "before": "20c7b0062d93b712d4f62dafaea322461abef78389ff972cfb0259a207382932",
+      "after": "fb7416659ffe9544166d24d84b7a338ea12aff4db7f4406e83539550268ecb6d",
+      "reason": "补充子组件查找的官方依据，说明先查自身、未激活子对象与多候选匹配的实际前提。",
+      "reviewDocument": "SCHOLAR-engine-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponentInChildren.html"
+      ]
+    },
+    {
+      "lesson": "l012",
+      "fields": [
+        "references"
+      ],
+      "before": "c489dcbf6402d64b971791268fc8f965d5f0422d76ec87d7b7031e2e5cd90eb3",
+      "after": "cb1a66fa36c7ad8ef50bb071272cb0294df26d0edd6d53f8051c18b614d50b8f",
+      "reason": "补充固定步追赶受maximumDeltaTime限制的直接官方依据，避免从真实长帧时间推导无限补步。",
+      "reviewDocument": "SCHOLAR-engine-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-maximumDeltaTime.html"
+      ]
+    },
+    {
+      "lesson": "l020",
+      "fields": [
+        "code",
+        "references"
+      ],
+      "before": "371c8fb3dec0e341a26cab7c9d81cf67eeb79982a4fea909ae68e88b2e8d1c7f",
+      "after": "214f21fd4aebf9e49b58202f5d20869a2e02bf7125b545ac2def11c391d323c9",
+      "reason": "修复红绿辅助线本应重合却被解释成分离的错误，新增只读数值报告入口并补TransformPoint官方定义。",
+      "reviewDocument": "SCHOLAR-engine-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Transform.TransformPoint.html"
+      ]
+    },
+    {
+      "lesson": "l021",
+      "fields": [
+        "references"
+      ],
+      "before": "e87ce7638d3d4a88126d5172b9fd81d2ea64687b5b8c575aa7de2745b3bcff6c",
+      "after": "ae3d134766edc80c758ee9509918078cb704d72141ad4b6086701af89ffdb7ad",
+      "reason": "补充deltaTime与maximumDeltaTime文档，对照固定阶段和游戏缩放时间的具体语义。",
+      "reviewDocument": "SCHOLAR-engine-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-deltaTime.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-maximumDeltaTime.html"
+      ]
+    },
+    {
+      "lesson": "l024",
+      "fields": [
+        "references"
+      ],
+      "before": "3018708914c4b6df7da15de866b12fa04b5cd8752b01131994412065748f58e3",
+      "after": "9acb941a875ebe5a6ec24f6d5f83715b1f3509f24cba723e0c2e035b9f9b862c",
+      "reason": "补充maximumDeltaTime官方依据，区分人工传入长步长的算法测试与引擎实际提供的时间。",
+      "reviewDocument": "SCHOLAR-engine-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-maximumDeltaTime.html"
+      ]
+    },
+    {
+      "lesson": "l026",
+      "fields": [
+        "references"
+      ],
+      "before": "c31c8be0f7bb6443cba60173a95795b7f6aae0907d8704c4db10ccac25ade70f",
+      "after": "1dc3d027b4c4f663bdfb94f3695ee88f611575e87e227b792ef47ca99b623081",
+      "reason": "补充InputActionType的直接包文档依据，解释Value动作多控件选择而非简单相加。",
+      "reviewDocument": "SCHOLAR-engine-review.md",
+      "references": [
+        "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/api/UnityEngine.InputSystem.InputActionType.html"
+      ]
+    },
+    {
+      "lesson": "l030",
+      "fields": [
+        "references"
+      ],
+      "before": "997ed1fb2324ed39b390f63521a448a4ad7d4e36547785deab6dfc2b7e1f19ed",
+      "after": "4cb299fe36fd8fbba9996c7e07bf2a09045154d923385ed2494250b6e7275a36",
+      "reason": "补充timeAsDouble在FixedUpdate阶段的时间含义，解释跨阶段缓冲与精确回放的区别。",
+      "reviewDocument": "SCHOLAR-engine-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-timeAsDouble.html"
+      ]
+    },
+    {
+      "lesson": "l035",
+      "fields": [
+        "code"
+      ],
+      "before": "9266981525a1b44a217b72d4119522ea833b2ef7103090f7fdabb51b01b5abd4",
+      "after": "d519fca0fdf95b726cab0cdf3bced723e9ab2e871d9b15c7c026e400ddeb9c81",
+      "reason": "原运动层缺少实验输入调用方，新增完整键盘适配器和ClearInput，补齐组件停用、应用失焦回调时的方向与跳跃缓存清理。",
+      "reviewDocument": "SCHOLAR-learning-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Rigidbody-linearVelocity.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Physics.CheckSphere.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/RigidbodyConstraints.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/CharacterController.Move.html"
+      ]
+    },
+    {
+      "lesson": "l058",
+      "fields": [
+        "references"
+      ],
+      "before": "1e3acb6b41aba307d6a26f1e5feea1b11adaaea134c367c5abed7481f7e9b9b6",
+      "after": "fa7fdcab8a66735e4dc32b533e29b9985a76a1d27fb2d7edbf6f2abf64ba4fa6",
+      "reason": "为注册与退订的委托身份补充官方接口依据；报告记录官方描述与纯托管观察的差异，正文不依赖自动去重。",
+      "reviewDocument": "SCHOLAR-learning-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Events.UnityEvent.AddListener.html"
+      ]
+    },
+    {
+      "lesson": "l083",
+      "fields": [
+        "references"
+      ],
+      "before": "660d3fa0d8a475d645ae1a91b07e083649ccb5ab37fb058d44ec862ab99db58f",
+      "after": "547f077bb026fc6d738e0f13db04cb84dde21ea74a94c5c70f1e28b8cee8e82d",
+      "reason": "补充SRP Batcher与GPU Instancing的直接官方说明，区分状态准备开销与实例化绘制目标。",
+      "reviewDocument": "SCHOLAR-writing-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/Manual/SRPBatcher.html",
+        "https://docs.unity3d.com/6000.3/Documentation/Manual/GPUInstancing.html"
+      ]
+    },
+    {
+      "lesson": "l087",
+      "fields": [
+        "references"
+      ],
+      "before": "27c26f9e5b966975fe50e7af5a0ff59186ede33a1b901c55f63f8eb2cd0631b0",
+      "after": "2790e9d0e3d44b0ae0c26da50e1c11a597c303b17423074e734b1f65ef1e17de",
+      "reason": "补充Prefab根变换特殊默认覆盖的官方依据，改用实例内子Transform验证普通位置覆盖与Revert。",
+      "reviewDocument": "SCHOLAR-writing-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/Manual/PrefabInstanceOverrides.html"
+      ]
+    },
+    {
+      "lesson": "l090",
+      "fields": [
+        "references"
+      ],
+      "before": "ac61dfeff950e607963fe5da51840cd798aaaeafedf0640fc5738028b57f16fa",
+      "after": "40695506f7ba32522d3165100f872a68522a4489a0f409d43c68eaf034b747b7",
+      "reason": "补充Debug.LogWarning对象上下文的官方依据，明确最小扫描器的报告范围与定位能力。",
+      "reviewDocument": "SCHOLAR-writing-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Debug.LogWarning.html"
+      ]
+    }
+  ]
+}

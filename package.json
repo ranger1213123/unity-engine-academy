@@ -1,6 +1,6 @@
 {
   "name": "unity-engine-atlas",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "description": "Unity 6.3 LTS 中文引擎教材，100课500小时",
   "scripts": {
@@ -8,6 +8,8 @@
     "check": "node scripts/validate-content.mjs",
     "audit:sources": "node scripts/audit-sources.mjs",
     "audit:editorial": "node scripts/audit-editorial.mjs",
-    "test:browser": "node scripts/test-browser.mjs"
+    "test:browser": "node scripts/test-browser.mjs",
+    "test:learners": "node --test scripts/test-learners.mjs",
+    "test:learner-browser": "node scripts/test-learner-browser.mjs"
   }
 }

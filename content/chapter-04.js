@@ -73,7 +73,8 @@ window.COURSE_MODULES.push({
           "title": "吸附需要明确设置局部姿态",
           "paragraphs": [
             "示例的 Attach 先设置 socket 为父级，再令 localPosition 为零、localRotation 为单位旋转。零位置表示与挂点原点重合；单位旋转表示相对父级没有额外旋转。这样比尝试几个世界偏移值更明确。",
-            "SetParent(false) 本身不等于把所有局部值自动归零。物品如果还需要美术上的握持偏移，应明确保留在专用子对象或配置中。先让逻辑挂点对齐，再处理模型修正，能避免角色转向后偏移忽然跑到另一边。"
+            "SetParent(false) 本身不等于把所有局部值自动归零。物品如果还需要美术上的握持偏移，应明确保留在专用子对象或配置中。先让逻辑挂点对齐，再处理模型修正，能避免角色转向后偏移忽然跑到另一边。",
+            "这里尚未重置 localScale。若物品原来局部缩放为2，Attach 后它仍可能保留这个数，再叠加 socket 的层级缩放。若需求是直接采用挂点尺寸，应明确设置合适的局部缩放；若需求是保留模型自身尺寸，则需要把模型修正和挂点规则分开。位置归零、旋转对齐和尺寸一致，是三个可分别验收的条件。"
           ]
         },
         {
@@ -299,7 +300,8 @@ window.COURSE_MODULES.push({
           "title": "点积帮助比较两个方向",
           "paragraphs": [
             "把角色 forward 与指向目标的单位方向点乘，结果在前方时为正、后方时为负、垂直时为零。两个单位方向的点积等于夹角余弦，不是角度本身，因此不能将0.5直接称为0.5度。",
-            "这个规则不依赖角色面朝世界哪个方向。角色转身后，目标是否在前应随 forward 改变，而不是始终比较目标世界 z 是否更大。先画方向线，再看点积，能把数字与几何关系对应起来。"
+            "这个规则不依赖角色面朝世界哪个方向。角色转身后，目标是否在前应随 forward 改变，而不是始终比较目标世界 z 是否更大。先画方向线，再看点积，能把数字与几何关系对应起来。",
+            "用数字看投影更容易理解：两个单位方向 u=(1,0,0)、v=(0.6,0.8,0)，点积 u·v=0.6，表示 v 沿 u 的有符号分量为0.6。若要得到真正的投影向量，还要乘回 u，得到(0.6,0,0)。只有参照方向已归一化时，才能这样直接用点积作投影长度；未归一化时还必须处理它的长度。"
           ]
         },
         {
@@ -529,7 +531,8 @@ window.COURSE_MODULES.push({
           "title": "固定时长插值需要保存起点",
           "paragraphs": [
             "若要求0.5秒完成，应保存开始旋转，计算已经过去的时间除以总时长，再从固定起点插到目标。这里比例表示整段过程走了多少，不是每帧重新取一个起点。目标是否允许中途变化，也要先约定。",
-            "每帧从当前姿态向目标做固定比例 Slerp，是另一种逐步靠近的行为。差距越来越小，每次变化也越来越小。它可能很好看，却不能因此说成固定时长或恒角速度，测试时应分别记录两种曲线。"
+            "每帧从当前姿态向目标做固定比例 Slerp，是另一种逐步靠近的行为。差距越来越小，每次变化也越来越小。它可能很好看，却不能因此说成固定时长或恒角速度，测试时应分别记录两种曲线。",
+            "固定比例还会依赖调用次数。假设目标只绕一个轴转动，初始相差90度，每帧取剩余差距的0.1，十次后仍约差90×0.9的10次方，即31.4度。60 FPS一秒做60次，30 FPS只做30次，结果不同。若需要按秒定义渐近速度，可用比例1-exp(-k×dt)，其中exp是指数函数，k表示每秒的衰减速率、dt是本帧秒数。它仍是渐近过程，并非保证某一秒恰好结束。"
           ]
         },
         {
@@ -748,7 +751,8 @@ window.COURSE_MODULES.push({
           "title": "射线加平面能明确地面条件",
           "paragraphs": [
             "示例从相机向屏幕中心发出几何射线，再与水平地面平面求交。法线是垂直于平面的方向：向上的法线对应水平面，再让平面经过世界原点，就选定了高度为0的地面。求出距离后，ray.GetPoint得到实际交点。",
-            "将平面高度改为2，交点应随新的约束变化；这不是给旧结果随便加2。对于倾斜相机，射线与高处平面的交点可能同时改变水平位置。先求正确交点，再移动标记，才能保持几何意义。"
+            "将平面高度改为2，交点应随新的约束变化；这不是给旧结果随便加2。对于倾斜相机，射线与高处平面的交点可能同时改变水平位置。先求正确交点，再移动标记，才能保持几何意义。",
+            "ScreenPointToRay 返回的射线从相机近平面上的对应位置出发，不一定以相机 Transform 的位置为起点。正交相机尤其容易看出区别：屏幕左右两点产生的射线方向平行，起点却不同。ray.GetPoint(distance) 中的 distance 是从 ray.origin 开始沿射线量出的距离，不能直接理解成物体离相机 Transform 有多远。"
           ]
         },
         {
@@ -964,14 +968,14 @@ window.COURSE_MODULES.push({
           "title": "位置点包含平移旋转与缩放",
           "paragraphs": [
             "TransformPoint 将局部位置点变成世界点。对象位于世界 x=5，局部点 x=1，且只有平移时，结果为6；若局部 x 还缩放2倍，结果便变为7。加入旋转后，要沿旋转后的局部轴理解这个偏移。",
-            "不要为了显示方向线，先把 Point 结果当向量直接从原点画射线。它本身已是一个世界位置，应与对应起点连接。示例红线使用对象位置和变换后的点，正是把两个世界点连起来。"
+            "TransformPoint 得到世界位置，TransformVector 得到世界偏移，不能把两种结果当同一种量。这里的 Gizmo 有一个应当主动解释的现象：红线从 transform.position 连到 TransformPoint(local)，其位移正好等于 TransformVector(local)，所以红线和绿线应重合，而不是画成不同方向。后画的绿线还可能盖住红线；这不表示点转换失败。"
           ]
         },
         {
           "title": "向量含缩放，方向转换不含缩放",
           "paragraphs": [
             "TransformVector 用于把局部向量变到世界，保留旋转和缩放影响，但不加入对象平移。TransformDirection 则不受平移和缩放影响，保留方向向量本来的长度，只改变朝向关系。",
-            "输入长度2时，方向转换不会自动变成单位长度。需要单位方向，应另外归一化。将对象缩放改成(2,1,1)再比较绿色和蓝色线，可以直观看到一个随缩放拉长，另一个保持长度；这比把三个接口都叫坐标转换更清楚。"
+            "输入长度2时，方向转换不会自动变成单位长度。需要单位方向，应另外归一化。将对象缩放改成(2,1,1)，用局部(1,0,0)比较绿色和蓝色线：绿色随缩放拉长，蓝色保持长度。再移动对象并执行数值报告，Point 数值会变，Vector 和 Direction 数值不会仅因平移改变；三条线的画法与三个返回值必须分别观察。"
           ]
         },
         {
@@ -998,18 +1002,19 @@ window.COURSE_MODULES.push({
         {
           "title": "用分组实验检查每种影响",
           "paragraphs": [
-            "先在默认变换下观察，再单独改位置、旋转和缩放。每次记录三种转换结果，检查哪些项改变、哪些不变。不要同时改三项后，只根据最终三条线不同就猜规则。逆变换也可以帮助核对往返关系。",
+            "先在默认变换下观察，再单独改位置、旋转和缩放。每次记录三种转换结果，检查哪些项改变、哪些不变。不要同时改三项后，只凭辅助线外观猜规则。逆变换也可以帮助核对往返关系。",
             "最后在有父级、非均匀缩放和旋转组合的条件下重做，并记录之前的简化公式不再适用之处。视觉子根拆开以后，还要确认相机目标和武器挂点仍指向正确层级，不能只看模型外观恢复就结束验证。"
           ]
         }
       ],
       "code": {
-        "title": "把三种转换画出来",
+        "title": "同时检查转换数值与重合的辅助线",
         "language": "csharp",
         "filename": "TransformKindsProbe.cs",
-        "source": "using UnityEngine;\npublic sealed class TransformKindsProbe : MonoBehaviour\n{\n    [SerializeField] Vector3 local = Vector3.right;\n    void OnDrawGizmosSelected()\n    {\n        Gizmos.color = Color.red;\n        Gizmos.DrawLine(transform.position, transform.TransformPoint(local));\n        Gizmos.color = Color.green;\n        Gizmos.DrawRay(transform.position, transform.TransformVector(local));\n        Gizmos.color = Color.blue;\n        Gizmos.DrawRay(transform.position, transform.TransformDirection(local));\n    }\n}",
+        "source": "using UnityEngine;\npublic sealed class TransformKindsProbe : MonoBehaviour\n{\n    [SerializeField] Vector3 local = Vector3.right;\n    void OnDrawGizmosSelected()\n    {\n        Gizmos.color = Color.red;\n        Gizmos.DrawLine(transform.position, transform.TransformPoint(local));\n        Gizmos.color = Color.green;\n        Gizmos.DrawRay(transform.position, transform.TransformVector(local));\n        Gizmos.color = Color.blue;\n        Gizmos.DrawRay(transform.position, transform.TransformDirection(local));\n    }\n    [ContextMenu(\"Report transformed values\")]\n    void Report()\n    {\n        Vector3 point = transform.TransformPoint(local);\n        Vector3 vector = transform.TransformVector(local);\n        Vector3 direction = transform.TransformDirection(local);\n        Debug.Log($\"point={point}, vector={vector}, direction={direction}; point-origin={point - transform.position}\", this);\n    }\n}",
         "explanation": [
-          "把 TransformKindsProbe 挂到对象，选中它并在 Scene 观察 Gizmo。分别只改位置、旋转、缩放，再比较红色点连线、绿色向量和蓝色方向；Game 画面不一定显示这些辅助线。"
+          "把 TransformKindsProbe 挂到对象，选中后在 Scene 观察 Gizmo，确保 Gizmos 已开启。红线和绿线使用相同起点与终点，应重合；后画的绿线可能遮住红线。蓝线在存在相应缩放时会显示不同长度。",
+          "从组件菜单执行 Report transformed values，同时查看返回值与 point-origin。分别只改位置、旋转、缩放，比较数值和辅助线；Game 画面不一定显示这些编辑辅助线。"
         ]
       },
       "lab": [
@@ -1017,11 +1022,11 @@ window.COURSE_MODULES.push({
           "title": "单独改变三种变换",
           "minutes": 60,
           "steps": [
-            "在默认位置、旋转和缩放下选中探针，记录三条辅助线。",
-            "分别只改位置、旋转、非均匀缩放，比较Point、Vector和Direction结果。",
-            "用对应逆变换核对，写出各接口是否包含平移与缩放。"
+            "令对象位置(5,0,0)、无旋转、缩放(2,1,1)，输入保持(1,0,0)。先算三种返回值，再执行组件菜单 Report transformed values 对照。",
+            "观察红绿线重合、蓝线长度不同。只把世界x由5改为8，分别记录三个返回值和线段起点，解释为什么平移改变Point却没有让红绿线分开。",
+            "再分别改变旋转和非均匀缩放，用对应逆变换核对返回值；不要将“线段重合”等同于“返回值相同”。"
           ],
-          "result": "根据数值含义选择接口，不把方向转换当归一化。"
+          "result": "同时解释返回量与画线方式，能用Point减起点得到Vector，按含义选择转换接口。"
         },
         {
           "title": "检查父级造成的形状变化",
@@ -1119,6 +1124,10 @@ window.COURSE_MODULES.push({
         {
           "label": "Transform.lossyScale",
           "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Transform-lossyScale.html"
+        },
+        {
+          "label": "Transform.TransformPoint",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Transform.TransformPoint.html"
         }
       ],
       "summary": [
@@ -1126,25 +1135,50 @@ window.COURSE_MODULES.push({
         "父级变换可能让三个缩放数不足以完整描述最终形状。"
       ],
       "teaching": {
-        "question": "同一个局部向量分别交给 TransformPoint、TransformVector、TransformDirection，为什么三条线会不同？",
-        "keyIdea": "点包含位置，向量只表示偏移，方向转换通常不需要缩放。选择接口前，要先说清楚这三个数代表什么。",
+        "question": "点转换包含平移，向量转换不含平移，为什么示例中 TransformPoint 的红线仍与 TransformVector 的绿线重合？",
+        "keyIdea": "先分清返回的量，再检查辅助线怎样画。世界位置减去世界起点才是位移；红线的位移与绿色向量相同，因此重合符合转换规则。",
         "walkthrough": [
           {
-            "title": "从默认变换开始",
-            "text": "对象在原点、无旋转且缩放为1，局部值为(1,0,0)。先观察三个结果在这个特殊条件下可能重合。"
+            "title": "分别算出三种结果",
+            "text": "对象世界位置(5,0,0)、无旋转、缩放(2,1,1)，局部输入(1,0,0)。Point为(7,0,0)，Vector为(2,0,0)，Direction为(1,0,0)。"
           },
           {
-            "title": "单独改变缩放",
-            "text": "将局部 x 缩放改为2。点和向量转换包含缩放，方向转换保持原向量长度，差别因此显现。"
+            "title": "从返回值推导画线",
+            "text": "红线由世界x=5连到x=7，绿线从x=5沿向量2画到x=7，所以两线重合。蓝线只画到x=6。不同量的返回数值不能直接当作不同终点。"
           },
           {
-            "title": "再改变位置",
-            "text": "移动对象后，位置点还受到平移影响；方向与向量的数值不因这次平移改变，画线起点则随对象移动。"
+            "title": "只平移再核对",
+            "text": "把对象世界x改为8，其他条件不变。Point变为10，Vector仍为2，Direction仍为1；三条线的起点都随对象移到8。执行Report transformed values核对数值。"
           }
         ],
         "prediction": {
-          "question": "把方向(2,0,0)交给 TransformDirection，结果长度一定变成1吗？",
-          "answer": "不会。它不受缩放影响，但不是归一化函数，会保留输入方向向量的长度。"
+          "question": "上述对象只从世界x=5移到8，红绿线仍重合，能否据此说TransformPoint忽略了平移？",
+          "answer": "不能。Point由7变为10，确实包含平移；但红线起点也从5变为8，两次线段的位移都为2。辅助线重合只能说明两种画法形成相同线段，不能代替检查返回值。"
+        },
+        "comparison": {
+          "caption": "对象位置(5,0,0)、无旋转、缩放(2,1,1)，局部输入(1,0,0)",
+          "headers": [
+            "接口",
+            "返回的量",
+            "本例数值"
+          ],
+          "rows": [
+            [
+              "TransformPoint",
+              "世界位置，含平移与缩放",
+              "(7,0,0)"
+            ],
+            [
+              "TransformVector",
+              "世界偏移，含缩放但不含平移",
+              "(2,0,0)"
+            ],
+            [
+              "TransformDirection",
+              "只转换朝向，不含平移或缩放",
+              "(1,0,0)"
+            ]
+          ]
         }
       }
     }

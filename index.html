@@ -12,18 +12,19 @@
   <a class="skip" href="#main">跳到正文</a>
   <aside class="sidebar" id="sidebar" aria-label="课程导航">
     <a class="brand" href="#home" aria-label="引擎之内首页"><span class="brand-mark" aria-hidden="true">内</span><span>引擎之内<small>THE ENGINE ATLAS</small></span></a>
-    <div class="edition">UNITY 6.3 LTS <span>中文教材 · 讲解修订版</span></div>
+    <div class="edition">UNITY 6.3 LTS <span>中文教材 · 三方审订版</span></div>
     <nav class="primary-nav" aria-label="学习空间">
       <a href="#home" data-route="home"><span aria-hidden="true">◉</span> 学习总览</a>
       <a href="#roadmap" data-route="roadmap"><span aria-hidden="true">≡</span> 500 小时学习路线</a>
       <a href="#components" data-route="components"><span aria-hidden="true">◇</span> 常用组件速查</a>
       <a href="#lab/lifecycle" data-route="lab"><span aria-hidden="true">⌘</span> 引擎交互实验室</a>
       <a href="#notes" data-route="notes"><span aria-hidden="true">▤</span> 我的学习笔记</a>
+      <a href="#learners" data-route="learners"><span aria-hidden="true">◎</span> 我的学习档案</a>
       <a href="#references" data-route="references"><span aria-hidden="true">↗</span> 官方文档索引</a>
     </nav>
     <div class="nav-caption">教材目录 <span>20 CHAPTERS</span></div>
     <nav id="chapter-nav" class="chapter-nav" aria-label="章节目录"></nav>
-    <div class="sidebar-footer"><div><span id="side-progress-text">学习旅程 · 0 / 100 课</span><span id="side-progress-percent">0%</span></div><progress id="side-progress" value="0" max="100" aria-label="课程完成进度"></progress><small>理解原理，用实验建立直觉。</small></div>
+    <div class="sidebar-footer"><a href="#learners" class="learner-badge" aria-label="查看或切换学习档案"><span>当前学习档案</span><strong id="learner-name">我的学习档案</strong><span aria-hidden="true">切换 →</span></a><div><span id="side-progress-text">学习旅程 · 0 / 100 课</span><span id="side-progress-percent">0%</span></div><progress id="side-progress" value="0" max="100" aria-label="课程完成进度"></progress><small>记录仅保存在你的浏览器与当前档案中。</small></div>
   </aside>
   <div class="workspace">
     <header class="topbar">
@@ -31,6 +32,7 @@
       <div class="breadcrumb" id="breadcrumb">学习空间 <span>/</span> 总览</div>
       <div class="topbar-actions"><button class="search-trigger" id="open-search"><span>搜索知识、组件、API…</span><kbd>Ctrl K</kbd></button><button class="icon-button" id="theme-toggle" aria-label="切换深色阅读">◐</button><button class="text-button" id="export-progress">导出进度</button><button class="text-button import-button" id="import-progress">导入</button></div>
     </header>
+    <p class="storage-status" id="storage-status" role="status" hidden></p>
     <main id="main" tabindex="-1"></main>
     <footer class="page-footer"><span>引擎之内 · Unity 引擎原理与实践</span><span>原创中文讲解 · 基于 Unity 官方文档 · 6000.3</span></footer>
   </div>
@@ -59,6 +61,7 @@
   <script src="content/chapter-18.js"></script>
   <script src="content/chapter-19.js"></script>
   <script src="content/chapter-20.js"></script>
+  <script src="learner-store.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
