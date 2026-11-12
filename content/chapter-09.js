@@ -1,4 +1,4 @@
-// 学者修订：补足具体推导、实验起点及教学边界。
+// 语境修订：题目背景、实验准备与学习用途。
 window.COURSE_MODULES.push({
   "id": "m09",
   "number": 9,
@@ -99,7 +99,13 @@ window.COURSE_MODULES.push({
             "先算世界宽度，再分别只改PPU或Transform缩放，记录实际尺寸。",
             "固定摄像机比较Point和Bilinear，再移动相机检查像素边缘。"
           ],
-          "result": "能区分源像素、世界尺寸和屏幕采样的对照图。"
+          "result": "能区分源像素、世界尺寸和屏幕采样的对照图。",
+          "setup": [
+            "在Project窗口的Assets下建EngineLabs/Textures，将32、64、128像素宽的测试PNG复制进去；没有素材时可先用一个已知切片宽度的Sprite，不把整张图集宽度当帧宽。",
+            "选中PNG，在Inspector的Texture Type选Sprite (2D and UI)，Sprite Mode先用Single，Pixels Per Unit设32，点Apply。将图片拖入Hierarchy生成SpriteRenderer对象，Transform缩放设(1,1,1)。",
+            "保存SpriteScaleProbe.cs到Assets/EngineLabs，选该对象用Inspector > Add Component添加；Window > General > Console看rect、ppu和local bounds日志。世界标尺可用相邻X坐标相差1的两个空对象。"
+          ],
+          "purpose": "亲手把像素数换成世界尺寸，再只改一项，避免靠根缩放补所有导入错误。"
         },
         {
           "title": "同时比较画质与占用",
@@ -109,7 +115,13 @@ window.COURSE_MODULES.push({
             "比较不同Max Size和目标平台格式下的清晰度与纹理占用。",
             "说明磁盘文件大小为什么不能代表运行时内存，并保存推荐设置。"
           ],
-          "result": "含目标格式、边缘样本和内存数据的导入说明。"
+          "result": "含目标格式、边缘样本和内存数据的导入说明。",
+          "setup": [
+            "用File > Save As另存L041_Quality，保留同一Sprite和静止Camera；背景用Camera的Background颜色或两块明暗Sprite，保持观察距离相同。",
+            "选PNG，在Inspector记录Max Size、Filter Mode、Compression以及平台覆盖；每轮只改其中一项并Apply。Project资源预览可看导入尺寸，Window > Analysis > Profiler用于运行内存观察。",
+            "只对照相同平台和格式的数据；若尚无目标设备，把结果写成Editor中的导入对照，不声称已经通过全部手机平台。"
+          ],
+          "purpose": "把画质、透明边缘与运行内存分别取证，避免拿小PNG文件误判显存成本。"
         }
       ],
       "pitfalls": [
@@ -160,7 +172,8 @@ window.COURSE_MODULES.push({
             "64个世界单位"
           ],
           "answer": 0,
-          "explanation": "用像素宽度除以PPU，得到64 ÷ 32 = 2。"
+          "explanation": "用像素宽度除以PPU，得到64 ÷ 32 = 2。",
+          "scenario": "Sprite切片矩形宽64像素，Pixels Per Unit为32，Transform的X缩放为1；按完整矩形估算世界宽度，不考虑父级额外缩放。"
         },
         {
           "question": "PNG文件很小，能证明运行时纹理占用很小吗？",
@@ -171,7 +184,8 @@ window.COURSE_MODULES.push({
             "能，只要PPU足够大"
           ],
           "answer": 1,
-          "explanation": "源文件压缩与运行时纹理格式是不同层次，应查看导入结果和实际占用。"
+          "explanation": "源文件压缩与运行时纹理格式是不同层次，应查看导入结果和实际占用。",
+          "scenario": "一张PNG在磁盘上仅几十KB；尚未知道实际导入分辨率、纹理格式、Mip Map或平台压缩设置。"
         },
         {
           "question": "Point过滤能保证所有分辨率下像素完美吗？",
@@ -182,7 +196,8 @@ window.COURSE_MODULES.push({
             "能，只要不使用Mip Map"
           ],
           "answer": 1,
-          "explanation": "Point改变采样方式，不自动保证世界像素与屏幕像素的比例和位置。"
+          "explanation": "Point改变采样方式，不自动保证世界像素与屏幕像素的比例和位置。",
+          "scenario": "一张像素Sprite设为Point过滤，但相机和对象可能在非整数屏幕像素位置，窗口分辨率也会变化。"
         }
       ],
       "references": [
@@ -218,8 +233,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "将Point过滤打开，能保证任何分辨率下每个像素都均匀清晰吗？",
-          "answer": "不能。过滤只控制纹理采样，屏幕映射还受相机、位置、缩放比例和输出分辨率影响。"
-        }
+          "answer": "不能。过滤只控制纹理采样，屏幕映射还受相机、位置、缩放比例和输出分辨率影响。",
+          "scenario": "Sprite切片像素矩形宽64，PPU=32，Transform缩放1；你只把Filter Mode改为Point，未限定相机位置、输出分辨率或屏幕缩放比例。"
+        },
+        "scenario": "同一张骑士PNG，拖进场景后有时像巨人，有时又小得看不清；把Filter Mode设为Point仍然可能抖动。先拿一张64像素宽的Sprite，以PPU=32、缩放1建立一把世界标尺。",
+        "purpose": "导入时能分别调整源像素、世界尺寸与屏幕映射，知道图片模糊该从哪一项开始查。"
       }
     },
     {
@@ -304,17 +322,30 @@ window.COURSE_MODULES.push({
             "对独立副本自动切片，逐帧记录矩形高度、脚底距底边的像素数与Pivot。用“脚底距底边÷帧高”核对所需纵向参考比例，再在固定根坐标下切帧，而不是只比较Pivot数字是否相同。",
             "记录适合该素材的切片方式，统一PPU和轴心。"
           ],
-          "result": "能够解释脚底稳定性与帧框、Pivot之间的关系。"
+          "result": "能够解释脚底稳定性与帧框、Pivot之间的关系。",
+          "setup": [
+            "先把图集复制到Assets/EngineLabs/Slicing，避免直接改正式Tiny Swords资源。选PNG，Inspector设Texture Type=Sprite (2D and UI)、Sprite Mode=Multiple并Apply。",
+            "在同一Inspector点Sprite Editor；若提示未安装2D Sprite，从Window > Package Management > Package Manager安装兼容2D Sprite包后再打开。",
+            "Sprite Editor中点Slice，按源图确认的Cell Size设置Grid By Cell Size；本课不替所有Tiny Swords文件假定192格。记录实际宽高和目标动作所在行，切出八帧后Apply。",
+            "把一个子帧拖进Scene，再逐个把SpriteRenderer的Sprite字段换成其余帧；保持Transform不动，在脚底放一个固定参照Sprite或Scene标尺。"
+          ],
+          "purpose": "看到帧框和Pivot怎样共同决定脚底，而非只记一个统一的轴心数字。"
         },
         {
           "title": "从场景追踪到子帧",
           "minutes": 60,
           "steps": [
-            "从实际SpriteRenderer或Animator查到Controller、Clip和关键帧引用。",
-            "创建同名独立素材，确认它不会仅凭名字替换旧引用。",
-            "在测试副本调整切片后重新导入，检查原Clip是否仍引用正确八帧。"
+            "选中第一组的场景Sprite，点击Inspector中SpriteRenderer > Sprite字段的资源，沿Project中的选中位置展开原PNG，记下正在引用的子帧名称和资源路径。",
+            "在另一个实验目录复制PNG并等导入，保留各自meta。先不改Sprite字段，确认场景仍指向原资源；再手动拖入副本的一帧，重新点击字段追踪，比较这次真正发生的引用更换。",
+            "在副本中用Sprite Editor调整一个子帧的矩形或Pivot并Apply，观察场景使用该子帧时的外观和脚底位置；保留原图对照并恢复副本。已有动画者可再追踪Controller到Clip的Sprite轨道，此项在第46课后补做。"
           ],
-          "result": "一条包含实际资源路径和子帧身份的引用记录。"
+          "result": "一条从场景SpriteRenderer到实际PNG子帧的引用记录，包含路径、子帧名称及切换前后的证据。",
+          "setup": [
+            "先完成本课第一组八帧切片，把其中一帧拖进Scene，保存为L042_References；必做部分只用SpriteRenderer，不要求已经会制作AnimationClip。",
+            "在Project中复制PNG到Assets/EngineLabs/SlicingCopy，等Unity导入。可让两份都叫Idle.png，但必须在不同目录；保留两份各自meta，不在文件管理器覆盖原meta。",
+            "选Hierarchy中的场景Sprite，在Inspector找到SpriteRenderer > Sprite。单击该字段中的资源可在Project定位；必要时展开原PNG查看子帧，避免只凭显示名称判断。调整副本时打开其Sprite Editor，Apply后再检查实际字段指向哪一份。"
+          ],
+          "purpose": "沿真实使用链追到子资源，理解同名新图为什么不会自动修好旧引用。"
         }
       ],
       "pitfalls": [
@@ -365,7 +396,8 @@ window.COURSE_MODULES.push({
             "是，只要PPU相同"
           ],
           "answer": 1,
-          "explanation": "路径与名称方便查找，实际引用由资源及子资源身份维持。"
+          "explanation": "路径与名称方便查找，实际引用由资源及子资源身份维持。",
+          "scenario": "Assets/Art/Idle.png与Assets/Test/Idle.png是分别导入的两个文件，文件名相同，但各有自己的meta。"
         },
         {
           "question": "根Transform不动但脚底逐帧跳动，应优先检查什么？",
@@ -376,7 +408,8 @@ window.COURSE_MODULES.push({
             "把所有帧改成同一名称"
           ],
           "answer": 1,
-          "explanation": "图像相对Transform的位置由帧框和参考点决定，先排除导入数据问题。"
+          "explanation": "图像相对Transform的位置由帧框和参考点决定，先排除导入数据问题。",
+          "scenario": "SpriteRenderer所在根的Transform位置保持不变；八帧播放时，脚底相对地板上下跳，尚未核对各帧矩形和Pivot。"
         },
         {
           "question": "制作Sprite逐帧动画时，关键帧应引用什么？",
@@ -387,7 +420,8 @@ window.COURSE_MODULES.push({
             "Sprite Editor窗口本身"
           ],
           "answer": 1,
-          "explanation": "对象引用轨道保存实际Sprite引用，不会从纹理名称自动选择动作行。"
+          "explanation": "对象引用轨道保存实际Sprite引用，不会从纹理名称自动选择动作行。",
+          "scenario": "一张图集已经切出八个Sprite子帧，正在为SpriteRenderer.sprite建立逐帧AnimationClip。"
         }
       ],
       "references": [
@@ -423,8 +457,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "把另一目录的新PNG也命名为Idle，会自动接替旧动画中的全部Sprite引用吗？",
-          "answer": "不会。资源和子资源有独立身份，引用不是只按文件名查找；要核对实际对象引用。"
-        }
+          "answer": "不会。资源和子资源有独立身份，引用不是只按文件名查找；要核对实际对象引用。",
+          "scenario": "旧Idle.anim已经引用原图集的八个Sprite子资源。你在另一个目录导入一张新PNG，也命名为Idle，但没有手动替换动画关键帧引用。"
+        },
+        "scenario": "Idle有八张图，每张单看都对，连起来脚底却上下跳；重切一次又让旧动画引用丢了。本课使用一张含八帧的图集，先检查每格矩形和脚底参考点，再看资源如何被动画保存引用。",
+        "purpose": "能稳定切出角色帧，并在修改素材后核对已有动画，不再用移动身体来掩盖轴心问题。"
       }
     },
     {
@@ -519,7 +556,13 @@ window.COURSE_MODULES.push({
             "将来源改成6，先写出A与B的预测值，再检查实际结果。",
             "先对B的speed执行Revert，核对源6、A6、B6；随后重新把B设为7，再只Apply speed，核对来源和A的传播。每轮注明重建了哪项覆盖，不在覆盖已被撤销后继续假设它还存在。"
           ],
-          "result": "每次操作都有修改前后数值和来源说明。"
+          "result": "每次操作都有修改前后数值和来源说明。",
+          "setup": [
+            "新建场景L043_Prefab。GameObject > Create Empty建Knight，保存PrefabSettingsProbe.cs到Assets/EngineLabs并用Knight的Inspector > Add Component添加；Speed=5。",
+            "在Project建Assets/EngineLabs/Prefabs，将Hierarchy里的Knight拖到该目录生成Prefab；从Project拖两次到场景，分别命名KnightA、KnightB。只选KnightB把Speed改为7。",
+            "在Hierarchy选中实例，Inspector顶部Overrides查看差异；双击Project中的Prefab进入Prefab Mode修改来源。全组在退出Play后操作，避免运行临时值混入判断。"
+          ],
+          "purpose": "通过来源、默认实例和覆盖实例的三列数值，验证Apply与Revert各修改谁。"
         },
         {
           "title": "在干净场景验证复用",
@@ -529,7 +572,13 @@ window.COURSE_MODULES.push({
             "拖入全新场景，核对Layer、碰撞、动画及外部引用。",
             "通过明确场景装配提供相机等依赖，验证缺失时能被发现。"
           ],
-          "result": "不依赖旧场景偶然状态的复用样本。"
+          "result": "不依赖旧场景偶然状态的复用样本。",
+          "setup": [
+            "从原Prefab开始，在Project对它创建Prefab Variant并命名EliteKnight；用Inspector记录基础、变体与场景实例的Speed分别来自哪一层。",
+            "File > New Scene创建独立空场景，保存L043_Clean，再从Project拖入基础和变体。Optional Target先留空，确认代码报告的是缺失配置而非自动寻找旧场景对象。",
+            "若练习要提供场景相机，先在新场景创建Camera，再只在场景实例的Optional Target字段拖入它。说明这是本场景装配，不把来源Prefab写成依赖旧场景的具体对象。"
+          ],
+          "purpose": "让角色离开原场景仍能使用，暴露复制时容易遗漏的相机或出生点依赖。"
         }
       ],
       "pitfalls": [
@@ -580,7 +629,8 @@ window.COURSE_MODULES.push({
             "实例取两者平均值"
           ],
           "answer": 1,
-          "explanation": "覆盖代表实例对相应属性的明确差异，来源变化不会无条件抹去它。"
+          "explanation": "覆盖代表实例对相应属性的明确差异，来源变化不会无条件抹去它。",
+          "scenario": "Knight.prefab的speed原为5；场景实例KnightA未改字段，KnightB在Inspector覆盖为7。现在来源speed改为6并保存。"
         },
         {
           "question": "Apply所选覆盖的核心含义是什么？",
@@ -591,7 +641,8 @@ window.COURSE_MODULES.push({
             "清除全部Prefab关联"
           ],
           "answer": 0,
-          "explanation": "Apply会向来源传播修改，执行前要检查具体来源和影响范围。"
+          "explanation": "Apply会向来源传播修改，执行前要检查具体来源和影响范围。",
+          "scenario": "场景实例KnightB有一个speed覆盖，你在Overrides面板选择该字段执行Apply；问题问这次操作写入哪一方向。"
         },
         {
           "question": "通用角色需要当前场景相机时，较合理的做法是什么？",
@@ -602,7 +653,8 @@ window.COURSE_MODULES.push({
             "把相机字段隐藏就无需配置"
           ],
           "answer": 1,
-          "explanation": "复用对象与场景依赖应有清楚的接线过程，并能检查缺失引用。"
+          "explanation": "复用对象与场景依赖应有清楚的接线过程，并能检查缺失引用。",
+          "scenario": "一份可复用角色Prefab要在多个场景使用，每个场景的相机对象都不同，Prefab资源本身不处在这些场景层级中。"
         }
       ],
       "references": [
@@ -625,7 +677,7 @@ window.COURSE_MODULES.push({
         "walkthrough": [
           {
             "title": "建立两个实例",
-            "text": "源speed为5，实例A保持默认，实例B改成7；在Overrides面板确认只有B有该字段覆盖。"
+            "text": "源speed为5，实例KnightA保持默认，实例KnightB改成7；在Overrides面板确认只有KnightB有该字段覆盖。"
           },
           {
             "title": "修改来源",
@@ -633,13 +685,16 @@ window.COURSE_MODULES.push({
           },
           {
             "title": "选择传播方向",
-            "text": "对B执行Revert会采用源值6；Apply则把所选差异写向来源，操作前检查会影响哪些实例。"
+            "text": "对KnightB执行Revert会采用源值6；Apply则把所选差异写向来源，操作前检查会影响哪些实例。"
           }
         ],
         "prediction": {
           "question": "B只是某一场景里的高速敌人，应不加检查地Apply所有覆盖吗？",
-          "answer": "不应。那可能把场景专用差异写成来源默认值；应选择保留实例覆盖或建立合适变体，并审查影响范围。"
-        }
+          "answer": "不应。那可能把场景专用差异写成来源默认值；应选择保留实例覆盖或建立合适变体，并审查影响范围。",
+          "scenario": "基础Prefab名Knight，speed原为5；实例KnightA未覆盖该字段，实例KnightB覆盖为7，来源后来改为6。B只需要在当前战斗场景里更快。"
+        },
+        "scenario": "你把骑士做成Prefab，源speed从5改到6，场景里一名骑士却仍然是7。实验里把两个实例明确命名为KnightA和KnightB：A保持来源值，B有自己的speed覆盖。",
+        "purpose": "修改前能预测哪些角色会变，知道一次Apply会把场景差异写向哪份来源。"
       }
     },
     {
@@ -734,7 +789,13 @@ window.COURSE_MODULES.push({
             "加方向箭头检查前轴，再用固定光源检查法线与材质。",
             "每次只改导入比例、法线或材质中的一项，保存前后图。"
           ],
-          "result": "能够解释尺寸、方向和光照异常的来源。"
+          "result": "能够解释尺寸、方向和光照异常的来源。",
+          "setup": [
+            "在Assets/EngineLabs/Models导入一个已知来源单位的模型；先记录文件格式和源高度。若暂时没有模型，可用Cube练习材质和依赖，源单位换算部分标记待模型补齐。",
+            "创建测试场景，放一个Scale=(1,1,1)的Cube当一单位标尺；选模型资源在Inspector看Model导入页，记录Scale Factor、轴向及Normals，不先给每个实例随意补缩放。",
+            "使用已有URP项目时，在Edit > Project Settings > Graphics检查当前Render Pipeline Asset；选Renderer实际材质，核对Shader。材质故障用专用副本，不改正式共享资源。"
+          ],
+          "purpose": "分别控制尺度、方向和表面着色，知道“看起来不对”具体发生在导入链哪个位置。"
         },
         {
           "title": "追踪材质与资源依赖",
@@ -744,7 +805,13 @@ window.COURSE_MODULES.push({
             "运行依赖工具，检查遗漏文件和重复材质，确认工具仅在编辑器使用。",
             "在干净场景或干净检出中重新导入，验证无需旧Library也能恢复外观。"
           ],
-          "result": "含管线条件与完整来源的交付检查记录。"
+          "result": "含管线条件与完整来源的交付检查记录。",
+          "setup": [
+            "在Project的Assets下建Editor文件夹，将本课工具保存为Assets/Editor/DependencyReport.cs；它是菜单工具，不挂到GameObject。等Console没有编译错误。",
+            "在Project点选模型或角色Prefab，再执行编辑器顶部Learning > Print Selected Dependencies；用Window > General > Console查看路径。若没选资源，工具可能没有有效路径。",
+            "把实际源模型、材质、纹理和meta纳入测试副本；在File > New Scene的新场景重新引用。干净检出验证必须从源和设置生成，不复制原Library来绕过缺失文件。"
+          ],
+          "purpose": "从实际引用列出交付文件，区分编辑资源依赖和运行时驻留。"
         }
       ],
       "pitfalls": [
@@ -795,7 +862,8 @@ window.COURSE_MODULES.push({
             "优先将所有碰撞体删除"
           ],
           "answer": 0,
-          "explanation": "先沿实际渲染引用检查Shader，再分别判断纹理等依赖，避免盲目复制资源。"
+          "explanation": "先沿实际渲染引用检查Shader，再分别判断纹理等依赖，避免盲目复制资源。",
+          "scenario": "项目使用URP，场景模型呈粉色；Renderer的材质来自另一个渲染管线，尚未检查Shader兼容性与Console错误。"
         },
         {
           "question": "编辑器依赖列表等于当前运行内存驻留吗？",
@@ -806,7 +874,8 @@ window.COURSE_MODULES.push({
             "等于，只要把文件大小相加"
           ],
           "answer": 1,
-          "explanation": "资产之间的依赖与运行时加载、释放及缓存状态不同。"
+          "explanation": "资产之间的依赖与运行时加载、释放及缓存状态不同。",
+          "scenario": "编辑器调用AssetDatabase.GetDependencies得到贴图路径列表，但没有采集Player的内存快照。"
         },
         {
           "question": "使用AssetDatabase的工具应放在哪里？",
@@ -817,7 +886,8 @@ window.COURSE_MODULES.push({
             "放进Resources便可运行于所有平台"
           ],
           "answer": 1,
-          "explanation": "AssetDatabase属于UnityEditor工具，不是通用玩家加载接口。"
+          "explanation": "AssetDatabase属于UnityEditor工具，不是通用玩家加载接口。",
+          "scenario": "一个C#工具使用UnityEditor.AssetDatabase列出资源依赖，仅准备在编辑器菜单中运行，不需要进入Player。"
         }
       ],
       "references": [
@@ -853,8 +923,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "AssetDatabase列出的贴图依赖，等于运行时当前全部纹理内存吗？",
-          "answer": "不等于。依赖是资产关系，驻留内存还取决于加载和引用状态，应使用相应运行时测量。"
-        }
+          "answer": "不等于。依赖是资产关系，驻留内存还取决于加载和引用状态，应使用相应运行时测量。",
+          "scenario": "编辑器工具AssetDatabase.GetDependencies列出一个角色Prefab依赖的贴图。当前Player没有连接Profiler，也没有检查资源是否已加载或释放。"
+        },
+        "scenario": "模型已经导入，场景里的角色却一片粉色；再下载一遍贴图仍然没好。先从真实Renderer引用的材质查到Shader与纹理槽，不按文件名猜它正在使用哪份资源。",
+        "purpose": "能把尺寸、管线不兼容和漏交付素材分开，给别人一份无需复制Library也能重建的资源说明。"
       }
     },
     {
@@ -949,7 +1022,13 @@ window.COURSE_MODULES.push({
             "在测试副本重新导入，与原报告比较过滤、PPU和实际外观。",
             "解释哪些文件是源与配置，哪些缓存可以再生成。"
           ],
-          "result": "别人能够依照同一输入与设置得到相同导入结果。"
+          "result": "别人能够依照同一输入与设置得到相同导入结果。",
+          "setup": [
+            "把工具保存为Assets/Editor/TextureImportReport.cs，等待Unity编译；不挂到场景对象。Project中选中一张PNG，再执行顶部Learning > Texture Import Report。",
+            "Window > General > Console保存输出路径、PPU、Filter和Compression；同时记录Edit > Project Settings中目标平台相关设置与编辑器具体版本。",
+            "只在独立实验副本重新导入：Project选资源后右键Reimport。重建Library属于整个项目级操作，不是本组必须删除用户现有缓存的步骤。"
+          ],
+          "purpose": "检查别人能否靠源与配置重建素材，而不是依赖你当前机器的缓存。"
         },
         {
           "title": "找出规范不该覆盖的例外",
@@ -959,7 +1038,13 @@ window.COURSE_MODULES.push({
             "放入一张角色图、一张UI头像和一张故意误设过滤的角色图；先列适用范围，再要求报告给出路径、当前值、期望值与处理状态。确认UI头像被明确排除，不把它默默改成角色设置。",
             "设计小范围修改流程，再验证第二次执行不产生多余变化。"
           ],
-          "result": "一份有适用范围、例外依据和复验步骤的规范。"
+          "result": "一份有适用范围、例外依据和复验步骤的规范。",
+          "setup": [
+            "在Project建立Assets/EngineLabs/Characters与Assets/EngineLabs/UI两个目录，各放测试图；另把一张Characters中的图故意设为Bilinear。",
+            "继续使用顶部Learning > Texture Import Report逐个选资源输出。现成工具一次只报所选纹理，尚未自动扫描目录、判断错误或批量修复。",
+            "用表格自行加“适用目录、期望值、允许例外、处理状态”列，再设计扫描器扩展。修改只在实验目录，先审阅差异，不能把演示只读工具当成已实现批处理。"
+          ],
+          "purpose": "通过角色图与UI头像的区别，验证规则范围和例外为何必须先于批量修改。"
         }
       ],
       "pitfalls": [
@@ -1010,7 +1095,8 @@ window.COURSE_MODULES.push({
             "仅在Library中备份即可"
           ],
           "answer": 0,
-          "explanation": "meta关联资源身份和导入信息，丢失它可能影响已有引用和导入一致性。"
+          "explanation": "meta关联资源身份和导入信息，丢失它可能影响已有引用和导入一致性。",
+          "scenario": "团队要在另一台电脑重建同一Sprite导入结果，源PNG已有场景和动画引用；meta保存资源标识及相关导入信息。"
         },
         {
           "question": "运行时能普遍用AssetDatabase加载Assets路径吗？",
@@ -1021,7 +1107,8 @@ window.COURSE_MODULES.push({
             "能，只要把脚本放进Resources"
           ],
           "answer": 1,
-          "explanation": "编辑器数据库与发布内容的加载方式不同，应明确工具与运行时边界。"
+          "explanation": "编辑器数据库与发布内容的加载方式不同，应明确工具与运行时边界。",
+          "scenario": "一个脚本调用UnityEditor.AssetDatabase，Editor里可以读到Assets路径；现在准备把相同脚本用于已构建Player加载。"
         },
         {
           "question": "统一导入设置的批处理，较好的第一步是什么？",
@@ -1032,7 +1119,8 @@ window.COURSE_MODULES.push({
             "先让每次导入都触发一次全局Refresh"
           ],
           "answer": 1,
-          "explanation": "先检查范围与差异，才能保留合理例外并控制重新导入的影响。"
+          "explanation": "先检查范围与差异，才能保留合理例外并控制重新导入的影响。",
+          "scenario": "你准备把角色目录统一为Point，但Assets还包含UI和背景等不同用途素材，目前尚未列出例外。"
         }
       ],
       "references": [
@@ -1068,8 +1156,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "发布后的玩家程序，可以把AssetDatabase当作通用Assets加载接口吗？",
-          "answer": "不能。它属于编辑器资源数据库，玩家加载需要使用相应运行时方案与已构建内容。"
-        }
+          "answer": "不能。它属于编辑器资源数据库，玩家加载需要使用相应运行时方案与已构建内容。",
+          "scenario": "你准备发布Windows Player，想用Assets路径运行AssetDatabase加载PNG。这个接口来自UnityEditor，尚未设计对应运行时加载方案。"
+        },
+        "scenario": "同一PNG在你电脑清楚，到另一份工程却模糊；批量改Point又可能把UI头像一起改坏。先让工具只读出被选资源的导入值，再决定规则适用于哪个目录。",
+        "purpose": "能写清源文件、meta和导入规则怎样共同复现结果，自动检查也能保留合理例外。"
       }
     }
   ]

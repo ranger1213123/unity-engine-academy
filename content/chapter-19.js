@@ -58,11 +58,19 @@ window.COURSE_MODULES.push({
       "code": {
         "title": "提交一次导航目标并验证状态",
         "language": "csharp",
-        "filename": "NavigationRequestProbe.cs",
-        "source": "using UnityEngine;\nusing UnityEngine.AI;\n\n[RequireComponent(typeof(NavMeshAgent))]\npublic sealed class NavigationRequestProbe : MonoBehaviour\n{\n    [SerializeField] private Transform destination;\n    private NavMeshAgent agent;\n    private void Awake() => agent = GetComponent<NavMeshAgent>();\n    [ContextMenu(\"Request Path\")]\n    private void RequestPath()\n    {\n        if (!Application.isPlaying || destination == null || !agent.enabled || !agent.isOnNavMesh)\n        { Debug.LogWarning(\"Need a running agent on a baked NavMesh and a destination.\", this); return; }\n        bool accepted = agent.SetDestination(destination.position);\n        Debug.Log($\"Request accepted: {accepted}; completion must be checked later.\", this);\n    }\n}",
         "explanation": [
           "先安装与编辑器兼容的 AI Navigation，用 NavMeshSurface 烘焙三维表面，并确认 Agent 初始就在网格上。",
           "播放中执行组件菜单只提交目标。随后另行观察路径计算、路径状态和到达条件，不能用返回值代替它们。"
+        ],
+        "files": [
+          {
+            "filename": "NavigationRequestProbe.cs",
+            "source": "using UnityEngine;\nusing UnityEngine.AI;\n\n[RequireComponent(typeof(NavMeshAgent))]\npublic sealed class NavigationRequestProbe : MonoBehaviour\n{\n    [SerializeField] private Transform destination;\n    private NavMeshAgent agent;\n    private void Awake() => agent = GetComponent<NavMeshAgent>();\n    [ContextMenu(\"Request Path\")]\n    private void RequestPath()\n    {\n        if (!Application.isPlaying || destination == null || !agent.enabled || !agent.isOnNavMesh)\n        { Debug.LogWarning(\"Need a running agent on a baked NavMesh and a destination.\", this); return; }\n        bool accepted = agent.SetDestination(destination.position);\n        Debug.Log($\"Request accepted: {accepted}; completion must be checked later.\", this);\n    }\n}"
+          },
+          {
+            "filename": "NavigationStatusProbe.cs",
+            "source": "using UnityEngine;\nusing UnityEngine.AI;\n\n[RequireComponent(typeof(NavMeshAgent))]\npublic sealed class NavigationStatusProbe : MonoBehaviour\n{\n    [ContextMenu(\"Report Path State\")]\n    private void Report()\n    {\n        if (!Application.isPlaying) return;\n        NavMeshAgent agent = GetComponent<NavMeshAgent>();\n        if (!agent.enabled || !agent.isOnNavMesh)\n        { Debug.LogWarning(\"Agent is not active on a NavMesh.\", this); return; }\n        Debug.Log($\"pending={agent.pathPending}; status={agent.pathStatus}; remaining={agent.remainingDistance}; hasPath={agent.hasPath}\", this);\n    }\n}"
+          }
         ]
       },
       "lab": [
@@ -75,7 +83,13 @@ window.COURSE_MODULES.push({
             "把目标置于可达与不可达区域，记录路径状态。",
             "移出网格后再次请求，确认诊断清楚。"
           ],
-          "result": "路径状态与地形表示对应。"
+          "result": "路径状态与地形表示对应。",
+          "setup": [
+            "通过 Window > Package Management 打开 Package Manager，安装与Unity版本兼容的 AI Navigation。新建三维场景，放地面、窄门、隔开空隙的孤立平台，先记录尺寸。",
+            "建 Surface 对象，Inspector 的 Add Component 搜索 NavMesh Surface，设置收集范围和 Agent Type，点击该组件 Bake。创建 Agent 对象，添加 NavMesh Agent、NavigationRequestProbe、NavigationStatusProbe，放在烘焙网格上。",
+            "创建 Target，将其拖入请求组件 Destination。打开 Console，播放后从组件菜单 Request Path 提交，再用状态探针 Report Path State 看 pending、status、remaining；不要把刚请求后的状态当最终结果。"
+          ],
+          "purpose": "在连通与孤立目标间只改变位置，观察请求与路径的区别；半径对照必须重新烘焙并查看实际通路。"
         },
         {
           "title": "运动控制权对照",
@@ -86,7 +100,13 @@ window.COURSE_MODULES.push({
             "设计导航、物理或 Root Motion 主导的三种控制权方案。",
             "为请求处理中、部分路径和被阻挡状态写恢复规则。"
           ],
-          "result": "能够区分规划问题和运动抢写。"
+          "result": "能够区分规划问题和运动抢写。",
+          "setup": [
+            "先用上一组可达目标，移除其他位置写入者，保存只由Agent移动的正常版本；本课状态探针只报告，不判定已到达。",
+            "在副本加入另一个驱动位置的组件，记录每处写入来源；不要在正常工程同时启用互相竞争的控制器。",
+            "分别在纸上设计导航主导、物理主导、Root Motion主导三种方案，写明位置怎样同步与谁负责恢复；实际实现只先选一种。"
+          ],
+          "purpose": "先把可规划的路径与能正确执行运动分开，避免把控制权问题误判成烘焙参数问题。"
         }
       ],
       "pitfalls": [
@@ -136,7 +156,8 @@ window.COURSE_MODULES.push({
             "否，但已保证得到完整路径"
           ],
           "answer": 1,
-          "explanation": "请求被接受之后仍有路径计算和实际运动，因此 true 不等于完整路径或已到达。"
+          "explanation": "请求被接受之后仍有路径计算和实际运动，因此 true 不等于完整路径或已到达。",
+          "scenario": "Agent 已位于烘焙网格，调用 SetDestination 后得到true；当前还没有等待路径计算或检查角色是否到目标。"
         },
         {
           "question": "烘焙半径会影响什么？",
@@ -146,7 +167,8 @@ window.COURSE_MODULES.push({
             "只改变渲染碰撞，不影响烘焙连通性"
           ],
           "answer": 0,
-          "explanation": "代理半径参与可通过区域的表示，窄门能否连通需要结合烘焙结果检查。"
+          "explanation": "代理半径参与可通过区域的表示，窄门能否连通需要结合烘焙结果检查。",
+          "scenario": "地面有窄门，准备改变 NavMeshSurface 烘焙所用 Agent Type 的半径并重新 Bake，观察蓝色可行走区域。"
         },
         {
           "question": "Agent 和动态刚体同时写位置应先做什么？",
@@ -156,7 +178,8 @@ window.COURSE_MODULES.push({
             "提高物理频率就能自动协调"
           ],
           "answer": 1,
-          "explanation": "先决定最终位置由谁修改，再设计同步；仅调整执行顺序或频率仍可能相互覆盖。"
+          "explanation": "先决定最终位置由谁修改，再设计同步；仅调整执行顺序或频率仍可能相互覆盖。",
+          "scenario": "NavMeshAgent 与动态刚体都在更新同一角色的位置，冲突已复现，需要决定优先解决什么。"
         }
       ],
       "references": [
@@ -215,8 +238,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "Agent 与动态刚体互相拉扯，调高物理频率能自动解决吗？",
-          "answer": "不能。先明确谁驱动最终位置，再按支持方式同步导航、物理和动画；频率不能替你决定控制关系。"
-        }
+          "answer": "不能。先明确谁驱动最终位置，再按支持方式同步导航、物理和动画；频率不能替你决定控制关系。",
+          "scenario": "同一个角色同时启用 NavMeshAgent 和 Dynamic Rigidbody，两者都影响位置。角色出现拉扯，尚未决定最终运动由谁负责。"
+        },
+        "scenario": "三维地面上有窄门和一个不连通的平台。Agent 想走到目标 Transform，SetDestination 返回true，但请求接受、路径完整和最终到达是三件事；还可能有刚体与Agent争着改位置。",
+        "purpose": "从烘焙出的通路、请求后状态和运动控制权三处排查，知道角色走不到时下一步看哪里。"
       }
     },
     {
@@ -288,7 +314,13 @@ window.COURSE_MODULES.push({
             "恢复同步后测试零长度和大数组。",
             "标出分配、调度、完成、读取和释放顺序。"
           ],
-          "result": "没有未完成读取或原生内存滞留。"
+          "result": "没有未完成读取或原生内存滞留。",
+          "setup": [
+            "在兼容项目保存 JobOwnershipProbe.cs，确认 Unity.Collections、Unity.Jobs 可解析；有asmdef时在Inspector配置所需引用。",
+            "新建空对象 JobLab并挂组件，打开 Window > General > Console，播放后从组件 ⋮ 菜单执行 Run Job Lab。先手算四个输入的翻倍结果，再看First与Last。",
+            "未完成读取的故障只在副本中做，保留安全检查与可恢复源码。每次结束都先确保作业完成，再释放自己创建的容器。"
+          ],
+          "purpose": "用四项小数据检查顺序和结果，随后改变长度观察边界；故障实验旨在暴露所有权违规，不是训练关闭安全检查。"
         },
         {
           "title": "依赖与调度成本",
@@ -299,7 +331,13 @@ window.COURSE_MODULES.push({
             "分别测小数组与大数组，观察调度成本。",
             "提出可与主线程重叠的工作，而不提前读取结果。"
           ],
-          "result": "收益结论有规模与同步条件。"
+          "result": "收益结论有规模与同步条件。",
+          "setup": [
+            "先画两项任务：A把[1,2,3,4]翻倍，B对A的结果求和，手算期望20；两个作业及调用由你在扩展中实现。",
+            "保留串行参考，A的返回句柄作为B的依赖；读取B结果前完成最终依赖，不把结构体副本当成独立数组。",
+            "记录小数组和大数组各自的准备、调度、等待、总时间；计时期间减少日志，另外列可在主线程重叠的独立工作。"
+          ],
+          "purpose": "依赖箭头用于保证B看到A完成后的数据；规模对照用于发现固定调度开销，不能只测作业内部循环。"
         }
       ],
       "pitfalls": [
@@ -349,7 +387,8 @@ window.COURSE_MODULES.push({
             "只要数组小就安全"
           ],
           "answer": 1,
-          "explanation": "Schedule 只提交工作。访问相关数据前需按作业依赖确保完成。"
+          "explanation": "Schedule 只提交工作。访问相关数据前需按作业依赖确保完成。",
+          "scenario": "主线程刚得到Schedule返回的句柄，作业可能仍在使用输出数组，尚未Complete或通过其他依赖保证完成。"
         },
         {
           "question": "复制 NativeArray 结构体是否自动深复制数据？",
@@ -359,7 +398,8 @@ window.COURSE_MODULES.push({
             "会立刻释放原数据"
           ],
           "answer": 1,
-          "explanation": "结构体复制通常仍指向同一底层分配，不能把变量副本当成独立数据和独立释放责任。"
+          "explanation": "结构体复制通常仍指向同一底层分配，不能把变量副本当成独立数据和独立释放责任。",
+          "scenario": "两个NativeArray变量由结构体赋值得到，未调用任何显式拷贝数据的方法，接下来准备修改和释放。"
         },
         {
           "question": "立即 Complete 的主要性能限制是？",
@@ -369,7 +409,8 @@ window.COURSE_MODULES.push({
             "禁止 Burst"
           ],
           "answer": 1,
-          "explanation": "立即等待可以正确，但可能失去主线程与作业重叠的机会，未必带来更好整体性能。"
+          "explanation": "立即等待可以正确，但可能失去主线程与作业重叠的机会，未必带来更好整体性能。",
+          "scenario": "为了保证读取安全，代码Schedule之后马上Complete；问题讨论这种安排对重叠执行机会的影响。"
         }
       ],
       "references": [
@@ -428,8 +469,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "立刻 Complete 能保证结果正确，是否也说明并发收益最佳？",
-          "answer": "不能。它可能让主线程马上等待，减少可重叠时间；性能还要连同调度和准备成本测量。"
-        }
+          "answer": "不能。它可能让主线程马上等待，减少可重叠时间；性能还要连同调度和准备成本测量。",
+          "scenario": "示例提交翻倍作业后立刻调用 Complete，然后读取数组。结果顺序正确，但还未研究主线程能否在等待前做其他独立工作。"
+        },
+        "scenario": "主线程准备数组[1,2,3,4]，交给一个作业翻倍，结果应为[2,4,6,8]。Schedule只是把任务交出去，代码马上往下走；什么时候可以读结果和释放内存，需要显式安排。",
+        "purpose": "沿一份真实数组追踪分配、调度、完成和释放，避免未完成就读取或销毁底层内存。"
       }
     },
     {
@@ -483,11 +527,19 @@ window.COURSE_MODULES.push({
       "code": {
         "title": "在同一作业上加入 Burst 编译",
         "language": "csharp",
-        "filename": "BurstSquareJob.cs",
-        "source": "using Unity.Burst;\nusing Unity.Collections;\nusing Unity.Jobs;\n\n// 由主线程分配容器、Schedule、Complete 并释放；本文件不挂组件。\n[BurstCompile]\npublic struct BurstSquareJob : IJobParallelFor\n{\n    [ReadOnly] public NativeArray<float> Input;\n    [WriteOnly] public NativeArray<float> Output;\n    public void Execute(int index)\n    {\n        float value = Input[index];\n        Output[index] = value * value;\n    }\n}",
         "explanation": [
           "安装兼容 Burst 与容器依赖。Input、Output 等长且不共享同一分配；该文件是作业类型，不直接挂组件。",
-          "沿用上一课的主线程驱动：分配并填入输入，Schedule(length, batchSize)，完成后读取，最后释放两份数组。"
+          "同时保存新增的 BurstSquareProbe.cs 并挂空对象。它给出完整主线程驱动：独立分配两数组、填入样本、Schedule(length,batchSize)、Complete后比较串行结果，最后释放；性能比较仍需单独设计。"
+        ],
+        "files": [
+          {
+            "filename": "BurstSquareJob.cs",
+            "source": "using Unity.Burst;\nusing Unity.Collections;\nusing Unity.Jobs;\n\n// 由主线程分配容器、Schedule、Complete 并释放；本文件不挂组件。\n[BurstCompile]\npublic struct BurstSquareJob : IJobParallelFor\n{\n    [ReadOnly] public NativeArray<float> Input;\n    [WriteOnly] public NativeArray<float> Output;\n    public void Execute(int index)\n    {\n        float value = Input[index];\n        Output[index] = value * value;\n    }\n}"
+          },
+          {
+            "filename": "BurstSquareProbe.cs",
+            "source": "using Unity.Collections;\nusing Unity.Jobs;\nusing UnityEngine;\n\npublic sealed class BurstSquareProbe : MonoBehaviour\n{\n    [SerializeField, Min(0)] private int length = 3;\n    [SerializeField, Min(1)] private int batchSize = 1;\n    [ContextMenu(\"Run Square Samples\")]\n    private void Run()\n    {\n        if (!Application.isPlaying) return;\n        int count = Mathf.Max(0, length);\n        var input = new NativeArray<float>(count, Allocator.TempJob);\n        var output = new NativeArray<float>(count, Allocator.TempJob);\n        JobHandle handle = default;\n        try\n        {\n            for (int i = 0; i < count; i++) input[i] = i == 1 ? -3f : i == 2 ? 2f : i;\n            handle = new BurstSquareJob { Input = input, Output = output }\n                .Schedule(count, Mathf.Max(1, batchSize));\n            handle.Complete();\n            bool matches = true;\n            for (int i = 0; i < count; i++)\n            {\n                matches &= Mathf.Approximately(output[i], input[i] * input[i]);\n                if (i < 3) Debug.Log($\"Square[{i}]: {input[i]} -> {output[i]}\", this);\n            }\n            Debug.Log($\"Square result matches serial reference: {matches}; count={count}\", this);\n        }\n        finally\n        {\n            handle.Complete();\n            if (input.IsCreated) input.Dispose();\n            if (output.IsCreated) output.Dispose();\n        }\n    }\n}"
+          }
         ]
       },
       "lab": [
@@ -495,12 +547,18 @@ window.COURSE_MODULES.push({
           "title": "编译与等价性",
           "minutes": 60,
           "steps": [
-            "在驱动中分配等长且独立的输入输出数组，填入 0、负数和普通值，先写串行参考答案。",
+            "先用给出的 BurstSquareProbe 驱动，Length=3时输入为0、-3、2，在运行菜单前手写参考输出0、9、4。",
             "调度并完成作业，与串行平方逐项比较。",
             "在 Burst Inspector 检查入口确实可编译。",
             "记录预热前后和安全检查开关，不把首次延迟当稳定性能。"
           ],
-          "result": "编译路径与结果均有证据。"
+          "result": "编译路径与结果均有证据。",
+          "setup": [
+            "通过 Window > Package Management 确认兼容 Burst 与容器依赖。分别保存 BurstSquareJob.cs 与 BurstSquareProbe.cs；前者不挂对象，后者挂空对象 SquareLab。",
+            "打开 Console，播放后从驱动组件菜单 Run Square Samples 执行，Length留3、Batch Size留1，核对0→0、-3→9、2→4及串行比较结果。",
+            "从顶部 Jobs > Burst > Open Inspector 打开 Burst Inspector，查找 BurstSquareJob 编译入口；若菜单或入口缺失，先检查包、编译错误与实际调度。"
+          ],
+          "purpose": "给完整驱动是为了让作业实际执行而非只声明类型；结果校验与编译入口检查分别回答算对了没有、是否走目标编译路径。"
         },
         {
           "title": "端到端收益",
@@ -511,7 +569,13 @@ window.COURSE_MODULES.push({
             "改变批次大小并保持功能结果不变。",
             "在目标 Player 复测，说明编辑器和构建差别。"
           ],
-          "result": "收益报告没有隐藏准备与同步成本。"
+          "result": "收益报告没有隐藏准备与同步成本。",
+          "setup": [
+            "保留给出的正确性驱动，另存用于比较的串行、未Burst作业、Burst作业三版；算法与输入输出保持一致。",
+            "小中大规模由你按目标设备选择并记录，例如100、1000、10000；每种都先预热，再分别计计算与完整调用流程。辅助驱动的三条示例日志应在正式计时前关闭。",
+            "改变Batch Size时仍比较全部输出；目标Player保留同样包、后端与安全设置记录。当前示例不自动生成性能表。"
+          ],
+          "purpose": "规模和批次对照用于比较调度开销占比，端到端时间用于判断局部加速有没有改善真正预算。"
         }
       ],
       "pitfalls": [
@@ -561,7 +625,8 @@ window.COURSE_MODULES.push({
             "Burst 自动解决所有依赖"
           ],
           "answer": 1,
-          "explanation": "Jobs 负责调度和依赖，Burst 负责编译优化，两者常一起用，但不替代彼此。"
+          "explanation": "Jobs 负责调度和依赖，Burst 负责编译优化，两者常一起用，但不替代彼此。",
+          "scenario": "SquareJob 声明了 BurstCompile 属性，主线程另调用 Schedule 提交它。你想判断这两个入口各自承担的工作，避免把添加属性当成自动解决所有依赖。"
         },
         {
           "question": "局部循环快十倍，游戏必快十倍吗？",
@@ -571,7 +636,8 @@ window.COURSE_MODULES.push({
             "只有编辑器必然"
           ],
           "answer": 1,
-          "explanation": "局部收益还会受到它在关键路径中的占比，以及准备、同步和其他阶段限制。"
+          "explanation": "局部收益还会受到它在关键路径中的占比，以及准备、同步和其他阶段限制。",
+          "scenario": "某局部循环得到十倍加速，但它只占原帧的一部分，数据转换和同步成本还未计入总时间。"
         },
         {
           "question": "浮点快速模式应怎样采用？",
@@ -581,7 +647,8 @@ window.COURSE_MODULES.push({
             "Burst Inspector 出现 SIMD 就证明数值语义相同"
           ],
           "answer": 1,
-          "explanation": "快速浮点选项可能改变运算性质，应按误差要求、边界输入与平台测试，不能用生成指令代替等价验证。"
+          "explanation": "快速浮点选项可能改变运算性质，应按误差要求、边界输入与平台测试，不能用生成指令代替等价验证。",
+          "scenario": "开发者准备开启会改变部分浮点运算性质的快速选项。项目有数值误差要求，并要在目标平台运行。"
         }
       ],
       "references": [
@@ -640,8 +707,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "计算循环快 10 倍，整帧是否也必定快 10 倍？",
-          "answer": "不一定。只看一个理想化例子：整帧 10 毫秒中，循环占 2 毫秒，其余 8 毫秒不变。循环快 10 倍后变为 0.2 毫秒，整帧约为 8.2 毫秒，而不是 1 毫秒；准备、调度和同步还可能增加成本。"
-        }
+          "answer": "不一定。只看一个理想化例子：整帧 10 毫秒中，循环占 2 毫秒，其余 8 毫秒不变。循环快 10 倍后变为 0.2 毫秒，整帧约为 8.2 毫秒，而不是 1 毫秒；准备、调度和同步还可能增加成本。",
+          "scenario": "这里是假设的算术模型：整帧10毫秒中，平方循环占2毫秒，其他8毫秒不变。现在只假定该循环快10倍，暂不计新增准备、调度、同步成本。"
+        },
+        "scenario": "现在要计算一组数的平方：输入0、-3、2，输出应为0、9、4。BurstSquareJob只定义单项计算，不是可挂组件；主线程还要分配数组、调度、等待、校验与释放。",
+        "purpose": "分清Burst编译优化与Jobs调度的职责，再用相同输出和完整流程时间判断是否值得采用。"
       }
     },
     {
@@ -697,11 +767,20 @@ window.COURSE_MODULES.push({
       "code": {
         "title": "Entities 1.4 的最小 Baking 与数据更新",
         "language": "csharp",
-        "filename": "LifetimeAuthoring.cs",
-        "source": "// 仅放入已安装兼容 Entities 1.4 的独立实验项目。\nusing Unity.Entities;\nusing UnityEngine;\n\npublic struct LabLifetime : IComponentData { public float Seconds; }\n\npublic sealed class LifetimeAuthoring : MonoBehaviour\n{\n    public float initialSeconds;\n    private sealed class LifetimeBaker : Baker<LifetimeAuthoring>\n    {\n        public override void Bake(LifetimeAuthoring authoring)\n        {\n            Entity entity = GetEntity(TransformUsageFlags.None);\n            AddComponent(entity, new LabLifetime { Seconds = authoring.initialSeconds });\n        }\n    }\n}\n\npublic partial class LabLifetimeSystem : SystemBase\n{\n    protected override void OnUpdate()\n    {\n        float dt = SystemAPI.Time.DeltaTime;\n        foreach (var lifetime in SystemAPI.Query<RefRW<LabLifetime>>())\n            lifetime.ValueRW.Seconds += dt;\n    }\n}",
         "explanation": [
           "只在安装兼容 Entities 1.4 的独立实验项目使用。作者组件放进正确加载的 SubScene，完成 Baking 后查看运行 World。",
-          "在 Entities Hierarchy 观察 LabLifetime.Seconds。示例只验证作者输入、实体转换和查询更新，不含渲染、物理或额外并发安排。"
+          "在 Entities Hierarchy 观察 LabLifetime.Seconds。示例只验证作者输入、实体转换和查询更新，不含渲染、物理或额外并发安排。",
+          "ComparisonEntityAuthoring是第二组查询对照：由Baking生成带LabComparisonTag的实体，不是每帧驱动；LabLifetimeSystem只匹配已有LabLifetime的实体。"
+        ],
+        "files": [
+          {
+            "filename": "LifetimeAuthoring.cs",
+            "source": "// 仅放入已安装兼容 Entities 1.4 的独立实验项目。\nusing Unity.Entities;\nusing UnityEngine;\n\npublic struct LabLifetime : IComponentData { public float Seconds; }\n\npublic sealed class LifetimeAuthoring : MonoBehaviour\n{\n    public float initialSeconds;\n    private sealed class LifetimeBaker : Baker<LifetimeAuthoring>\n    {\n        public override void Bake(LifetimeAuthoring authoring)\n        {\n            Entity entity = GetEntity(TransformUsageFlags.None);\n            AddComponent(entity, new LabLifetime { Seconds = authoring.initialSeconds });\n        }\n    }\n}\n\npublic partial class LabLifetimeSystem : SystemBase\n{\n    protected override void OnUpdate()\n    {\n        float dt = SystemAPI.Time.DeltaTime;\n        foreach (var lifetime in SystemAPI.Query<RefRW<LabLifetime>>())\n            lifetime.ValueRW.Seconds += dt;\n    }\n}"
+          },
+          {
+            "filename": "ComparisonEntityAuthoring.cs",
+            "source": "using Unity.Entities;\nusing UnityEngine;\n\npublic struct LabComparisonTag : IComponentData { }\n\npublic sealed class ComparisonEntityAuthoring : MonoBehaviour\n{\n    private sealed class ComparisonBaker : Baker<ComparisonEntityAuthoring>\n    {\n        public override void Bake(ComparisonEntityAuthoring authoring)\n        {\n            Entity entity = GetEntity(TransformUsageFlags.None);\n            AddComponent(entity, new LabComparisonTag());\n        }\n    }\n}"
+          }
         ]
       },
       "lab": [
@@ -714,18 +793,30 @@ window.COURSE_MODULES.push({
             "运行后在正确 World 查找 LabLifetime。",
             "观察值增长并区分作者字段与运行实体字段。"
           ],
-          "result": "转换和运行阶段都有可定位证据。"
+          "result": "转换和运行阶段都有可定位证据。",
+          "setup": [
+            "新建独立实验工程，通过 Window > Package Management 安装兼容Entities 1.4并记录实际版本；不要把本例直接塞进没有Entities依赖的主工程。",
+            "在Hierarchy右键选择New Sub Scene > Empty Scene，命名并保存；选SubScene，Inspector确认Auto Load Scene勾选。在已打开的SubScene中建作者空对象LifetimeSample，挂LifetimeAuthoring，Initial Seconds填5，保存并等待Baking。",
+            "通过 Window > Entities > Hierarchy 打开实体层级，播放后选择运行World，定位带LabLifetime的实体并在Inspector查看Seconds；不要只盯作者对象字段。"
+          ],
+          "purpose": "用已知初值5追踪数据从作者到实体再到系统，明确哪一层应该随时间变化。"
         },
         {
           "title": "查询与结构变化推演",
           "minutes": 60,
           "steps": [
-            "准备带 LabLifetime 与不带该组件的实体，先预测系统更新谁，再到运行 World 核对。",
+            "比较LifetimeSample与ComparisonSample生成的实体：前者有LabLifetime，后者只有LabComparisonTag。先预测系统更新谁，再在运行World核对。",
             "设计启停标记组件的变更流程。",
             "解释何处可能发生结构变化和同步，不先写复杂命令缓冲。",
             "与高质量传统批量循环做采用成本比较。"
           ],
-          "result": "技术选择基于数据规模和工作流。"
+          "result": "技术选择基于数据规模和工作流。",
+          "setup": [
+            "在同一SubScene另建ComparisonSample，保存并挂ComparisonEntityAuthoring.cs，不挂LifetimeAuthoring。它的Baker明确生成带LabComparisonTag、没有LabLifetime的实体，避免把“完全没生成实体”误当作查询不匹配。",
+            "先预测查询只更新哪些带LabLifetime的实体，再在运行World查具体组件。标记组件启停属于扩展设计，需要你说明添加、删除或启用位的实际表示。",
+            "先画变更时机与依赖，不急着引入复杂命令缓冲。保留传统批量循环参考，记录转换、调试与内容制作成本。"
+          ],
+          "purpose": "把查询匹配和结构变化分开，再比较采用成本，避免只因系统能跑就要求全部项目迁移。"
         }
       ],
       "pitfalls": [
@@ -775,7 +866,8 @@ window.COURSE_MODULES.push({
             "只要类名包含 Authoring 就保证"
           ],
           "answer": 1,
-          "explanation": "作者组件只是输入。实体是否产生，还取决于正确 Baking、SubScene 加载和实际运行 World。"
+          "explanation": "作者组件只是输入。实体是否产生，还取决于正确 Baking、SubScene 加载和实际运行 World。",
+          "scenario": "场景中已经挂了LifetimeAuthoring，但还未确认它是否在已加载SubScene、Baking是否完成，以及查看的World是否正确。"
         },
         {
           "question": "修改已有组件数值与添加组件是否同类操作？",
@@ -785,7 +877,8 @@ window.COURSE_MODULES.push({
             "修改字段一定比添加组件更昂贵"
           ],
           "answer": 1,
-          "explanation": "增加组件可能改变实体组成与存储布局，和改已有字段的同步及成本不一样。"
+          "explanation": "增加组件可能改变实体组成与存储布局，和改已有字段的同步及成本不一样。",
+          "scenario": "一个操作修改现有LabLifetime.Seconds，另一个操作给没有该类型的实体添加LabLifetime，需要比较二者性质。"
         },
         {
           "question": "ECS 是否要求小型学习项目立即迁移？",
@@ -795,7 +888,8 @@ window.COURSE_MODULES.push({
             "只要用了 Jobs 就必须同时迁入 ECS"
           ],
           "answer": 1,
-          "explanation": "是否采用取决于规模、收益和工作流成本；传统项目也可用其他方法优化。"
+          "explanation": "是否采用取决于规模、收益和工作流成本；传统项目也可用其他方法优化。",
+          "scenario": "一个小型学习项目用传统组件已满足需求，开发者想知道仅为学习Jobs是否就必须迁移全部内容到ECS。"
         }
       ],
       "references": [
@@ -854,8 +948,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "给一个实体添加 LabLifetime，与把已有 Seconds 改成 6 是同类操作吗？",
-          "answer": "不是。添加组件可能引起结构变化；修改现有字段主要改变已有数据，需要分别理解允许时机和成本。"
-        }
+          "answer": "不是。添加组件可能引起结构变化；修改现有字段主要改变已有数据，需要分别理解允许时机和成本。",
+          "scenario": "某运行实体已经有LabLifetime组件，Seconds=5。现在比较“把Seconds改为6”与“给另一个尚无LabLifetime的实体添加该组件”。"
+        },
+        "scenario": "作者对象有 LifetimeAuthoring，Initial Seconds设5。它经Baking生成带LabLifetime的实体，系统随后增加实体的Seconds。作者Inspector中的5与运行World内不断变化的值，是不同阶段的数据。",
+        "purpose": "先能定位作者输入、转换结果和真正运行数据，再判断ECS的数据组织是否适合自己的工作。"
       }
     },
     {
@@ -930,7 +1027,13 @@ window.COURSE_MODULES.push({
             "加入已有作业版，按三规模采样。",
             "记录未完成或不可比部分，不用猜测填表。"
           ],
-          "result": "比较具有相同工作量和环境。"
+          "result": "比较具有相同工作量和环境。",
+          "setup": [
+            "本课没有可直接运行的新组件，architecture-comparison.txt是你要填写的记录表。先选已完成的平方或翻倍规则，写定输入与参考输出。",
+            "在工程中建立A=传统组件、B=集中循环、C=Jobs+Burst三个明确版本；D=ECS是可选扩展。先保证所有版本完成同样N个单位的同样工作。",
+            "记录设备、Unity与包版本、后端、预热条件；按100/1000/10000分别测试。无法实现某版就填未验证，不能填猜测数字。"
+          ],
+          "purpose": "三种规模用于看固定开销占比怎样随工作量改变；表中的字母必须指向具体实现，避免把大规模赢家直接推广到小场景。"
         },
         {
           "title": "写可逆采用方案",
@@ -941,7 +1044,13 @@ window.COURSE_MODULES.push({
             "保留串行参考与回归测试。",
             "写采用阈值和撤回条件，尝试说服另一个学习者。"
           ],
-          "result": "决策包含收益、成本和退路。"
+          "result": "决策包含收益、成本和退路。",
+          "setup": [
+            "保留每个已完成实现的源码、输入输出校验与构建记录，逐项列新增包、工具、调试步骤和实际投入。",
+            "为调用者设计统一输入输出边界，但暂不堆叠抽象；先写清底层版本能否替换、由谁持有数据。",
+            "在决策记录中给出采用范围、扩展阈值和撤回条件；阈值来自本次预算与测量，不能只写“很多单位时”。"
+          ],
+          "purpose": "让性能收益与维护成本进入同一个可复查决策，未来需求改变时能重测，而非凭技术偏好长期绑定。"
         }
       ],
       "pitfalls": [
@@ -991,7 +1100,8 @@ window.COURSE_MODULES.push({
             "采用其中一个会自动具备另两个的全部能力"
           ],
           "answer": 1,
-          "explanation": "三者常配合使用，却解决不同问题：调度、编译和数据架构需要分别比较。"
+          "explanation": "三者常配合使用，却解决不同问题：调度、编译和数据架构需要分别比较。",
+          "scenario": "技术评审同时出现 Jobs、Burst、ECS 三个名称。有的方案只用了其中两项，你需要判断它们是否必须作为一个不可拆分的功能整体采用。"
         },
         {
           "question": "单一规模最好成绩足够做决策吗？",
@@ -1001,7 +1111,8 @@ window.COURSE_MODULES.push({
             "只需记录循环，准备与同步不影响选择"
           ],
           "answer": 1,
-          "explanation": "固定成本、规模转折点和波动影响结论。只看一个规模的一次最好成绩会遗漏日常使用情况。"
+          "explanation": "固定成本、规模转折点和波动影响结论。只看一个规模的一次最好成绩会遗漏日常使用情况。",
+          "scenario": "某测量只报告作业Execute的时间，尚未记录创建输入、转换数据、Schedule、Complete与结果应用。"
         },
         {
           "question": "当前项目选择不采用某技术可以是专业结论吗？",
@@ -1011,7 +1122,8 @@ window.COURSE_MODULES.push({
             "只有未尝试实现时才可以决定不采用"
           ],
           "answer": 0,
-          "explanation": "依据已知需求、预算与维护成本选择不用某技术，同样可以是有证据的工程决策。"
+          "explanation": "依据已知需求、预算与维护成本选择不用某技术，同样可以是有证据的工程决策。",
+          "scenario": "候选实现已经保存，团队要决定何时扩大采用，以及发生收益不足或制作流程受阻时如何退回。"
         }
       ],
       "references": [
@@ -1070,8 +1182,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "当前选择不采用 ECS，可以是专业结论吗？",
-          "answer": "可以，前提是说明实际需求、测量范围和采用成本；也应写出未来哪些变化会触发重新评估。"
-        }
+          "answer": "可以，前提是说明实际需求、测量范围和采用成本；也应写出未来哪些变化会触发重新评估。",
+          "scenario": "项目当前只有100个单位，已有串行版本满足预算。更大规模的实验显示另一方案更快，但你还没有把当前规模的接入和维护成本计入。"
+        },
+        "scenario": "同一条数值更新规则，要分别处理100、1000、10000个单位。组件逐个更新、集中循环、Jobs+Burst可能在不同规模各有成本；A、B、C、D在本课仅是记录表中四个明确实现的名字。",
+        "purpose": "用公平输入、完整耗时和真实接入成本写技术决策，并保留以后重新评估或撤回的条件。"
       }
     }
   ]

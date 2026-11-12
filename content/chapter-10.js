@@ -1,4 +1,4 @@
-// 学者修订：补足具体推导、实验起点及教学边界。
+// 语境修订：题目背景、实验准备与学习用途。
 window.COURSE_MODULES.push({
   "id": "m10",
   "number": 10,
@@ -99,7 +99,14 @@ window.COURSE_MODULES.push({
             "设置采样标尺，逐帧检查顺序、帧框和Pivot，再检查循环接点。",
             "完成Sprite关键帧后关闭红色录制按钮，检查轨道列表仅包含目标Sprite属性。固定根Transform并显示脚底标尺，逐帧区分姿态起伏、Pivot漂移与身体位置变化。"
           ],
-          "result": "一份顺序、目标属性和循环效果都能解释的Idle。"
+          "result": "一份顺序、目标属性和循环效果都能解释的Idle。",
+          "setup": [
+            "在Assets/EngineLabs/Animation中准备已切片的八个Sprite；若尚未切片，先完成第42课，确认每帧有真实内容且帧框/Pivot一致。",
+            "Hierarchy用GameObject > Create Empty建Player，再在其下建Visual；选Visual用Inspector > Add Component添加SpriteRenderer并放第一帧。根Player添加Animator。",
+            "先选Hierarchy的Player，再打开Window > Animation > Animation；点Create把片段保存为Idle.anim。录制属性目标是Visual的SpriteRenderer.sprite，不是根Position。",
+            "窗口缺失时可从Window > General打开Hierarchy、Project和Inspector；Console用于先排除脚本编译错误。"
+          ],
+          "purpose": "先得到一段实际可预览的Idle，让每个关键帧和目标属性都能核对。"
         },
         {
           "title": "验证绑定路径与运行链",
@@ -109,7 +116,13 @@ window.COURSE_MODULES.push({
             "恢复路径，用单状态Controller连接该Clip，运行确认实际状态与片段。",
             "退出Play保存资源，重新运行，再检查是否仍能播放。"
           ],
-          "result": "能分别定位数据、绑定和运行选择问题的记录。"
+          "result": "能分别定位数据、绑定和运行选择问题的记录。",
+          "setup": [
+            "从八帧Idle场景另存L046_Runtime。在Project空白处右键Create > Animator Controller建立IdleOnly，拖Idle.anim到该控制器的Animator窗口形成唯一状态。",
+            "选Player，在Inspector的Animator > Controller拖入IdleOnly；状态的Motion应指向刚才Idle.anim，默认状态只留这一段，不先加输入脚本。",
+            "保存ClipStateProbe.cs，选Player用Add Component添加。Play后通过该组件标题右侧菜单Report Current State输出实际Clip；Window > General > Console查看。绑定破坏仅在测试副本改Visual名称，随后恢复。"
+          ],
+          "purpose": "让时间轴预览与真实运行各走一次，知道哪个环节断开会导致“预览能动、Play不动”。"
         }
       ],
       "pitfalls": [
@@ -160,7 +173,8 @@ window.COURSE_MODULES.push({
             "会，只要动画帧数量超过一"
           ],
           "answer": 1,
-          "explanation": "Clip描述属性随时间变化，输入与状态选择需要明确连接。"
+          "explanation": "Clip描述属性随时间变化，输入与状态选择需要明确连接。",
+          "scenario": "角色的AnimationClip含八个Sprite关键帧，文件名为Idle；没有配置松开移动键后的Animator参数或过渡。"
         },
         {
           "question": "Sprite逐帧轨道主要保存什么？",
@@ -171,7 +185,8 @@ window.COURSE_MODULES.push({
             "每帧图片文件名的搜索条件"
           ],
           "answer": 1,
-          "explanation": "轨道引用实际子帧资源，不会仅按名字自动找到相应图片。"
+          "explanation": "轨道引用实际子帧资源，不会仅按名字自动找到相应图片。",
+          "scenario": "正在给一个带SpriteRenderer的角色制作八帧逐帧动画，已打开Animation窗口；需要决定每个时点保存哪类内容。"
         },
         {
           "question": "编辑预览正常能证明运行时状态机正确吗？",
@@ -182,7 +197,8 @@ window.COURSE_MODULES.push({
             "能，只要采样率与显示器一致"
           ],
           "answer": 1,
-          "explanation": "预览和Play的入口不同，应分别验证绑定、Motion和真实运行状态。"
+          "explanation": "预览和Play的入口不同，应分别验证绑定、Motion和真实运行状态。",
+          "scenario": "选择角色后，在Animation窗口拖时间轴可以换帧；还没有检查Play时实际Animator使用的Controller、状态或Motion。"
         }
       ],
       "references": [
@@ -218,8 +234,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "将片段改名为Idle，能自动让松开移动键时播放它吗？",
-          "answer": "不能。名称不代表状态选择规则，仍需参数、过渡或其他明确的播放逻辑。"
-        }
+          "answer": "不能。名称不代表状态选择规则，仍需参数、过渡或其他明确的播放逻辑。",
+          "scenario": "一段只包含Sprite关键帧的AnimationClip已经做好，文件名改成Idle；角色尚未配置读取移动输入并选择状态的逻辑。"
+        },
+        "scenario": "你选中了图集，找不到创建Idle的入口；或者时间轴有八帧，按编辑器顶部Play却不播放。本课从Hierarchy里的测试角色开始，先做一段只替换Sprite的Clip，再用最短播放链运行。",
+        "purpose": "完成一份能逐帧核对、能在Play里播放的Idle，分清片段数据、对象绑定和运行选择。"
       }
     },
     {
@@ -314,7 +333,14 @@ window.COURSE_MODULES.push({
             "添加Moving Bool及双向条件，运行时手工改参数验证两条边。",
             "再接入脚本，确认修改的是场景角色实际Animator。"
           ],
-          "result": "从启动到移动再回Idle的一条明确运行路径。"
+          "result": "从启动到移动再回Idle的一条明确运行路径。",
+          "setup": [
+            "先完成第46课，准备能独立播放的Idle.anim与Walk.anim。Project右键Create > Animator Controller建Locomotion，双击打开Window > Animation > Animator。",
+            "把两段Clip拖进图，右键Idle选择Set as Layer Default State；在Parameters页点+ > Bool建Moving。右键状态Make Transition建立Idle→Walk和Walk→Idle两条边。",
+            "选每条过渡，在Inspector的Conditions分别设Moving=true和Moving=false。先关Has Exit Time并缩短Transition Duration用于基础验证。",
+            "保存AnimatorBoolProbe.cs并挂到持有实际Animator的Player；先停用它手改Parameters测试，接回后只改脚本Inspector中的Moving字段，因为Update会持续把这个字段写入Animator。"
+          ],
+          "purpose": "先手工驱动状态图，再接脚本，把图本身错误和参数写错对象分开。"
         },
         {
           "title": "隔离退出时间与混合时长",
@@ -324,7 +350,13 @@ window.COURSE_MODULES.push({
             "用长度已知且播放速度为1的片段，保持Duration=0.25，分别勾选和取消Fixed Duration，记录单位与预计秒数；随后只改Duration，观察过渡开始后的混合。不要把开始前等待时间也算进Duration。",
             "快速反复切换和停用恢复，记录当前参数与状态，检查是否出现意外中断。"
           ],
-          "result": "能把延后开始和缓慢混合分别解释。"
+          "result": "能把延后开始和缓慢混合分别解释。",
+          "setup": [
+            "把基础双状态场景另存L047_Timing，保留同一个Player、Locomotion控制器和参数来源。双击实际Controller，点击Idle→Walk的过渡箭头。",
+            "Inspector中找到Has Exit Time、Exit Time、Fixed Duration与Transition Duration；先在Clip的Inspector确认源片段长度和状态Speed=1。",
+            "打开Window > General > Console记录或用屏幕录像比较切换时点；每轮先让角色回到Idle，再改Moving，不在不同起点之间比较等待。"
+          ],
+          "purpose": "只改变一种时间规则，实测等待开始与持续混合并不相同。"
         }
       ],
       "pitfalls": [
@@ -375,7 +407,8 @@ window.COURSE_MODULES.push({
             "只要默认状态正确就完全没有影响"
           ],
           "answer": 1,
-          "explanation": "状态选择与片段引用都要正确，名称不能替代Motion。"
+          "explanation": "状态选择与片段引用都要正确，名称不能替代Motion。",
+          "scenario": "Animator Controller里建立名为Walk的状态，但Inspector的Motion字段为None，Project中虽有同名Walk.anim却未拖入。"
         },
         {
           "question": "Idle到Walk需要尽快响应时，应检查什么？",
@@ -386,7 +419,8 @@ window.COURSE_MODULES.push({
             "只把Moving从Bool改为Trigger"
           ],
           "answer": 0,
-          "explanation": "参数满足后仍可能等待退出条件，开始后也可能持续混合。"
+          "explanation": "参数满足后仍可能等待退出条件，开始后也可能持续混合。",
+          "scenario": "Idle和Walk的Motion都正确，Bool参数Moving已变化；希望按下移动后尽快切换，正在检查两状态之间的过渡配置。"
         },
         {
           "question": "Trigger能直接替代可靠业务消息队列吗？",
@@ -397,7 +431,8 @@ window.COURSE_MODULES.push({
             "能，只要每帧都再次SetTrigger"
           ],
           "answer": 1,
-          "explanation": "Trigger不自动提供编号、确认、重试和完整顺序，应另行定义关键动作请求规则。"
+          "explanation": "Trigger不自动提供编号、确认、重试和完整顺序，应另行定义关键动作请求规则。",
+          "scenario": "Controller有一个Trigger参数Attack。游戏还要求按顺序保存多个攻击请求、确认消费结果并在失败后重试。"
         }
       ],
       "references": [
@@ -433,8 +468,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "Walk状态名称正确但Motion为空，能靠参数Moving=true自动补上Walk片段吗？",
-          "answer": "不能。状态名与资源名没有这种自动关联，必须显式指定Motion并验证实际播放。"
-        }
+          "answer": "不能。状态名与资源名没有这种自动关联，必须显式指定Motion并验证实际播放。",
+          "scenario": "Animator里有名为Walk的状态，但该状态的Motion为空；Moving参数为Bool，运行时已变为true。尚未给Walk指定任何片段。"
+        },
+        "scenario": "Moving已经勾上，骑士还要等一下才开始走；停止后又迟迟不回Idle。这里用两个已验证片段和一个Bool参数搭最短状态图，单独看等待退出与开始后的混合。",
+        "purpose": "能自己完成Idle和Walk双向切换，切换慢时知道查参数、退出条件还是混合时长。"
       }
     },
     {
@@ -529,7 +567,13 @@ window.COURSE_MODULES.push({
             "分别让动画读取输入和实际速度，写出两种表现适合什么需求。",
             "检查方向参数是否在停止后保留最后一次有效朝向。"
           ],
-          "result": "一张参数来源与可见表现的选择表。"
+          "result": "一张参数来源与可见表现的选择表。",
+          "setup": [
+            "先完成第39课二维移动场景，用File > Save As另存L048_Parameters，保留Player的Rigidbody2D与TopDownKeyboardMotor，再加带BoxCollider2D的Wall。",
+            "按第47课准备有Float参数Speed的实际Controller；保存BodyAnimationAdapter.cs挂到独立Adapter对象，将Player的Rigidbody2D拖到Body，将实际Animator拖到Animator字段。",
+            "进入Play时双击该Controller，在Window > Animation > Animator的Parameters看Speed；同时在Inspector看刚体速度。本例代码读实际速度，不会自动创建Facing方向参数或读取输入长度。"
+          ],
+          "purpose": "用顶墙反例看见意图和结果的差别，再选择想要的表现。"
         },
         {
           "title": "验证阈值和平滑的代价",
@@ -539,7 +583,13 @@ window.COURSE_MODULES.push({
             "先关闭所有平滑，输入0.07、0.10、0.16、0.10、0.07的速度序列；分别比较单阈值和“进入0.15、退出0.08”的迟滞。再单独加参数阻尼，测量急停延迟，不同时叠加多个改动。",
             "关闭其他层后复测，再逐层恢复检查属性覆盖。"
           ],
-          "result": "阈值有单位，平滑有响应时间记录。"
+          "result": "阈值有单位，平滑有响应时间记录。",
+          "setup": [
+            "另存L048_Thresholds。先在纸上给速度0、0.05、0.1、0.2分别计算平方值，再填入Animator阈值，不急着加阻尼。",
+            "要手动输参数时先停用BodyAnimationAdapter，否则Update会覆写你的手工值。基本图只开Base Layer，其他层权重先设0。",
+            "迟滞和阻尼是这组要扩展的策略，现成脚本没有实现它们。先按正文两条阈值写清状态规则，再在自己的副本实现，记录参数归零与状态变化的时间。"
+          ],
+          "purpose": "从数值边界检查长度、平方长度和去抖规则，让平滑延迟成为可比较结果。"
         }
       ],
       "pitfalls": [
@@ -590,7 +640,8 @@ window.COURSE_MODULES.push({
             "开启插值后两者就永远相同"
           ],
           "answer": 0,
-          "explanation": "输入是意图，身体结果还受到接触和外部运动影响。"
+          "explanation": "输入是意图，身体结果还受到接触和外部运动影响。",
+          "scenario": "角色控制层保存移动输入，动画适配器还可以读取身体速度；你要比较“持续向墙输入”和“角色受到击退”两种情况。"
         },
         {
           "question": "将Speed改成SpeedSquared后能直接沿用数值阈值吗？",
@@ -601,7 +652,8 @@ window.COURSE_MODULES.push({
             "能，只要速度小于1"
           ],
           "answer": 1,
-          "explanation": "长度与平方长度的数值和量纲不同，应从原始速度条件推导阈值。"
+          "explanation": "长度与平方长度的数值和量纲不同，应从原始速度条件推导阈值。",
+          "scenario": "原来以普通速度0.1为边界控制Idle；现把动画参数改为速度向量的sqrMagnitude，并命名SpeedSquared。"
         },
         {
           "question": "阻尼通常带来什么取舍？",
@@ -612,7 +664,8 @@ window.COURSE_MODULES.push({
             "自动保证动画和物理步完全同步"
           ],
           "answer": 0,
-          "explanation": "平滑是有时间尺度的数据处理，应同时检查稳定性与响应速度。"
+          "explanation": "平滑是有时间尺度的数据处理，应同时检查稳定性与响应速度。",
+          "scenario": "身体速度在零附近有小幅波动，开发者给传到Animator的数值增加时间阻尼，其他条件保持。"
         }
       ],
       "references": [
@@ -648,8 +701,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "给参数增加阻尼后，急停回Idle变慢一定是错误吗？",
-          "answer": "不一定。平滑会引入响应延迟，应测量并判断是否符合需求，再检查是否多层重复平滑。"
-        }
+          "answer": "不一定。平滑会引入响应延迟，应测量并判断是否符合需求，再检查是否多层重复平滑。",
+          "scenario": "一个Speed参数来自实际速度，加入阻尼后目标值从5瞬间降为0，但显示参数仍缓慢下降；状态图与片段没有其他修改。"
+        },
+        "scenario": "角色顶墙仍原地跑步，或者实际已经停下，动画还慢慢滑回Idle。先把日志里的输入、身体速度与Animator参数分成三列，决定画面究竟要表达“用力想走”还是“身体在走”。",
+        "purpose": "能给动画参数选择清楚的数据来源、单位和阈值，遇到抖动时知道平滑会付出多少延迟。"
       }
     },
     {
@@ -741,9 +797,15 @@ window.COURSE_MODULES.push({
           "steps": [
             "先用一个脚步事件验证方法名、签名、对象与正常调用次数。",
             "在事件前后切换状态，再改变播放速度与循环，记录实际回报。",
-            "画出攻击A开始、A取消、攻击B开始、旧回报到达的四个时点。检查回报究竟携带了什么，特别说明“事件中读取当前编号”为什么不能单独证明来源；在未解决来源前，仅让本例事件播放脚步，不让它直接扣血。"
+            "画四个时点：第一轮攻击AttackOne开始、AttackOne取消、第二轮AttackTwo开始、可能来自旧轮次的回报到达。检查回报有没有可核验的来源；仅在回报里读取AttackTwo当前编号不能证明它来自AttackTwo。未解决来源时，保留本例脚步用途，不直接扣血。"
           ],
-          "result": "正常路径和过期回报都有解释的时序记录。"
+          "result": "正常路径和过期回报都有解释的时序记录。",
+          "setup": [
+            "用第46课能播放的Walk场景另存L049_Events。把一个短脚步WAV放进Assets/EngineLabs/Audio；主相机保留一个有效AudioListener。",
+            "保存FootstepEventReceiver.cs，挂到实际持有Animator的动画宿主对象；Inspector把脚步Clip拖到Step字段，AudioSource关闭Play On Awake，Spatial Blend先设0，排除距离影响。",
+            "选角色打开Window > Animation > Animation，选Walk片段，在脚落地时点添加Animation Event标记；点标记，在Inspector的Function选择Footstep。不是给方法名随便加括号或参数。"
+          ],
+          "purpose": "先让一个可听的事件完整工作，再故意中断检查回报时点，避免上来就把扣血绑到片段。"
         },
         {
           "title": "检查身体到底由谁移动",
@@ -753,7 +815,13 @@ window.COURSE_MODULES.push({
             "在测试场景逐个开关这些来源，观察重复移动或覆盖。",
             "选择一个明确身体移动者，验证事件表现不会偷偷修改物理根。"
           ],
-          "result": "一份身体移动责任与动画回报范围的说明。"
+          "result": "一份身体移动责任与动画回报范围的说明。",
+          "setup": [
+            "另存L049_Motion，用同一角色保留一个明确的运动脚本。选Animator，在Inspector记录Apply Root Motion；在Animation窗口展开轨道，看是否还有根Position曲线。",
+            "先关闭根运动及Position曲线，只验证脚步声，再在实验副本逐项开启。三维含根位移Clip才适合根运动对照；纯Sprite换帧若无根位移，不要为了“看到效果”任意补造结果。",
+            "若没有导航组件，本组只比较已有脚本与动画；将未安装导航包写入范围，而不是假装所有控制来源都已测试。"
+          ],
+          "purpose": "列出每个位置写入者，证明动画通知发声不应偷偷接管刚体运动。"
         }
       ],
       "pitfalls": [
@@ -804,7 +872,8 @@ window.COURSE_MODULES.push({
             "保证重要消息永远只到达一次"
           ],
           "answer": 0,
-          "explanation": "事件报告动画时点，关键业务还需要独立有效性和身份判断。"
+          "explanation": "事件报告动画时点，关键业务还需要独立有效性和身份判断。",
+          "scenario": "Walk片段有明确的脚落地画面，你希望在这一时点播放短脚步声；接收器只负责音效，不作伤害判定。"
         },
         {
           "question": "根运动与脚本同时写同一身体位置，主要风险是什么？",
@@ -815,7 +884,8 @@ window.COURSE_MODULES.push({
             "Unity必然自动按最佳顺序合并"
           ],
           "answer": 0,
-          "explanation": "不同来源不会天然理解彼此意图，应明确最终由谁推进身体。"
+          "explanation": "不同来源不会天然理解彼此意图，应明确最终由谁推进身体。",
+          "scenario": "同一个角色根同时启用了Animator根运动与一个每帧写位置的移动脚本；两者都试图决定同一个身体的位置。"
         },
         {
           "question": "动作被中断后，应怎样处理可能过期的回报？",
@@ -826,7 +896,8 @@ window.COURSE_MODULES.push({
             "把所有回报都延后到下一帧就一定正确"
           ],
           "answer": 1,
-          "explanation": "延后不能替代有效性校验。应明确动作取消后的处理规则。"
+          "explanation": "延后不能替代有效性校验。应明确动作取消后的处理规则。",
+          "scenario": "攻击动作AttackOne被取消，之后AttackTwo开始；一个可能来自旧动作的动画回报到达，关键逻辑需要先核验来源与有效阶段。"
         }
       ],
       "references": [
@@ -862,8 +933,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "脚步事件被正常触发，能证明角色此刻一定有地面接触吗？",
-          "answer": "不能。事件来自动画播放时点，地面事实仍需相应物理判断；可以结合状态决定是否播放脚步效果。"
-        }
+          "answer": "不能。事件来自动画播放时点，地面事实仍需相应物理判断；可以结合状态决定是否播放脚步效果。",
+          "scenario": "一个Walk片段播放到脚步标记时调用Footstep；角色此刻可能正在空中，但本例没有做地面接触查询。"
+        },
+        "scenario": "脚步声想贴着落脚画面播放，用固定计时器却经常对不上；把同一做法移到攻击扣血，又遇到动画被打断的问题。本课先用一个Footstep事件发声，再划清表现回报与关键动作的边界。",
+        "purpose": "能给动画加上可接收的表现事件，并知道何时需要额外身份与取消规则，避免旧事件修改新动作。"
       }
     },
     {
@@ -958,7 +1032,13 @@ window.COURSE_MODULES.push({
             "每个故障都填写三列：单帧显示、时间轴采样、Play运行。再指出最早失败的是数据、绑定还是运行选择；只修改这一处后重复三列验证，不用“重建后好了”代替定位证据。",
             "记录哪一步首次失败及实际引用，修复后复测，不重建全部资源。"
           ],
-          "result": "四份现象、证据与根因一一对应的诊断记录。"
+          "result": "四份现象、证据与根因一一对应的诊断记录。",
+          "setup": [
+            "先完成第46、47课正常Idle/Walk场景，用File > Save As保存L050_Baseline，再另存四个故障副本；保留原基准随时对照。",
+            "保存AnimatorConfigurationProbe.cs，选实际持有Animator的角色根，用Inspector > Add Component添加。Console入口Window > General > Console，运行时查看enabled、controller、layers、speed。",
+            "Window > Animation > Animation用于采样Clip，Window > Animation > Animator用于状态图；把两窗口的用途区分，再分别制造错帧、改Visual路径、空Motion、换错Controller四种单独故障。"
+          ],
+          "purpose": "用一次只留一个故障的副本，练习从最早失败的节点定位，不靠重建碰运气。"
         },
         {
           "title": "从实际引用完成回归",
@@ -968,7 +1048,13 @@ window.COURSE_MODULES.push({
             "启动后测试Idle、移动、停止、重复启停与脚底稳定，再重开场景。",
             "清理重复资产前确认依赖，保存最终Prefab和场景并再次运行。"
           ],
-          "result": "别人能按步骤重复得到同样结果的修复报告。"
+          "result": "别人能按步骤重复得到同样结果的修复报告。",
+          "setup": [
+            "选修好的Hierarchy角色，在Inspector点Animator的Controller引用，再在Animator图点当前状态，于Inspector的Motion找到实际Clip，最后展开Sprite轨道核对帧。",
+            "File > Save保存场景，关闭再用File > Open Scene重新打开同一场景。若角色来自Prefab，也检查实例Overrides与来源保存范围，不仅保存Clip。",
+            "清理Project中的Idle副本前，先记录仍被哪些Controller、Prefab或场景使用；本课探针不自动做安全删除，不能按文件名长短决定删哪个。"
+          ],
+          "purpose": "修复不只在这次Play有效，还要跨保存和重新打开保持实际引用正确。"
         }
       ],
       "pitfalls": [
@@ -1019,7 +1105,8 @@ window.COURSE_MODULES.push({
             "能，只要Clip启用Loop Time"
           ],
           "answer": 1,
-          "explanation": "Clip数据、绑定目标和运行状态选择都要连通。"
+          "explanation": "Clip数据、绑定目标和运行状态选择都要连通。",
+          "scenario": "Idle.anim时间轴有Sprite关键帧，但你还未检查运行角色的Animator、Controller和状态Motion是否指向该片段。"
         },
         {
           "question": "面对Idle和Idle1两个资源，优先怎样定位？",
@@ -1030,7 +1117,8 @@ window.COURSE_MODULES.push({
             "把两个都拖到同一状态就自动合并"
           ],
           "answer": 1,
-          "explanation": "先确认真实引用再修改，避免修到未使用的副本。"
+          "explanation": "先确认真实引用再修改，避免修到未使用的副本。",
+          "scenario": "Project同时有Idle.anim和Idle1.anim，均可预览；Hierarchy里实际角色使用哪一个还没有确认。"
         },
         {
           "question": "修复后最有价值的交付是什么？",
@@ -1041,7 +1129,8 @@ window.COURSE_MODULES.push({
             "保留更多Idle副本供以后尝试"
           ],
           "answer": 1,
-          "explanation": "复现和回归证据帮助判断根因，也能避免保存或重新导入后故障复发。"
+          "explanation": "复现和回归证据帮助判断根因，也能避免保存或重新导入后故障复发。",
+          "scenario": "你已修好角色Idle，准备把问题交给同学复核，希望对方能确认根因且在重开场景后重复成功。"
         }
       ],
       "references": [
@@ -1077,8 +1166,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "已经能在时间轴拖动看到换帧，能因此排除Controller配置错误吗？",
-          "answer": "不能。时间轴采样与运行时状态选择分开，仍要查看实际Animator、状态和Motion。"
-        }
+          "answer": "不能。时间轴采样与运行时状态选择分开，仍要查看实际Animator、状态和Motion。",
+          "scenario": "选中真实角色后，在Animation窗口拖时间轴能够换Sprite；尚未进入Play查看实际Animator的Controller、当前状态和Motion。"
+        },
+        "scenario": "你已经创建Idle、Idle1和两个Controller，预览似乎都能动，真正角色还是静止。接下来不再继续新建资源，而是从Hierarchy里的实际角色沿Controller、状态、Motion与Sprite逐层找断点。",
+        "purpose": "完成一份别人能照着重现的Idle修复记录；修好后重新打开场景也能确认没有修到未使用副本。"
       }
     }
   ]

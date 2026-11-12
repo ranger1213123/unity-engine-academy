@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-11-12T07:34:25.032Z",
-  "total": 176,
-  "ok": 176,
+  "checkedAt": "2026-11-12T08:32:30.245Z",
+  "total": 177,
+  "ok": 177,
   "failed": 0,
   "note": "HTTP和标题检查表示当时链接可用，不代表逐行人工核实了全部文档。excerpt是核对来源的短摘录；教材正文为原创解释。",
   "sources": [
@@ -29,6 +29,18 @@
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/working-with-gameobjects/gameobject-fundamentals/class-game-object",
       "title": "The GameObject class • GameObject fundamentals • 6000.3 • Unity Editor",
       "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Unity 6.3 User Manual GameObjects GameObject fundamentals The GameObject class Understand the fundamental Unity GameObject class, which you can interact with through the"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/Manual/class-TimeManager.html",
+      "label": "Time project settings reference",
+      "lessons": [
+        "l001"
+      ],
+      "checkedAt": "2026-11-12T08:32:26.658Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/unity-editor/editor-settings-reference/comp-manager-group/class-time-manager",
+      "title": "Time project settings reference • Project Settings reference • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Unity 6.3 User Manual Unity Editor interface Unity Editor settings reference Project Settings reference Time project settings reference Control the time settings for you"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/Manual/Coroutines.html",
@@ -1617,6 +1629,7 @@
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-fixedDeltaTime.html",
       "label": "Time.fixedDeltaTime",
       "lessons": [
+        "l001",
         "l021"
       ],
       "checkedAt": "2026-11-12T05:10:31.530Z",

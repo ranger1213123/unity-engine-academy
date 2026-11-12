@@ -75,7 +75,13 @@ window.COURSE_MODULES.push({
             "重新运行，记录日志；对组件执行 Reset，再记录区别。",
             "进入 Play Mode 改成 7，停止播放，观察编辑模式数值并解释。"
           ],
-          "result": "形成默认值、序列化值、重置值、临时运行值的对照表。"
+          "result": "形成默认值、序列化值、重置值、临时运行值的对照表。",
+          "setup": [
+            "新建独立空场景，用 GameObject > Create Empty 建 SpeedProbe；将 SerializedSpeedProbe.cs 保存到 Assets 并挂上。",
+            "打开 Window > General > Inspector 与 Console，先处于编辑模式，确认 Speed 显示5；用 Ctrl+S 保存场景。",
+            "组件的 Reset 位于其标题右侧 ⋮ 菜单。它会重置配置，所以只在本实验对象上操作，不对正式 Prefab 批量执行。"
+          ],
+          "purpose": "追踪同一个字段在添加、保存、源码修改和播放停止时的来源；每一步记录模式与保存状态，才能解释为什么数值回去了。"
         },
         {
           "title": "验证与容器边界",
@@ -86,7 +92,13 @@ window.COURSE_MODULES.push({
             "比较 Inspector 与保存后恢复的内容。",
             "为字典设计可序列化键值列表，不假定 Dictionary 自动保存。"
           ],
-          "result": "能依据规则预测结果，且记录不符合直觉的字段。"
+          "result": "能依据规则预测结果，且记录不符合直觉的字段。",
+          "setup": [
+            "复制 SpeedProbe 的实验场景，另存脚本副本且更改类名，避免改坏前一组已记录的样本。",
+            "在副本中分别增加普通属性、static 字段和带 SerializeField 的 private 字段；字段使用简单 float，先避免类型支持差异掩盖保存路径。",
+            "从 Inspector 输入负速度；再为普通代码调用准备一个可控入口，明确运行时调用和 Inspector 编辑是两条路径。"
+          ],
+          "purpose": "分开测试编辑器校验、运行入口校验和字段保存规则，找出“能在代码里读”与“Unity会保存”各自的条件。"
         }
       ],
       "pitfalls": [
@@ -136,7 +148,8 @@ window.COURSE_MODULES.push({
             "先显示 10，第一帧后自动变成 5"
           ],
           "answer": 0,
-          "explanation": "场景已经保存了这个组件的 3。修改初始化器不是修改所有历史组件配置的命令。"
+          "explanation": "场景已经保存了这个组件的 3。修改初始化器不是修改所有历史组件配置的命令。",
+          "scenario": "一个已有组件的 speed 字段在 Inspector 中改为3，且场景已经保存。之后只修改源码初始化器为10，不对这个组件执行 Reset。"
         },
         {
           "question": "Inspector 改字段是否保证调用同名属性的 setter？",
@@ -146,7 +159,8 @@ window.COURSE_MODULES.push({
             "只要 setter 是 public 就保证"
           ],
           "answer": 1,
-          "explanation": "默认 Inspector 编辑的是序列化字段，不会保证经过同名普通属性的 setter。"
+          "explanation": "默认 Inspector 编辑的是序列化字段，不会保证经过同名普通属性的 setter。",
+          "scenario": "组件用一个字段保存速度，另写一个普通 C# 属性并在 setter 校验。问题只讨论默认 Inspector 对序列化字段的编辑路径。"
         },
         {
           "question": "运行时输入还需要验证吗？",
@@ -156,7 +170,8 @@ window.COURSE_MODULES.push({
             "只需在保存场景时检查一次"
           ],
           "answer": 1,
-          "explanation": "外部存档或运行时调用可能带来编辑器没有检查过的数据，因此要在实际接收和使用前验证。"
+          "explanation": "外部存档或运行时调用可能带来编辑器没有检查过的数据，因此要在实际接收和使用前验证。",
+          "scenario": "组件在编辑器中写有 OnValidate；游戏运行后，还会从外部存档或普通方法接收新的速度值。"
         }
       ],
       "references": [
@@ -215,8 +230,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "只在 Speed 属性 setter 中禁止负数，能保证 Inspector 永远不能写入负数吗？",
-          "answer": "不能。默认 Inspector 按序列化字段编辑，不保证经过普通属性 setter；编辑器和运行时接收数据的位置都需要相应检查。"
-        }
+          "answer": "不能。默认 Inspector 按序列化字段编辑，不保证经过普通属性 setter；编辑器和运行时接收数据的位置都需要相应检查。",
+          "scenario": "假设组件有字段 speed，以及供代码访问的 Speed 属性；Speed 的 setter 检查负数。现在使用默认 Inspector，直接编辑被序列化的 speed 字段。"
+        },
+        "scenario": "一个空对象挂着 SerializedSpeedProbe。脚本最初写 speed=5，你在 Inspector 把这个对象改为3并保存场景。后来只把源码默认值改成10，再播放，日志仍不是你期待的新值。",
+        "purpose": "判断一个数究竟来自源码、场景保存值还是播放中的临时修改，解决“代码改了却没生效”的疑惑。"
       }
     },
     {
@@ -295,7 +313,13 @@ window.COURSE_MODULES.push({
             "记录第一个 Current 为 90、第二个为 100。",
             "更改模板数值并重新运行，解释读配置的时机。"
           ],
-          "result": "证明模板共享但运行生命独立。"
+          "result": "证明模板共享但运行生命独立。",
+          "setup": [
+            "将 CharacterDefinition.cs、CharacterHealth.cs 按各自文件名保存到 Assets，等 Console 没有编译错误。",
+            "在顶部 Assets > Create > Engine Lab > Character Definition 创建模板；这是 CharacterDefinition 的 CreateAssetMenu 添加的入口。选模板，将 Max Health 设100。",
+            "用 GameObject > Create Empty 分别建角色甲、角色乙，各挂 CharacterHealth，再把同一个模板拖到各自 Definition 字段。播放后从甲的组件 ⋮ 菜单选 Damage 10。"
+          ],
+          "purpose": "只伤害甲，再同时读取甲、乙与模板三个数，证明共享引用没有替你自动建立每个角色的独立状态。"
         },
         {
           "title": "错误设计的反证",
@@ -306,7 +330,13 @@ window.COURSE_MODULES.push({
             "恢复配置/状态分离，为模板缺失补充清晰日志。",
             "写出发布版保存生命时要保存的数据，不写资源对象本体。"
           ],
-          "result": "能解释串改成因与存档边界。"
+          "result": "能解释串改成因与存档边界。",
+          "setup": [
+            "复制模板与两份角色作故障实验，不修改上一组保留的正常资源。",
+            "在这个模板副本中自行增加 currentHealth，再让两个实验角色直接读写它；明确这是故意新增的错误设计，不是原示例已有行为。",
+            "开始前给模板副本保留一份文件备份；停止播放后仍检查资源值，别假定 ScriptableObject 的修改一定自动撤回。"
+          ],
+          "purpose": "让两人意外共用当前生命，亲眼看到串改来自同一对象；再恢复分离设计，并说明哪些值需要真正写进存档。"
         }
       ],
       "pitfalls": [
@@ -356,7 +386,8 @@ window.COURSE_MODULES.push({
             "每帧复制"
           ],
           "answer": 0,
-          "explanation": "两个引用默认指向同一资源对象。需要独立的变化状态时，应另外创建并保存，而不是期待引用自动深复制。"
+          "explanation": "两个引用默认指向同一资源对象。需要独立的变化状态时，应另外创建并保存，而不是期待引用自动深复制。",
+          "scenario": "角色甲与角色乙的 Inspector 都拖入同一个 CharacterDefinition 资源；没有调用 Instantiate 复制该资源。"
         },
         {
           "question": "适合保存在角色模板里的字段是？",
@@ -366,7 +397,8 @@ window.COURSE_MODULES.push({
             "本局临时连击数"
           ],
           "answer": 1,
-          "explanation": "最大生命和基础速度通常用于描述一类角色；剩余无敌时间和连击数属于某次运行的个体状态。"
+          "explanation": "最大生命和基础速度通常用于描述一类角色；剩余无敌时间和连击数属于某次运行的个体状态。",
+          "scenario": "模板用于描述一类角色，角色实例会经历受伤、无敌与连击。现在要决定哪些字段属于共享设计配置。"
         },
         {
           "question": "ScriptableObject 字段改变是否自动成为发布版存档？",
@@ -376,7 +408,8 @@ window.COURSE_MODULES.push({
             "只要 public 就可以"
           ],
           "answer": 1,
-          "explanation": "字段在内存里变化不等于已写入玩家存档；跨次启动恢复需要单独的保存和读取流程。"
+          "explanation": "字段在内存里变化不等于已写入玩家存档；跨次启动恢复需要单独的保存和读取流程。",
+          "scenario": "问题发生在独立构建的 Player 中，运行代码修改了内存里的 ScriptableObject 字段，但没有另写文件或其他持久化步骤。"
         }
       ],
       "references": [
@@ -435,8 +468,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "把 Current 也移到同一个模板，甲减 10 后乙读到多少？",
-          "answer": "如果乙直接读取该共享字段，它也读到 90，因为改变的是两者共同引用的那一份数据。"
-        }
+          "answer": "如果乙直接读取该共享字段，它也读到 90，因为改变的是两者共同引用的那一份数据。",
+          "scenario": "另做一个错误设计的副本：同一份模板中 currentHealth 初始为100，甲、乙都直接读取这个字段。只有甲执行一次减10操作，乙不做其他修改。"
+        },
+        "scenario": "场景里有两个敌人，命名为角色甲、角色乙；它们都引用同一份 CharacterDefinition 资源，最大生命为100。你希望改模板能统一新角色配置，但甲受伤时乙不应该跟着少血。",
+        "purpose": "看清一份共享资源和两份角色运行状态的区别，避免把每局生命误放进所有角色共用的模板。"
       }
     },
     {
@@ -476,7 +512,7 @@ window.COURSE_MODULES.push({
         {
           "title": "用两次运行证明不是缓存",
           "paragraphs": [
-            "实验先保存 hp=42，再在内存里把 hp 改成九，加载后应恢复为42。这证明当前流程能从保存内容还原。接着停止播放、重新进入，再执行加载；若仍恢复42，才排除了“只是同一次运行中的变量还没清掉”这种解释。",
+            "实验先保存 hp=42，再在内存里把 hp 改成9，加载后应恢复为42。接着停止Play、重新进入，再主动把SaveProbe的Hp设为9，最后执行加载并核对42。两次都从不同的当前值读回保存值，检查文件读取，而不是只看变量碰巧仍为42；这仍不等于关闭重开Unity进程。",
             "再备份文件，分别制造非法 JSON、合法 JSON 中的负数，以及文件缺失。每一种都记录加载前后 hp 和错误信息。失败时不要自动把坏文件覆盖成默认值，否则你会破坏诊断证据，也可能把仍可恢复的玩家数据抹掉。恢复默认应该是明确选择，而不是异常后的隐藏动作。"
           ]
         },
@@ -491,11 +527,19 @@ window.COURSE_MODULES.push({
       "code": {
         "title": "仅供桌面实验的小型 JSON 存档",
         "language": "csharp",
-        "filename": "JsonSaveProbe.cs",
-        "source": "using System;\nusing System.IO;\nusing UnityEngine;\n\npublic sealed class JsonSaveProbe : MonoBehaviour\n{\n    [Serializable] private sealed class SaveData { public int version = 1; public int hp; }\n    [SerializeField] private int hp = 100;\n    private string SavePath => Path.Combine(Application.persistentDataPath, \"engine-lab-save.json\");\n    [ContextMenu(\"Save Lab Data\")]\n    private void Save()\n    {\n        try { File.WriteAllText(SavePath, JsonUtility.ToJson(new SaveData { hp = hp }, true)); }\n        catch (IOException e) { Debug.LogError(e.Message, this); }\n        catch (UnauthorizedAccessException e) { Debug.LogError(e.Message, this); }\n    }\n    [ContextMenu(\"Load Lab Data\")]\n    private void Load()\n    {\n        if (!File.Exists(SavePath)) { Debug.Log(\"No save yet\", this); return; }\n        try\n        {\n            SaveData data = JsonUtility.FromJson<SaveData>(File.ReadAllText(SavePath));\n            if (data == null || data.version != 1 || data.hp < 0 || data.hp > 100)\n                throw new ArgumentException(\"Invalid save data\");\n            hp = data.hp;\n        }\n        catch (Exception e) when (e is IOException || e is ArgumentException || e is UnauthorizedAccessException)\n        { Debug.LogError($\"Load failed: {e.Message}\", this); }\n    }\n}",
         "explanation": [
-          "把组件挂在空对象上，播放中从组件菜单保存或加载。查看日志确认实际路径；示例只操作自己的 engine-lab-save.json。",
+          "把 JsonSaveProbe 挂在 SaveProbe 空对象上，播放中从组件菜单保存或加载。另将 SavePathProbe 挂到 PathProbe；它只在 Start 输出专用文件的完整路径，不读写存档。",
           "先验证数据内容和跨次读取。本例直接写文件，尚未实现中断恢复；临时文件、备份和迁移在下一课处理。"
+        ],
+        "files": [
+          {
+            "filename": "JsonSaveProbe.cs",
+            "source": "using System;\nusing System.IO;\nusing UnityEngine;\n\npublic sealed class JsonSaveProbe : MonoBehaviour\n{\n    [Serializable] private sealed class SaveData { public int version = 1; public int hp; }\n    [SerializeField] private int hp = 100;\n    private string SavePath => Path.Combine(Application.persistentDataPath, \"engine-lab-save.json\");\n    [ContextMenu(\"Save Lab Data\")]\n    private void Save()\n    {\n        try { File.WriteAllText(SavePath, JsonUtility.ToJson(new SaveData { hp = hp }, true)); }\n        catch (IOException e) { Debug.LogError(e.Message, this); }\n        catch (UnauthorizedAccessException e) { Debug.LogError(e.Message, this); }\n    }\n    [ContextMenu(\"Load Lab Data\")]\n    private void Load()\n    {\n        if (!File.Exists(SavePath)) { Debug.Log(\"No save yet\", this); return; }\n        try\n        {\n            SaveData data = JsonUtility.FromJson<SaveData>(File.ReadAllText(SavePath));\n            if (data == null || data.version != 1 || data.hp < 0 || data.hp > 100)\n                throw new ArgumentException(\"Invalid save data\");\n            hp = data.hp;\n        }\n        catch (Exception e) when (e is IOException || e is ArgumentException || e is UnauthorizedAccessException)\n        { Debug.LogError($\"Load failed: {e.Message}\", this); }\n    }\n}"
+          },
+          {
+            "filename": "SavePathProbe.cs",
+            "source": "using System.IO;\nusing UnityEngine;\n\npublic sealed class SavePathProbe : MonoBehaviour\n{\n    private void Start()\n        => Debug.Log($\"Engine Lab save file: {Path.Combine(Application.persistentDataPath, \"engine-lab-save.json\")}\", this);\n}"
+          }
         ]
       },
       "lab": [
@@ -503,23 +547,35 @@ window.COURSE_MODULES.push({
           "title": "验证跨运行恢复",
           "minutes": 60,
           "steps": [
-            "播放中通过 Inspector 把 hp 设为 42，从组件菜单保存，并记录日志给出的真实文件路径。",
+            "播放中在 Inspector 把 Hp 设为42，从组件菜单 Save Lab Data 保存；用 SavePathProbe 输出的完整路径确认 engine-lab-save.json 实际出现。",
             "把 hp 设为 9，再加载并确认恢复为 42。",
-            "停止播放后重新运行再加载，排除只是内存缓存的可能。",
+            "停止Play后重新进入Play，先在SaveProbe Inspector把Hp设为9，再从JsonSaveProbe组件菜单Load Lab Data加载，核对回到42。此处只是第二次Play，不是重开Unity或重启独立Player。",
             "阅读 JSON 并解释每一个字段的意义。"
           ],
-          "result": "保存与恢复证据包含一次完全重启。"
+          "result": "文件已写入磁盘，第二次Play仍能读回保存值；本组没有据此声称已验证完整进程重启。",
+          "setup": [
+            "新建空场景，用 GameObject > Create Empty 建 SaveProbe，挂 JsonSaveProbe.cs；打开 Window > General > Console 与 Inspector。",
+            "分别保存两个 .cs 文件；用 GameObject > Create Empty 创建 PathProbe 并挂 SavePathProbe。按 Ctrl+S 保存场景，进入 Play 后到 Console 搜索 Engine Lab save file，复制日志冒号后的完整文件路径，在文件资源管理器中打开其所在目录。复制路径后立即清空Console搜索框，并确认普通日志、警告、错误三类显示按钮开启，再执行保存/加载，避免筛选遮住后续提示。",
+            "播放后选 SaveProbe，把 Hp 设42；保存与加载都从该脚本组件 ⋮ 菜单进入，名称分别为 Save Lab Data、Load Lab Data。只操作这个专用实验文件。"
+          ],
+          "purpose": "先在同次Play把42改为9再读回，再停止并进入第二次Play读取；这检查保存值能跨两次Play恢复，不把它等同于关闭重开Unity或Player。"
         },
         {
           "title": "主动制造失败",
           "minutes": 60,
           "steps": [
-            "先备份自己的实验 JSON，再故意破坏语法，从组件菜单加载并记录错误及角色原值。",
+            "先备份实验JSON并清空Console搜索框，暂时移走主文件，加载并记录No save yet；恢复备份，再故意破坏语法，记录Load failed错误与当前SaveProbe组件的Hp。",
             "把 hp 改为负数并再次加载。",
             "确认失败没有半途改变当前 hp，也没有自动覆盖损坏文件。",
             "设计位置和道具标识的验证规则，但先不实现庞大的背包。"
           ],
-          "result": "建立缺失、损坏、非法值三种恢复行为表。"
+          "result": "建立缺失、损坏、非法值三种恢复行为表。",
+          "setup": [
+            "先完成正常保存，使用路径探针给出的目录找到 engine-lab-save.json，复制成独立备份。开始失败实验前清空Console搜索框，开启普通日志与错误显示，确认能看到No save yet或Load failed。",
+            "播放前记录当前 Hp，例如设为9；用文本编辑器只修改实验 JSON，不修改脚本与其他存档文件。",
+            "按顺序准备文件不存在、JSON语法损坏、JSON合法但hp为负三种副本；每次只替换一种，加载入口仍为组件菜单 Load Lab Data。"
+          ],
+          "purpose": "把文件系统失败、语法失败和数据规则失败分开；每种都核对加载前后Hp，检查是否发生半恢复或误覆盖原文件。"
         }
       ],
       "pitfalls": [
@@ -538,7 +594,7 @@ window.COURSE_MODULES.push({
         "brief": "把存档扩展为版本、位置和生命，拒绝非法浮点数，保留加载前状态直到全部验证通过。",
         "deliverables": [
           "存档 DTO 与验证函数",
-          "一次重启恢复记录",
+          "一次进程重启恢复记录：保存实验存档后停止Play、保存场景、关闭Unity；从Unity Hub重开同一工程和实验场景，进入Play，把Hp临时设为与存档不同的值，再加载核对。与前组只重复Play的记录分开。",
           "三个失败样本及处理结果"
         ],
         "rubric": [
@@ -569,7 +625,8 @@ window.COURSE_MODULES.push({
             "所有静态字段"
           ],
           "answer": 1,
-          "explanation": "先保存恢复必需的数据，才能逐字段验证含义。DTO 是专门装这些数据的对象，而不是整个场景的替身。"
+          "explanation": "先保存恢复必需的数据，才能逐字段验证含义。DTO 是专门装这些数据的对象，而不是整个场景的替身。",
+          "scenario": "目标只是在下次启动恢复角色生命、位置等必要信息。DTO 指专门装这些恢复数据的普通数据对象，不负责创建整个场景。"
         },
         {
           "question": "JsonUtility 能否据此当作任意 JSON 树查询器？",
@@ -579,7 +636,8 @@ window.COURSE_MODULES.push({
             "只有编辑器不能"
           ],
           "answer": 1,
-          "explanation": "JsonUtility 根据预先定义的数据结构工作。任意 JSON 节点查询需要符合该需求的其他表示或工具。"
+          "explanation": "JsonUtility 根据预先定义的数据结构工作。任意 JSON 节点查询需要符合该需求的其他表示或工具。",
+          "scenario": "你已预先定义保存类的字段，并调用 JsonUtility 在类与 JSON 文本之间转换。现在考虑能否继续用它任意查找未知层级的 JSON 节点。"
         },
         {
           "question": "读取成功之后应该立即逐字段修改场景吗？",
@@ -589,7 +647,8 @@ window.COURSE_MODULES.push({
             "先删除旧存档"
           ],
           "answer": 1,
-          "explanation": "整份候选通过检查后再应用，可避免前几个字段已改、后一个字段出错的半恢复状态。"
+          "explanation": "整份候选通过检查后再应用，可避免前几个字段已改、后一个字段出错的半恢复状态。",
+          "scenario": "文件已读成文本并解析为候选对象。候选有生命和其他待检查字段，当前场景角色仍保持原来的状态。"
         }
       ],
       "references": [
@@ -648,8 +707,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "把文件里的 hp 改成 -10，是否应先赋给角色再报错？",
-          "answer": "不应。先验证候选数据，确认整份可以接受再应用。拒绝加载时应保留当前角色状态和原文件证据。"
-        }
+          "answer": "不应。先验证候选数据，确认整份可以接受再应用。拒绝加载时应保留当前角色状态和原文件证据。",
+          "scenario": "当前角色 hp=9，文件候选数据中的 hp 被手动改为-10，其他字段保持能解析的格式。你准备执行加载流程，但尚未把候选赋给角色。"
+        },
+        "scenario": "角色生命字段叫 hp。你要保存 hp=42，随后把内存里的值改成9；如果重新加载能恢复42，还要进一步证明不是同一次运行的变量恰好没被清掉。",
+        "purpose": "把保存与读取分成能逐项检查的步骤，并让损坏文件在被拒绝时保留当前角色状态。"
       }
     },
     {
@@ -703,11 +765,19 @@ window.COURSE_MODULES.push({
       "code": {
         "title": "纯数据迁移：可重复、可测试",
         "language": "csharp",
-        "filename": "SaveMigration.cs",
-        "source": "using System;\n\n[Serializable]\npublic sealed class VersionedSave\n{\n    public int version = 1;\n    public int coins;\n    public int currency;\n}\n\npublic static class SaveMigration\n{\n    public static VersionedSave ToCurrent(VersionedSave input)\n    {\n        if (input == null || input.version < 1 || input.version > 2)\n            throw new ArgumentException(\"Unsupported save version\");\n        int value = input.version == 1 ? input.coins : input.currency;\n        if (value < 0) throw new ArgumentException(\"Negative currency\");\n        return new VersionedSave { version = 2, currency = value, coins = 0 };\n    }\n}",
         "explanation": [
           "这是普通 C# 数据工具，不挂到对象上。在上一课解析出候选数据后调用，再验证迁移结果。",
           "函数不发奖励、不创建场景对象、不写文件，也不改变输入对象。文件替换和备份由另一个明确步骤处理。"
+        ],
+        "files": [
+          {
+            "filename": "SaveMigration.cs",
+            "source": "using System;\n\n[Serializable]\npublic sealed class VersionedSave\n{\n    public int version = 1;\n    public int coins;\n    public int currency;\n}\n\npublic static class SaveMigration\n{\n    public static VersionedSave ToCurrent(VersionedSave input)\n    {\n        if (input == null || input.version < 1 || input.version > 2)\n            throw new ArgumentException(\"Unsupported save version\");\n        int value = input.version == 1 ? input.coins : input.currency;\n        if (value < 0) throw new ArgumentException(\"Negative currency\");\n        return new VersionedSave { version = 2, currency = value, coins = 0 };\n    }\n}"
+          },
+          {
+            "filename": "SaveMigrationProbe.cs",
+            "source": "using System;\nusing UnityEngine;\n\npublic sealed class SaveMigrationProbe : MonoBehaviour\n{\n    [ContextMenu(\"Run Migration Samples\")]\n    private void Run()\n    {\n        Check(new VersionedSave { version = 1, coins = 12 });\n        Check(new VersionedSave { version = 2, currency = 20 });\n        Check(new VersionedSave { version = 99, currency = 30 });\n    }\n    private void Check(VersionedSave input)\n    {\n        try\n        {\n            VersionedSave first = SaveMigration.ToCurrent(input);\n            VersionedSave second = SaveMigration.ToCurrent(first);\n            Debug.Log($\"Input v{input.version}: coins={input.coins}, currency={input.currency}; first v{first.version}, currency={first.currency}; repeated currency={second.currency}\", this);\n        }\n        catch (ArgumentException error)\n        {\n            Debug.LogWarning($\"Input v{input.version} rejected: {error.Message}\", this);\n        }\n    }\n}"
+          }
         ]
       },
       "lab": [
@@ -720,7 +790,13 @@ window.COURSE_MODULES.push({
             "对已迁移输出再次迁移，确认没有新增货币。",
             "输入未来版本 99，确认拒绝且不覆盖原文件。"
           ],
-          "result": "得到迁移输入输出表与重复执行证据。"
+          "result": "得到迁移输入输出表与重复执行证据。",
+          "setup": [
+            "把 SaveMigration.cs 保存到 Assets；它是普通静态数据工具，不要尝试拖到 GameObject 当组件。",
+            "将第二个文件 SaveMigrationProbe.cs 保存到 Assets，挂到空对象 MigrationProbe。打开 Window > General > Console，从组件 ⋮ 菜单执行 Run Migration Samples；此调用器只操作内存对象，不会覆盖任何文件。",
+            "调用器已给出 v1/coins=12、v2/currency=20、未来 v99 三组输入，并对每份有效输出再次迁移。先在纸上预测每条日志，再展开 Console 对照输入版本、首次结果与重复结果。"
+          ],
+          "purpose": "比较旧格式、新格式和未来格式的处理，再把已迁移输出再次送入流程，检查重试是否意外发放货币。"
         },
         {
           "title": "纸面事务与故障注入",
@@ -731,7 +807,13 @@ window.COURSE_MODULES.push({
             "在每阶段主动抛出异常，重启后观察主文件与备份。",
             "写出恢复优先级以及何时显示保存成功。"
           ],
-          "result": "每个失败点都有确定的恢复路径。"
+          "result": "每个失败点都有确定的恢复路径。",
+          "setup": [
+            "先只画流程，不调用示例迁移函数去写文件，因为它本来不包含文件操作。",
+            "在专用实验目录建立 main.json、临时文件与备份，保存一份已知可读的旧主文件；只使用自己生成的数据。",
+            "自行补写桌面保存驱动，把“写临时文件、校验、替换”分开，并在每段前后留一个可控抛异常位置。开始前写明目标系统和文件操作API。"
+          ],
+          "purpose": "在不同阶段中断后重新读取，确认何时仍用旧主文件、何时能用备份；中断点是为了覆盖不同提交状态，并非重复次数越多就越可靠。"
         }
       ],
       "pitfalls": [
@@ -781,7 +863,8 @@ window.COURSE_MODULES.push({
             "把版本号直接改小"
           ],
           "answer": 1,
-          "explanation": "旧程序不能保证理解未来结构。保留原文件，才能让兼容它的版本或恢复工具继续处理。"
+          "explanation": "旧程序不能保证理解未来结构。保留原文件，才能让兼容它的版本或恢复工具继续处理。",
+          "scenario": "程序只声明支持存档版本1与2，打开的文件却标为99。题目没有提供版本99到当前格式的转换规则。"
         },
         {
           "question": "临时文件方案保证所有平台断电不丢数据吗？",
@@ -791,7 +874,8 @@ window.COURSE_MODULES.push({
             "只要扩展名是 tmp 就保证"
           ],
           "answer": 1,
-          "explanation": "临时文件能减少部分覆盖风险，但原子替换、落盘和断电恢复依赖目标平台，必须分别验证。"
+          "explanation": "临时文件能减少部分覆盖风险，但原子替换、落盘和断电恢复依赖目标平台，必须分别验证。",
+          "scenario": "桌面保存原型先写临时文件、校验，再替换主文件。现在要评价这一设计对不同平台与断电情景能承诺的范围。"
         },
         {
           "question": "迁移最易测试的形式是？",
@@ -801,7 +885,8 @@ window.COURSE_MODULES.push({
             "依赖当前场景顺序"
           ],
           "answer": 0,
-          "explanation": "纯数据输入输出方便固定样本、重复转换和比较结果；场景生成等副作用会使重试难以保证。"
+          "explanation": "纯数据输入输出方便固定样本、重复转换和比较结果；场景生成等副作用会使重试难以保证。",
+          "scenario": "旧格式用coins，新格式用currency。你想用固定输入重复验证转换，迁移期间不需要角色、敌人或当前场景。"
         }
       ],
       "references": [
@@ -860,8 +945,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "读到 version=99，能把版本号改成 2 后覆盖吗？",
-          "answer": "不能。当前程序不知道未来格式的含义，应保护原文件并报告不兼容；改数字并不能完成数据转换。"
-        }
+          "answer": "不能。当前程序不知道未来格式的含义，应保护原文件并报告不兼容；改数字并不能完成数据转换。",
+          "scenario": "当前程序只支持存档格式1和2。现在收到一个 version=99 的文件；你不知道未来格式的字段含义，原文件尚未被修改。"
+        },
+        "scenario": "第一版存档用 coins 存货币，旧玩家文件是 version=1、coins=12。新版改用 currency，支持的最新格式是version=2。你要转换旧文件，却不能每次重试都再给玩家加12枚。",
+        "purpose": "把“解释旧格式”和“正式提交新文件”拆开，让迁移可重复检查，保存中途失败时也知道找哪份有效数据。"
       }
     },
     {
@@ -916,11 +1004,19 @@ window.COURSE_MODULES.push({
       "code": {
         "title": "列表是保存源，字典是派生索引",
         "language": "csharp",
-        "filename": "StatTable.cs",
-        "source": "using System;\nusing System.Collections.Generic;\nusing UnityEngine;\n\n[CreateAssetMenu(menuName = \"Engine Lab/Stat Table\")]\npublic sealed class StatTable : ScriptableObject, ISerializationCallbackReceiver\n{\n    [Serializable] private struct Entry { public string key; public float value; }\n    [SerializeField] private List<Entry> entries = new List<Entry>();\n    private Dictionary<string, float> lookup = new Dictionary<string, float>();\n    private void Rebuild()\n    {\n        lookup.Clear();\n        foreach (Entry item in entries)\n            if (!string.IsNullOrEmpty(item.key)) lookup[item.key] = item.value;\n    }\n    public bool TryGet(string key, out float value) => lookup.TryGetValue(key, out value);\n    public void OnBeforeSerialize() { }\n    public void OnAfterDeserialize() => Rebuild();\n    private void OnEnable() => Rebuild();\n}",
         "explanation": [
           "创建资源后在 Inspector 添加条目，再用读取脚本调用 TryGet。重复键按后项覆盖，实际需求也可改为拒绝重复。",
           "回调只转换自有数据，不操作场景。按示例声明的重新启用或加载时机验证修改后的查询结果，不假定列表改动会自动通知所有缓存。"
+        ],
+        "files": [
+          {
+            "filename": "StatTable.cs",
+            "source": "using System;\nusing System.Collections.Generic;\nusing UnityEngine;\n\n[CreateAssetMenu(menuName = \"Engine Lab/Stat Table\")]\npublic sealed class StatTable : ScriptableObject, ISerializationCallbackReceiver\n{\n    [Serializable] private struct Entry { public string key; public float value; }\n    [SerializeField] private List<Entry> entries = new List<Entry>();\n    private Dictionary<string, float> lookup = new Dictionary<string, float>();\n    private void Rebuild()\n    {\n        lookup.Clear();\n        foreach (Entry item in entries)\n            if (!string.IsNullOrEmpty(item.key)) lookup[item.key] = item.value;\n    }\n    public bool TryGet(string key, out float value) => lookup.TryGetValue(key, out value);\n    public void OnBeforeSerialize() { }\n    public void OnAfterDeserialize() => Rebuild();\n    private void OnEnable() => Rebuild();\n}"
+          },
+          {
+            "filename": "StatTableReadProbe.cs",
+            "source": "using UnityEngine;\n\npublic sealed class StatTableReadProbe : MonoBehaviour\n{\n    [SerializeField] private StatTable table;\n    [SerializeField] private string key = \"speed\";\n    private void Start() => Read();\n    [ContextMenu(\"Read Configured Key\")]\n    private void Read()\n    {\n        if (table == null) { Debug.LogWarning(\"Assign a StatTable first.\", this); return; }\n        bool found = table.TryGet(key, out float value);\n        Debug.Log($\"Key={key}; found={found}; value={value}\", this);\n    }\n}"
+          }
         ]
       },
       "lab": [
@@ -933,7 +1029,13 @@ window.COURSE_MODULES.push({
             "加入重复 speed，验证后者覆盖策略并记录。",
             "增加未知键读取，确认由调用者处理 false。"
           ],
-          "result": "序列化源和派生缓存的职责清晰。"
+          "result": "序列化源和派生缓存的职责清晰。",
+          "setup": [
+            "把 StatTable.cs 保存到 Assets，等待编译；从 Assets > Create > Engine Lab > Stat Table 新建资源。此入口由本课 CreateAssetMenu 添加。",
+            "选资源，在 Inspector 的 Entries 列表加入speed=3、damage=10并保存。",
+            "将 StatTableReadProbe.cs 挂到场景空对象 Reader，将资源拖入 Table、Key 先填 speed。播放会读取一次，也可从组件菜单 Read Configured Key 触发；再分别填 damage 与 missing 比较。修改资源后保存并重新加载工程或资源，再验证重建结果，不假定字典实时跟随 Inspector。"
+          ],
+          "purpose": "分别观察保存的条目和重新建立的查询结果，再加重复键、未知键，明确谁决定数值及失败怎样返回。"
         },
         {
           "title": "判断托管引用必要性",
@@ -944,7 +1046,13 @@ window.COURSE_MODULES.push({
             "在独立实验类中保存派生类型并重新加载，观察是否保留。",
             "设计类型改名时的历史资源回归检查清单。"
           ],
-          "result": "能够为一种具体需求选择最简单的表示。"
+          "result": "能够为一种具体需求选择最简单的表示。",
+          "setup": [
+            "先在纸上定义一个普通Rule基类，以及DamageRule和HealRule两个具体数据类，分别只保存伤害或治疗数值，不调用场景API。",
+            "准备独立实验宿主，分别试普通内联字段、共享ScriptableObject资源、SerializeReference托管字段；代码由你为比较补写，不改前组StatTable。",
+            "为每种表示保存一份历史资源，记录字段声明类型、实际类型，以及两个字段是否原本指向同一对象；保存再重新加载后分别核对。"
+          ],
+          "purpose": "把“内容相同”“实际类型相同”和“真是同一个对象”分开比较，为当前需求选表示，而不是把SerializeReference当万能开关。"
         }
       ],
       "pitfalls": [
@@ -994,7 +1102,8 @@ window.COURSE_MODULES.push({
             "把任意场景层级自动转换成存档"
           ],
           "answer": 0,
-          "explanation": "它用于符合条件的托管对象多态与引用表示，不能因此推导它会自动保存任意场景对象。"
+          "explanation": "它用于符合条件的托管对象多态与引用表示，不能因此推导它会自动保存任意场景对象。",
+          "scenario": "普通托管规则字段可以存不同派生规则，且可能有两个字段指向同一个规则对象。题目讨论这类托管数据的保存表示，不是场景对象存档。"
         },
         {
           "question": "序列化回调里能否随意 Instantiate GameObject？",
@@ -1004,7 +1113,8 @@ window.COURSE_MODULES.push({
             "只要先检查 Application.isPlaying 就保证可以"
           ],
           "answer": 1,
-          "explanation": "相关回调可能不在主线程；Instantiate 等场景操作不应随意放进去。"
+          "explanation": "相关回调可能不在主线程；Instantiate 等场景操作不应随意放进去。",
+          "scenario": "ISerializationCallbackReceiver 的回调用来处理数据序列化。现在考虑在其中创建一个真正的场景 GameObject，而不是只重建普通字典。"
         },
         {
           "question": "列表和字典都能被外部独立修改时，首要问题是？",
@@ -1014,7 +1124,8 @@ window.COURSE_MODULES.push({
             "先把列表和字典都标成 public"
           ],
           "answer": 1,
-          "explanation": "两份数据都能独立改变，就必须解决保存和读取以谁为准。先确定来源，另一份作为可以重建的缓存。"
+          "explanation": "两份数据都能独立改变，就必须解决保存和读取以谁为准。先确定来源，另一份作为可以重建的缓存。",
+          "scenario": "同一参数表保留条目列表和运行字典。外部代码能分别修改两者，目前没有规定哪一份用于保存，也没有同步步骤。"
         }
       ],
       "references": [
@@ -1073,8 +1184,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "能在反序列化回调里顺便创建角色吗？",
-          "answer": "不应这样做。回调可能不在主线程，场景也未必准备好；先转换自有数据，再在适合的运行阶段创建对象。"
-        }
+          "answer": "不应这样做。回调可能不在主线程，场景也未必准备好；先转换自有数据，再在适合的运行阶段创建对象。",
+          "scenario": "一个实现 ISerializationCallbackReceiver 的资源刚恢复数据，OnAfterDeserialize 被调用。你想在里面顺便 Instantiate 一个角色；还没确认执行线程和场景准备情况。"
+        },
+        "scenario": "你想在 Inspector 配置 speed=3、damage=10，运行时按名字快速读取。StatTable 把条目列表作为要保存的内容，加载后建立 Dictionary 查询；这两种表示看着像有两份数据，却不能各自随意改。",
+        "purpose": "先决定保存来源与重建时机，再判断是否真的需要托管多态或共享身份，避免为了“支持字典”造出不同步状态。"
       }
     }
   ]

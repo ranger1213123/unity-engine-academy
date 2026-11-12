@@ -98,7 +98,13 @@ window.COURSE_MODULES.push({
             "进入播放后，依次启用脚本、激活对象或激活父对象。每次操作前清楚记下对象状态，保存这一轮日志。",
             "让所有对象都更新过至少一帧，再分别禁用和启用脚本。统计各自的 Awake、Start 和 OnEnable 次数，解释为什么不同。"
           ],
-          "result": "重新启用同一实例会重复 OnEnable；Awake、Start 不会因为重新勾选而重复。尚未执行过 Start 的实例要另行判断。"
+          "result": "重新启用同一实例会重复 OnEnable；Awake、Start 不会因为重新勾选而重复。尚未执行过 Start 的实例要另行判断。",
+          "purpose": "用四种初始状态，拆开对象活动与组件启用两个条件。",
+          "setup": [
+            "新场景创建 ActiveEnabled、ActiveDisabled、InactiveSelf、InactiveParentChild 四个空对象，分别添加 InitializationProbe；最后一个放到另建的 InactiveParent 下。",
+            "非播放时保留第一组全开；第二组仅关脚本勾选；第三组关对象活动勾选；第四组仅关父对象活动勾选，子对象和脚本自身勾选保留。",
+            "Window > General > Console 关闭 Collapse，清空后 Play。日志含对象名、回调名、frame；每次只改变一组状态。"
+          ]
         },
         {
           "title": "把同一个探针放到运行时创建的对象上",
@@ -108,7 +114,13 @@ window.COURSE_MODULES.push({
             "在简单生成脚本中分别 Instantiate 两个版本，在调用前后打印标记。之后激活未激活的实例，比较日志出现在哪一步。",
             "让另一个探针始终运行，记录生成时的帧号。说明为什么旧对象已经执行过 Update，新对象却才开始 Awake。"
           ],
-          "result": "回调围绕每个实例自己的初始化发生，运行中新建对象不会让整场游戏重新初始化。"
+          "result": "回调围绕每个实例自己的初始化发生，运行中新建对象不会让整场游戏重新初始化。",
+          "purpose": "观察运行中创建时，新旧对象各自处于生命周期哪个阶段。",
+          "setup": [
+            "将挂探针的活动空对象拖到 Assets/Prefabs，命名 InitActive；复制资源做 InitInactive，在 Prefab 编辑中取消其根对象活动勾选并保存。",
+            "另建 Spawner 及生成脚本，提供两个 GameObject 模板槽，分别拖入两个 Project 资源。在同一测试方法中为 Instantiate 前、返回后及激活前后加标签日志。",
+            "原场景再放一个名为 Existing 的活动探针；运行后再触发生成。模板中不挂生成脚本，避免递归实例化。"
+          ]
         }
       ],
       "pitfalls": [
@@ -159,7 +171,8 @@ window.COURSE_MODULES.push({
             "只要父对象未激活也一定立即执行"
           ],
           "answer": 0,
-          "explanation": "本题已明确对象处于活动层级。组件的 enabled 决定是否启用，但不会阻止这个条件下的 Awake。若整个对象未激活，需另行判断。"
+          "explanation": "本题已明确对象处于活动层级。组件的 enabled 决定是否启用，但不会阻止这个条件下的 Awake。若整个对象未激活，需另行判断。",
+          "scenario": "非播放时，场景对象 ProbeA 及它的全部父级都活动；它的 InitializationProbe 组件勾选关闭。随后进入 Play，讨论初始化阶段。"
         },
         {
           "question": "角色已执行过 Start，禁用后重新启用同一个脚本，会再次执行 Start 吗？",
@@ -170,7 +183,8 @@ window.COURSE_MODULES.push({
             "不会，因为 OnEnable 也不会再执行"
           ],
           "answer": 1,
-          "explanation": "实例已经执行过 Start，再次启用只会进入新的启用过程。OnEnable 可以重复，Start 不会重复。"
+          "explanation": "实例已经执行过 Start，再次启用只会进入新的启用过程。OnEnable 可以重复，Start 不会重复。",
+          "scenario": "ProbeA 在本次 Play 中已经打印过 Start。接着只取消并重新勾选同一个组件，没有停止 Play、删除对象或添加新组件。"
         },
         {
           "question": "A 必须使用 B 初始化后的数据，怎样安排更可靠？",
@@ -181,7 +195,8 @@ window.COURSE_MODULES.push({
             "让 A 随机等待一帧，不检查 B 的状态"
           ],
           "answer": 2,
-          "explanation": "把依赖写成明确的准备和传递步骤，才能说明 A 为什么此时可以读取。Hierarchy 排列和一次运行的顺序都不能提供这个保证。"
+          "explanation": "把依赖写成明确的准备和传递步骤，才能说明 A 为什么此时可以读取。Hierarchy 排列和一次运行的顺序都不能提供这个保证。",
+          "scenario": "A 是显示组件，B 是配置组件；A 需要 B 完成准备后的角色名。两者最初都在 Awake 中工作，没有其他机制表达准备完成或传递顺序。"
         }
       ],
       "references": [
@@ -221,7 +236,8 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "如果在 Start 尚未执行时就禁用脚本，之后再启用同一个实例，Start 会不会执行？",
-          "answer": "会在之后满足启用条件、第一次 Update 之前执行。题目明确这个实例还没执行过 Start；仅说“第一次 Update 之前禁用”不够，因为 Start 可能已经执行。关键是此前是否执行过 Start，而不是已经勾选过几次。"
+          "answer": "会在之后满足启用条件、第一次 Update 之前执行。题目明确这个实例还没执行过 Start；仅说“第一次 Update 之前禁用”不够，因为 Start 可能已经执行。关键是此前是否执行过 Start，而不是已经勾选过几次。",
+          "scenario": "这是一个明确的时序假设：某实例的 Awake 已完成，但 Start 尚未发生；它的组件随后被禁用，对象仍活动。稍后重新启用，期间没有销毁或更换这个实例。"
         },
         "comparison": {
           "caption": "同一个实例首次初始化时，分别检查对象活动状态与组件启用状态",
@@ -251,7 +267,9 @@ window.COURSE_MODULES.push({
               "符合条件后、第一次Update前调用"
             ]
           ]
-        }
+        },
+        "scenario": "同一个 InitializationProbe 实例会经历首次初始化、开始工作、暂时停用、再次启用。我们让四个对象分别处于“对象活动且脚本启用”“对象活动但脚本禁用”“对象自身未激活”“父对象未激活”，用对象名与回调日志比较。",
+        "purpose": "知道准备自身引用、开始监听与一次性启动分别适合放在哪里，并能从初始状态预测回调。"
       }
     },
     {
@@ -345,7 +363,13 @@ window.COURSE_MODULES.push({
             "按同一个 frame 值整理 Update、LateUpdate 与 stepsSinceLast。解释出现0或大于1时，各代表什么。",
             "改变目标帧率或固定步长后重新运行，只改一个条件。记录实际帧耗时；目标帧率不一定就是实际帧率。"
           ],
-          "result": "固定步次数可以在不同帧之间变化；LateUpdate 所在阶段晚于本轮 Update。"
+          "result": "固定步次数可以在不同帧之间变化；LateUpdate 所在阶段晚于本轮 Update。",
+          "purpose": "把真实日志按 frame 整理，观察固定步与画面帧的关系。",
+          "setup": [
+            "创建空对象 LoopHost，添加 LoopPhaseProbe；Console 关闭 Collapse，清空旧记录。代码只打印渲染帧号小于20的部分，想重测应停止再 Play。",
+            "Edit > Project Settings > Time 中记录原值，设 Fixed Timestep=0.02、Time Scale=1。",
+            "对照先只把 Fixed Timestep 改成0.01。若另测目标帧率，需同时记录实际帧耗时与垂直同步设置，不能把目标值当实测；实验结束恢复原设置。"
+          ]
         },
         {
           "title": "用单位解释两种移动结果",
@@ -355,7 +379,13 @@ window.COURSE_MODULES.push({
             "在不同实际帧率下比较相同时间内的移动距离。将预测距离、实际距离和测量时间放在同一张表里。",
             "画出“保存输入方向→固定步读取→运动计算→相机跟随”的流程，标明持续方向与一次跳跃请求的不同处理方式。"
           ],
-          "result": "以每帧常量移动会依赖帧率；速度换算位移才需要乘时间，接口本身接收速度时不应再次换算。"
+          "result": "以每帧常量移动会依赖帧率；速度换算位移才需要乘时间，接口本身接收速度时不应再次换算。",
+          "purpose": "用同一时间内的距离识别每帧常量移动的问题。",
+          "setup": [
+            "创建 FrameMover、TimeMover 两个无刚体空对象，起点分开以便观察；各写一个简单 Update 组件，前者每帧 position 加 Vector3.right*0.1f，后者加 Vector3.right*5f*Time.deltaTime。",
+            "每轮从相同起点新 Play，记录开始/结束时间及 Position X；不要用日志行数冒充经过秒数。",
+            "使用较低实际帧率的对照时记录耗时，保持移动公式与测试总时间一致；流程图中的跳跃请求只是数据流设计，本例没有现成跳跃组件。"
+          ]
         }
       ],
       "pitfalls": [
@@ -406,7 +436,8 @@ window.COURSE_MODULES.push({
             "必定等于这一帧的输入事件数"
           ],
           "answer": 1,
-          "explanation": "固定步按累积的游戏时间安排。画面帧的长度与固定步长不同，次数自然不必一一对应。"
+          "explanation": "固定步按累积的游戏时间安排。画面帧的长度与固定步长不同，次数自然不必一一对应。",
+          "scenario": "一个有效组件定义了 FixedUpdate。项目使用通常自动固定更新，timeScale=1，画面帧间隔不保证等于 Fixed Timestep；问题问某一个渲染帧中的调用数。"
         },
         {
           "question": "要把刚体速度设为5单位/秒，使用 linearVelocity 时通常怎样做？",
@@ -417,7 +448,8 @@ window.COURSE_MODULES.push({
             "同时每帧用Transform再移动一次"
           ],
           "answer": 0,
-          "explanation": "linearVelocity 接收速度。乘时间后得到的是位移，已不是这个接口所要表达的数值。"
+          "explanation": "linearVelocity 接收速度。乘时间后得到的是位移，已不是这个接口所要表达的数值。",
+          "scenario": "角色沿世界右方运动，目标速度为5单位/秒。准备给 Rigidbody.linearVelocity 赋值，而不是直接给 Transform.position 加位移。"
         },
         {
           "question": "把相机跟随放在 LateUpdate，自动保证了什么？",
@@ -428,7 +460,8 @@ window.COURSE_MODULES.push({
             "目标即使从未移动也会自动平滑"
           ],
           "answer": 2,
-          "explanation": "LateUpdate 提供的是阶段关系，不能代替所有脚本之间的依赖安排，也不会自动添加平滑效果。"
+          "explanation": "LateUpdate 提供的是阶段关系，不能代替所有脚本之间的依赖安排，也不会自动添加平滑效果。",
+          "scenario": "目标的移动发生在 Update，相机读取目标位置的代码改到 LateUpdate；场景中还可能存在别的 LateUpdate 脚本与插值配置。"
         }
       ],
       "references": [
@@ -472,8 +505,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "画面仍在刷新，但 timeScale 设为0，普通自动固定步还会按原来频率推进吗？",
-          "answer": "不会。在通常的自动模拟设置下，缩放后的游戏时间不再前进，普通 FixedUpdate 也不再推进；Update 仍可以继续调用，因此暂停菜单仍能处理界面。"
-        }
+          "answer": "不会。在通常的自动模拟设置下，缩放后的游戏时间不再前进，普通 FixedUpdate 也不再推进；Update 仍可以继续调用，因此暂停菜单仍能处理界面。",
+          "scenario": "组件与对象保持有效，项目使用通常的自动物理模拟；Time Scale 从1改为0，Fixed Timestep 保持0.02，应用仍处于运行并刷新画面的状态。"
+        },
+        "scenario": "画面帧按实际耗时推进，固定步按设定游戏时间间隔推进。先假设 timeScale=1、固定步0.02秒、每帧约1/60秒，并从没有剩余累计时间开始手算；LoopPhaseProbe 再记录真实运行中两次 Update 之间的固定步数。",
+        "purpose": "学会按阶段连接输入、物理与显示，并按单位区分“每秒速度”和“本步位移”。"
       }
     },
     {
@@ -567,7 +603,13 @@ window.COURSE_MODULES.push({
             "分别从全新运行开始测试关闭GameObject和Destroy。保留对象名字、操作步骤和日志，不把不同运行的结果混在一起。",
             "在已经禁用后再销毁对象，核对实际Release次数。逐句说明为什么第二次进入清理函数没有再次归还。"
           ],
-          "result": "对象可以经历多次启用；每次注册有对应释放，而重复的退出路径不会多归还一次。"
+          "result": "对象可以经历多次启用；每次注册有对应释放，而重复的退出路径不会多归还一次。",
+          "purpose": "通过获得/释放计数，区分停用与销毁并检查重复清理。",
+          "setup": [
+            "创建名为 RegistrationHost 的空对象并添加 RegistrationProbe，Console 关闭 Collapse。",
+            "组件禁用用其标题旁勾选，整个对象失活用 Inspector 顶部勾选；销毁对照可在 Play 中选中 Hierarchy 对象再 Delete，停止 Play 后会恢复编辑场景。",
+            "每种操作从新 Play 开始，先保存本轮 Acquire，再执行操作并统计 Release；不要把上一轮记录并入当前计数。"
+          ]
         },
         {
           "title": "检查场景退出与应用退出",
@@ -577,7 +619,13 @@ window.COURSE_MODULES.push({
             "增加暂停、失焦和退出日志，在编辑器中测试能实际触发的情况；给这些结果明确标上“编辑器观察”。",
             "列出目标平台的正常退出、后台停留和强制终止测试，记录重要存档发生在哪个检查点，以及哪些路径尚未执行。"
           ],
-          "result": "清理回调与保存策略各有用途；编辑器中的一次成功保存不能证明所有终止情况都可靠。"
+          "result": "清理回调与保存策略各有用途；编辑器中的一次成功保存不能证明所有终止情况都可靠。",
+          "purpose": "识别场景结束、编辑器失焦与真实平台退出的不同证据范围。",
+          "setup": [
+            "File > New Scene 建两个简单场景，分别 Save As 到 Assets/Scenes，命名 ExitA、ExitB；只在 ExitA 放 RegistrationProbe。",
+            "File > Build Profiles 打开构建配置，在 Scene List 加入两个保存场景；另建切场景测试组件，调用 UnityEngine.SceneManagement.SceneManager.LoadScene(\"ExitB\")。",
+            "暂停/失焦/退出日志需在单独观察脚本中定义 OnApplicationPause(bool)、OnApplicationFocus(bool)、OnApplicationQuit；原 RegistrationProbe 没有这些回调或存档实现。目标设备未构建运行的项目标为待测。"
+          ]
         }
       ],
       "pitfalls": [
@@ -628,7 +676,8 @@ window.COURSE_MODULES.push({
             "只要没有调用Destroy就不会发生OnDisable"
           ],
           "answer": 0,
-          "explanation": "禁用会结束这次启用过程，字段与实例通常仍然保留。销毁是另一种结束方式，两者不能混为同一个动作。"
+          "explanation": "禁用会结束这次启用过程，字段与实例通常仍然保留。销毁是另一种结束方式，两者不能混为同一个动作。",
+          "scenario": "对象和父级都活动，脚本原本 enabled=true。运行中仅执行该脚本 enabled=false，没有 Destroy 或重新创建操作。"
         },
         {
           "question": "唯一一次重要存档放在OnDestroy，能保证覆盖系统直接终止程序吗？",
@@ -639,7 +688,8 @@ window.COURSE_MODULES.push({
             "能，改成OnApplicationQuit就覆盖所有情况"
           ],
           "answer": 1,
-          "explanation": "系统直接终止进程时，退出或销毁回调不一定被执行。幂等清理解决的是重复操作，也不能保证代码获得执行机会。"
+          "explanation": "系统直接终止进程时，退出或销毁回调不一定被执行。幂等清理解决的是重复操作，也不能保证代码获得执行机会。",
+          "scenario": "游戏在整局中只计划保存一次，位置是对象的 OnDestroy；目标设备可能被系统直接结束进程，无法预先保证回调执行。"
         },
         {
           "question": "同一份注册先经OnDisable再经OnDestroy处理，怎样实现幂等释放？",
@@ -650,7 +700,8 @@ window.COURSE_MODULES.push({
             "第二次调用时直接重新注册"
           ],
           "answer": 2,
-          "explanation": "第一次改变真实状态，后续调用看到已经释放便安全返回。这样多条退出路径可以使用同一个方法。"
+          "explanation": "第一次改变真实状态，后续调用看到已经释放便安全返回。这样多条退出路径可以使用同一个方法。",
+          "scenario": "RegistrationProbe 当前 registered=true；同一对象先停用再销毁，因此 Release 可能从两个回调先后进入，需要确保同一份注册只实际释放一次。"
         }
       ],
       "references": [
@@ -690,8 +741,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "从未激活过的 GameObject 被销毁，能否把唯一的清理工作都托付给 OnDestroy？",
-          "answer": "不能。官方说明 OnDestroy 只会对曾经处于活动状态的 GameObject 调用。需要在其他地方获得资源时，也在那里规定可靠的释放路径，不能假定所有对象都会收到这个回调。"
-        }
+          "answer": "不能。官方说明 OnDestroy 只会对曾经处于活动状态的 GameObject 调用。需要在其他地方获得资源时，也在那里规定可靠的释放路径，不能假定所有对象都会收到这个回调。",
+          "scenario": "一个 GameObject 从创建起从未进入过活动层级，它可能已经由外部管理者关联了资源。现在外部管理者要销毁它，想把唯一释放入口放在该对象的 OnDestroy。"
+        },
+        "scenario": "RegistrationProbe 在 OnEnable 将 registered 标为 true，并打印 Acquire；OnDisable 与 OnDestroy 都进入 Release。它用布尔状态模拟一份注册，不实际分配资源。我们比较同一实例停用、再次启用和最终销毁。",
+        "purpose": "为每次获得安排相应结束路径，并把可重复清理与可靠存档分别设计。"
       }
     },
     {
@@ -786,7 +840,13 @@ window.COURSE_MODULES.push({
             "分别取消脚本勾选和关闭GameObject。两次从干净运行开始，记录哪个操作后循环仍然输出，哪个停止。",
             "恢复完整的OnDisable代码，再重复两种操作。解释这次结果中哪些来自引擎默认行为，哪些来自你主动写下的停止逻辑。"
           ],
-          "result": "仅禁用组件不会默认停止已有协程；示例通过显式清理，让它按预期随组件停用结束。"
+          "result": "仅禁用组件不会默认停止已有协程；示例通过显式清理，让它按预期随组件停用结束。",
+          "purpose": "先保留原例作基线，再区分主动停止与引擎默认停止。",
+          "setup": [
+            "创建 CoroutineHost，添加完整 CoroutineLifetimeProbe，Time Scale=1，Console 关闭 Collapse。",
+            "为对照复制脚本并同步改文件名与类名；只在对照版移除 OnDisable 中 StopCoroutine 调用，避免与完整示例同挂一个对象造成双循环。",
+            "在每次新 Play 中分别操作组件勾选和对象活动勾选，先明确本轮挂的是原版还是对照版；保存后等编译再测。"
+          ]
         },
         {
           "title": "检查重复启用与任务身份",
@@ -796,7 +856,13 @@ window.COURSE_MODULES.push({
             "在副本中把停止参数暂改成新创建的ReportLoop()迭代器，观察它为什么无法代表旧任务；随后恢复保存的句柄。",
             "增加一个会在等待期间被销毁的目标。恢复后先检查Unity对象是否有效，再决定继续或退出，保存两种情况的日志。"
           ],
-          "result": "停止需要正确的任务身份；等待后的访问也需要重新检查目标，不能只信任等待前的状态。"
+          "result": "停止需要正确的任务身份；等待后的访问也需要重新检查目标，不能只信任等待前的状态。",
+          "purpose": "用重复开关检查任务身份和等待后目标状态。",
+          "setup": [
+            "回到完整原例。十轮开关是检查累积问题的测试数量，每次开后至少等到一条 Tick，再关闭；不是协程必须运行十轮。",
+            "错误句柄对照只在另存的实验脚本中做，先移除原组件再添加对照；随后恢复正确代码。",
+            "目标寿命实验需另外添加 [SerializeField] Transform target 并从 Hierarchy 拖入 Target；等待后读取前判断 target==null。原例只打印自身名字，没有外部目标字段。"
+          ]
         }
       ],
       "pitfalls": [
@@ -847,7 +913,8 @@ window.COURSE_MODULES.push({
             "会，并在再次启用时自动从原等待处恢复"
           ],
           "answer": 0,
-          "explanation": "仅禁用MonoBehaviour不会自动停止已有协程。若设计上要停止，就明确调用相应停止方法。"
+          "explanation": "仅禁用MonoBehaviour不会自动停止已有协程。若设计上要停止，就明确调用相应停止方法。",
+          "scenario": "脚本已启动一个协程并正在等待；OnDisable 没有写 StopCoroutine，且只把脚本 enabled 改为 false，GameObject 仍活动。"
         },
         {
           "question": "想在OnEnable开始一个等待流程，怎样写符合回调规则？",
@@ -858,7 +925,8 @@ window.COURSE_MODULES.push({
             "将Update移进Start后，所有对象都会等它完成"
           ],
           "answer": 1,
-          "explanation": "Start支持协程形式；Awake、OnEnable不能直接作为这种协程回调。OnEnable可以明确启动另一个IEnumerator方法。"
+          "explanation": "Start支持协程形式；Awake、OnEnable不能直接作为这种协程回调。OnEnable可以明确启动另一个IEnumerator方法。",
+          "scenario": "你需要每次组件启用都开始一个可等待流程，同时保留正确的 MonoBehaviour 回调签名；考虑从 OnEnable 触发它。"
         },
         {
           "question": "旧的延迟伤害影响了池中已经重新使用的角色，应该补上什么判断？",
@@ -869,7 +937,8 @@ window.COURSE_MODULES.push({
             "只保证所有角色名字不同"
           ],
           "answer": 2,
-          "explanation": "对象池复用的是同一实例。对象还存在并不能证明它仍属于发出旧请求的那一轮，需要取消旧任务或核对轮次。"
+          "explanation": "对象池复用的是同一实例。对象还存在并不能证明它仍属于发出旧请求的那一轮，需要取消旧任务或核对轮次。",
+          "scenario": "延迟伤害的目标没有被销毁，而是归还对象池后又代表新一轮角色。旧请求恢复时仍指向同一个 GameObject。"
         }
       ],
       "references": [
@@ -909,7 +978,8 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "把StopCoroutine(task)换成StopCoroutine(ReportLoop())，为什么不能据此停止旧任务？",
-          "answer": "再次调用ReportLoop()会创建另一个迭代器对象，它不是先前正在运行的那个。需要保存启动时的Coroutine句柄，或使用与启动时对应的同一个迭代器身份。"
+          "answer": "再次调用ReportLoop()会创建另一个迭代器对象，它不是先前正在运行的那个。需要保存启动时的Coroutine句柄，或使用与启动时对应的同一个迭代器身份。",
+          "scenario": "task 保存先前 StartCoroutine(ReportLoop()) 的返回句柄。现在组件要停用，准备把 StopCoroutine(task) 换为 StopCoroutine(ReportLoop())；后者会再次调用迭代器方法。"
         },
         "comparison": {
           "caption": "已有协程的默认停止规则；如果脚本自己写了停止代码，还要叠加考虑该代码",
@@ -940,7 +1010,9 @@ window.COURSE_MODULES.push({
               "需要时由代码重新启动"
             ]
           ]
-        }
+        },
+        "scenario": "CoroutineLifetimeProbe 的循环先打印 Tick，再等待一个游戏秒。原示例会在 OnDisable 主动停止保存的 task；另做一个临时去掉停止调用的副本，才可观察“仅禁用组件”的引擎默认规则。",
+        "purpose": "逐个辨认启动、等待、恢复与停止，避免把协程当线程，或每次启用都叠加旧循环。"
       }
     },
     {
@@ -1022,7 +1094,8 @@ window.COURSE_MODULES.push({
         "source": "using UnityEngine;\npublic sealed class ExplicitInitProbe : MonoBehaviour\n{\n    [SerializeField] Transform target;\n    bool ready;\n    public bool Init(Transform value)\n    {\n        if (value == null) return false;\n        target = value;\n        ready = true;\n        return true;\n    }\n    void Start()\n    {\n        if (!ready && !Init(target)) Debug.LogError(\"Initialization failed.\", this);\n    }\n    void Update()\n    {\n        if (!ready || target == null) return;\n        Debug.DrawLine(transform.position, target.position, Color.green);\n    }\n}",
         "explanation": [
           "先在Inspector把target指向另一个对象。Start会在尚未准备时尝试Init；初始化成功后，Update才会画出两对象之间的绿线。",
-          "运行时创建者也可直接调用Init并检查返回值。ready只是本组件记录的状态，不会自动代表其他组件、资源或整场游戏都已准备完毕。"
+          "运行时创建者也可直接调用Init并检查返回值。ready只是本组件记录的状态，不会自动代表其他组件、资源或整场游戏都已准备完毕。",
+          "Debug.DrawLine 是调试显示：在 Play 中打开 Scene 并开启 Gizmos，两个对象位置不同才容易看出线段；它不是自动添加 LineRenderer，也不保证 Game 画面显示。"
         ]
       },
       "lab": [
@@ -1034,7 +1107,13 @@ window.COURSE_MODULES.push({
             "让A改为通过明确的初始化方法接收B已准备的数据，由一个启动器顺序调用。交换Hierarchy位置并复制实例，再观察结果。",
             "故意漏赋其中一个引用，检查启动器是否先报告失败、停止依赖它的行为。记录失败前是否已有工作需要撤销。"
           ],
-          "result": "正确性来自明确的数据准备与传递，不再依赖某次恰好出现的跨对象回调顺序。"
+          "result": "正确性来自明确的数据准备与传递，不再依赖某次恰好出现的跨对象回调顺序。",
+          "purpose": "把 A 的读取条件从偶然顺序改成明确数据传递。",
+          "setup": [
+            "先做完整代码的可视基线：创建 InitHost、Target 两个空对象，把 ExplicitInitProbe 挂 InitHost，将 Target 从 Hierarchy 拖到 Target 槽；两对象位置分开。Play 后在 Scene 开启 Gizmos 看绿线。",
+            "A/B 对照是另写的两个小组件：B 保存字符串 Name 并在 Awake 赋值，A 保存 B 引用并在 Awake 读 Name；在 Inspector 为 A 指定 B，不使用未定义的全局查找。",
+            "重构时另建启动器，先调用 B 的 Prepare，再把结果传 A.Init；删除 A/B 中旧的竞争读取路径，避免两套入口同时工作。"
+          ]
         },
         {
           "title": "比较类型排序与运行时创建",
@@ -1044,7 +1123,13 @@ window.COURSE_MODULES.push({
             "添加两个相同脚本类型的实例，说明类型之间的排序为什么不能提供这两个实例的身份顺序。",
             "分别从活动与未激活Prefab创建对象，在Instantiate前后和Init中打印标记。记录Awake、OnEnable与外部赋值各发生在哪一步。"
           ],
-          "result": "执行顺序只解决其规定范围内的排序；外部参数何时可用、异步准备何时结束，仍需明确安排。"
+          "result": "执行顺序只解决其规定范围内的排序；外部参数何时可用、异步准备何时结束，仍需明确安排。",
+          "purpose": "确认类型排序的适用范围，并检查运行时赋值发生在何时。",
+          "setup": [
+            "两个不同测试脚本各在同一个 Awake 阶段打印类型名；给它们不同 DefaultExecutionOrder。到 Edit > Project Settings > Script Execution Order 记录项目中的覆盖设置。",
+            "复制其中一种脚本的对象，改名 SameA、SameB；类型之间的顺序与两个同类实例之间的身份顺序分开记录。",
+            "运行时对照准备活动和根对象未激活的两个 Prefab 资源，生成脚本在 Instantiate 前后及 Init 前后打印标记；调用 Init 的前提与返回值必须记录。"
+          ]
         }
       ],
       "pitfalls": [
@@ -1095,7 +1180,8 @@ window.COURSE_MODULES.push({
             "会，只要它们各自只执行一次Awake"
           ],
           "answer": 1,
-          "explanation": "这里安排的是脚本类型在相应事件阶段的顺序。不能由此推断同类型两个实例按对象名排列。"
+          "explanation": "这里安排的是脚本类型在相应事件阶段的顺序。不能由此推断同类型两个实例按对象名排列。",
+          "scenario": "同一种脚本类型有两个实例，分别名为 First、Second。只为该类型设置 DefaultExecutionOrder，没有编写按实例身份排列的启动器。"
         },
         {
           "question": "服务的Awake启动异步加载后返回，使用者此时应该怎样判断资源可用？",
@@ -1106,7 +1192,8 @@ window.COURSE_MODULES.push({
             "只检查服务GameObject是否活动"
           ],
           "answer": 0,
-          "explanation": "Awake返回与异步加载完成是两件事。存在和活动状态都不能证明资源已加载。"
+          "explanation": "Awake返回与异步加载完成是两件事。存在和活动状态都不能证明资源已加载。",
+          "scenario": "B.Awake 发出异步资源加载请求后返回；A 需要该资源内容，而不是只需要 B 的引用。尚未收到完成通知。"
         },
         {
           "question": "创建活动Prefab后才给外部字段赋值，为什么OnEnable仍可能看到空？",
@@ -1117,7 +1204,8 @@ window.COURSE_MODULES.push({
             "因为公开字段永远不能在运行时赋值"
           ],
           "answer": 2,
-          "explanation": "创建活动实例会触发相应初始化。若回调依赖创建者尚未传入的数据，就要调整职责或采用先配置、后激活的明确流程。"
+          "explanation": "创建活动实例会触发相应初始化。若回调依赖创建者尚未传入的数据，就要调整职责或采用先配置、后激活的明确流程。",
+          "scenario": "创建者执行 GameObject copy=Instantiate(activePrefab)，下一行才给副本外部字段赋值；该活动模板组件在 OnEnable 读取这个字段。"
         }
       ],
       "references": [
@@ -1157,8 +1245,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "若服务的Awake启动了资源加载，并且Awake已经返回，能否据此断定资源也准备好了？",
-          "answer": "不能。同步的Awake已经结束，只说明这一段代码返回了；异步加载可能仍在进行。使用者需要检查明确的就绪状态或等待完成通知，不能只看回调是否发生过。"
-        }
+          "answer": "不能。同步的Awake已经结束，只说明这一段代码返回了；异步加载可能仍在进行。使用者需要检查明确的就绪状态或等待完成通知，不能只看回调是否发生过。",
+          "scenario": "服务 B 的 Awake 发起一个异步资源请求，尚未收到完成通知就返回。使用者 A 此时知道 B 对象存在，并知道 Awake 调用结束，但未检查加载结果。"
+        },
+        "scenario": "概念例中的 B 准备角色名字，A 显示名字，因此 A 依赖 B 的数据。代码例换成更小的依赖：ExplicitInitProbe 需要有效 Transform target，Init 返回是否接受成功，Update 只在已准备且目标有效时画绿线。",
+        "purpose": "把“谁先调用”还原成“哪份数据何时可用”，再用明确调用或就绪条件表达依赖。"
       }
     }
   ]

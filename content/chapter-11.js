@@ -1,4 +1,4 @@
-// 学者修订：补足具体推导、实验起点及教学边界。
+// 语境修订：题目背景、实验准备与学习用途。
 window.COURSE_MODULES.push({
   "id": "m11",
   "number": 11,
@@ -104,7 +104,13 @@ window.COURSE_MODULES.push({
             "放近远两个同尺寸箱子，分别改变透视FOV和相机距离。",
             "记录哪些变化影响构图，哪些改变不同深度的相对大小。"
           ],
-          "result": "包含数值预测与实际画面范围的投影记录。"
+          "result": "包含数值预测与实际画面范围的投影记录。",
+          "setup": [
+            "新建L051_Camera。Hierarchy选Main Camera，在Inspector的Camera将Projection设Orthographic、Size=5、Position=(0,0,-10)、Rotation=(0,0,0)。用Square或网格标出Y=-5、5。",
+            "Window > General > Game打开Game窗口，在上方宽高比下拉分别选16:9、4:3；若未列出，可添加相应比例。每轮只改比例，不移动相机。",
+            "透视对照另存场景，Camera > Projection改Perspective；用GameObject > 3D Object > Cube放两个相同Cube在不同深度，保持都在裁剪范围内。"
+          ],
+          "purpose": "用标尺把相机参数换成可见范围，不用缩放整个关卡补镜头。"
         },
         {
           "title": "验证转换与跟随",
@@ -114,7 +120,13 @@ window.COURSE_MODULES.push({
             "固定相机观察刚体，再加入LateUpdate跟随与身体插值，分步定位抖动。",
             "改变分辨率和相机朝向，检查中心与边缘的转换是否仍正确。"
           ],
-          "result": "坐标空间、深度条件和跟随时点均明确。"
+          "result": "坐标空间、深度条件和跟随时点均明确。",
+          "setup": [
+            "保存CameraPlaneProbe.cs到Assets/EngineLabs，选Main Camera从Inspector > Add Component添加。初始相机(0,0,-10)朝+Z，脚本目标平面固定为世界Z=0。",
+            "Scene右上打开Gizmos；这段现成代码只从视口中心发射并画黄线，不读取鼠标、不自动生成四角标记，也没有ScreenToWorldPoint调用。先验证中心，再在实验副本扩展。",
+            "跟随部分需要你按本节说明另写LateUpdate读取目标的脚本；先用静止相机比较身体Interpolation，确认基线后再接跟随。不要同时保留第二个相机写入者。"
+          ],
+          "purpose": "用明确平面定位屏幕点，并通过分步开关定位跟随抖动来自身体还是相机。"
         }
       ],
       "pitfalls": [
@@ -165,7 +177,8 @@ window.COURSE_MODULES.push({
             "始终等于窗口像素高度"
           ],
           "answer": 1,
-          "explanation": "size是半高度，完整垂直范围约为2 × 5。"
+          "explanation": "size是半高度，完整垂直范围约为2 × 5。",
+          "scenario": "Camera为Orthographic，Size=5，完整视口且没有额外裁切；问题问沿相机上下方向的可见世界高度。"
         },
         {
           "question": "屏幕二维点能唯一确定三维世界点吗？",
@@ -176,7 +189,8 @@ window.COURSE_MODULES.push({
             "能，只要使用透视投影"
           ],
           "answer": 1,
-          "explanation": "同一屏幕点对应一条视线，必须用平面、深度或碰撞等约束选择世界点。"
+          "explanation": "同一屏幕点对应一条视线，必须用平面、深度或碰撞等约束选择世界点。",
+          "scenario": "一台透视相机得到屏幕点(x,y)，没有给相对相机深度、目标平面或可命中Collider。"
         },
         {
           "question": "相机后退与增大FOV总是完全等价吗？",
@@ -187,7 +201,8 @@ window.COURSE_MODULES.push({
             "是，只要Near和Far保持不变"
           ],
           "answer": 1,
-          "explanation": "透视关系会随相机位置改变，不能只看一个目标大小相似就认为整体相同。"
+          "explanation": "透视关系会随相机位置改变，不能只看一个目标大小相似就认为整体相同。",
+          "scenario": "近处和远处各有一个相同大小的箱子；比较相机沿后方移动与只增大Field of View两种操作对它们相对大小的影响。"
         }
       ],
       "references": [
@@ -223,8 +238,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "把鼠标二维坐标直接当作世界XY，所有相机下都正确吗？",
-          "answer": "不正确。屏幕像素与世界单位不同，且缺少深度条件，应使用适当坐标转换或射线求交。"
-        }
+          "answer": "不正确。屏幕像素与世界单位不同，且缺少深度条件，应使用适当坐标转换或射线求交。",
+          "scenario": "鼠标只提供屏幕二维像素坐标，相机位置和朝向任意；你想在一个三维场景放置世界标记，尚未给定深度或目标平面。"
+        },
+        "scenario": "Scene里能看见箱子，Game里却消失；或者把鼠标坐标直接给角色，位置一下跑远。先用一台相机、几个已知坐标的物体，把世界单位、屏幕像素与相机深度一层层对应。",
+        "purpose": "能算出正交镜头实际看多宽，并给屏幕点补上明确平面，减少相机调整和点击定位时的试错。"
       }
     },
     {
@@ -314,7 +332,13 @@ window.COURSE_MODULES.push({
             "复制成左右并排的同Sprite样本，在同一Global Light 2D下仅比较兼容Lit与Unlit材质；然后另开一组改灯范围和目标Sorting Layers，分别记录哪种改变让响应消失。",
             "对每个不变亮的情况指出断开的环节，恢复后再次验证。"
           ],
-          "result": "能区分Shader能力、灯范围与Renderer配置。"
+          "result": "能区分Shader能力、灯范围与Renderer配置。",
+          "setup": [
+            "在已有URP二维项目建立L052_Light场景，不在Built-in项目直接照搬。Edit > Project Settings > Graphics记录URP Asset；在该资源的Renderer List和Camera的Renderer选择确认使用2D Renderer。",
+            "用GameObject > 2D Object > Sprites > Square建两个并排样本。通过各SpriteRenderer的Material字段选择兼容URP二维的Sprite-Lit-Default与Sprite-Unlit-Default，不混用三维Lit Shader。",
+            "从GameObject > Light > Global Light 2D创建全局二维灯；若菜单不存在，先检查URP/2D Renderer安装配置，而非搜一个同名普通Light。Inspector中的Target Sorting Layers包含测试样本所在层。"
+          ],
+          "purpose": "先得到同一光源下Lit与Unlit的可见差异，缩小“灯不亮”的检查范围。"
         },
         {
           "title": "验证多部件遮挡",
@@ -324,7 +348,13 @@ window.COURSE_MODULES.push({
             "加入Sorting Group并确定组内顺序，再统一脚底参考点进行外部排序。",
             "加入半透明阴影与粒子，用明暗背景复测，并对比Gizmos与真实Game内容。"
           ],
-          "result": "一组包含角色、环境与透明效果的明确排序规则。"
+          "result": "一组包含角色、环境与透明效果的明确排序规则。",
+          "setup": [
+            "新建两个空角色KnightOne、KnightTwo，各建Body和Weapon两个Sprite子对象；Inspector中让它们在同一Sorting Layer，给组内Order设明确不同值。",
+            "先不加Sorting Group，移动KnightTwo让它和KnightOne交叠。随后在两个角色根用Inspector > Add Component添加Sorting Group，保持子Renderer配置不变比较。",
+            "用脚底空对象作为外部排序参考；半透明阴影是显示样本，不需要同时增加物理Collider。Scene与Game分别查看，Gizmos开关只用于分辨编辑器辅助图标。"
+          ],
+          "purpose": "把角色内部绘制顺序与两个角色之间的顺序分开，再检查透明效果和编辑器图标。"
         }
       ],
       "pitfalls": [
@@ -375,7 +405,8 @@ window.COURSE_MODULES.push({
             "一定，只要Order in Layer足够高"
           ],
           "answer": 1,
-          "explanation": "是否受光首先是渲染配置与Shader能力问题。"
+          "explanation": "是否受光首先是渲染配置与Shader能力问题。",
+          "scenario": "两个并排Sprite分别使用Sprite-Lit-Default和Sprite-Unlit-Default；现在提高同一盏Light 2D的强度，其他条件保持。"
         },
         {
           "question": "Sorting Group的主要价值之一是什么？",
@@ -386,7 +417,8 @@ window.COURSE_MODULES.push({
             "自动计算角色受到的所有灯光"
           ],
           "answer": 0,
-          "explanation": "它服务于显示排序，组内外关系仍需按需求配置。"
+          "explanation": "它服务于显示排序，组内外关系仍需按需求配置。",
+          "scenario": "角色由身体和武器两个SpriteRenderer组成，希望它们作为整体与另一个角色比较前后，同时组内仍保留武器与身体顺序。"
         },
         {
           "question": "Scene窗口中的白色相机图标一定会出现在游戏画面吗？",
@@ -397,7 +429,8 @@ window.COURSE_MODULES.push({
             "一定，只要没有隐藏Hierarchy对象"
           ],
           "answer": 1,
-          "explanation": "编辑器辅助图标与相机实际绘制内容不同，应对照Game视图和Gizmos开关。"
+          "explanation": "编辑器辅助图标与相机实际绘制内容不同，应对照Game视图和Gizmos开关。",
+          "scenario": "Scene窗口在Camera位置显示一个白色相机标记，Game窗口是否显示同一标记还没有验证；编辑器Gizmos开关开启。"
         }
       ],
       "references": [
@@ -433,8 +466,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "Sorting Group会把角色的多个Collider自动合成一个物理身体吗？",
-          "answer": "不会。它处理绘制排序，物理身体仍由Rigidbody2D和Collider2D等组件关系决定。"
-        }
+          "answer": "不会。它处理绘制排序，物理身体仍由Rigidbody2D和Collider2D等组件关系决定。",
+          "scenario": "一个角色根下有身体和武器两个SpriteRenderer，同时还有两个Collider2D。你只给根添加Sorting Group，未修改任何Rigidbody2D或Collider2D配置。"
+        },
+        "scenario": "你加了Light 2D，强度拉高，骑士仍不变亮；两名多部件角色交错时，别人的身体又插进自己的武器中间。先用URP二维渲染的最小场景，把受光链与排序关系分别验证。",
+        "purpose": "能解释灯没生效该查材质、Renderer还是作用层，也能为角色身体与武器建立稳定遮挡。"
       }
     },
     {
@@ -531,10 +567,16 @@ window.COURSE_MODULES.push({
           "minutes": 60,
           "steps": [
             "让两个对象引用同一材质，修改共享颜色并记录影响范围。",
-            "取得A的独立材质后保存该引用，记录A与B各自实际引用的对象；重复读取时观察实例数，不预设每次访问都创建。清理时只销毁自己创建或拥有的实例，绝不销毁B仍在使用的共享材质。",
+            "取得ColorOne的独立材质后保存该引用，记录ColorOne与ColorTwo各自实际引用的对象；重复读取时观察实例数，不预设每次访问都创建。清理时只销毁自己创建或拥有的实例，绝不销毁ColorTwo仍在使用的共享材质。",
             "使用属性块仅改变一个Renderer，核对Shader属性及恢复结果。"
           ],
-          "result": "能指出每种方案修改哪个对象、由谁清理。"
+          "result": "能指出每种方案修改哪个对象、由谁清理。",
+          "setup": [
+            "新建L053_Color，在Hierarchy用GameObject > 3D Object > Cube建ColorOne与ColorTwo并排。Project右键Create > Material建TestShared，使用URP兼容Lit Shader并拖给两个MeshRenderer。",
+            "保存ColorPropertyProbe.cs后只给ColorOne添加，Color字段红色。代码要求Shader有_BaseColor，Sprite Shader或其他属性名可能不适合此现成探针。",
+            "Window > General > Inspector点实际材质检查颜色；修改共享资源的实验只用TestShared专用副本。独立材质比较是在学习项目副本编写，不把现成属性块探针当作已经实现三种方案。"
+          ],
+          "purpose": "从两个明确命名的使用者追踪共享材质，验证只改一名敌人需要怎样隔离。"
         },
         {
           "title": "比较URP中的实际成本",
@@ -544,7 +586,13 @@ window.COURSE_MODULES.push({
             "用Frame Debugger看批次，用Profiler测CPU/GPU时间，不只数材质。",
             "反复开关闪色和对象，检查串色、原色恢复及实例数量是否持续增长。"
           ],
-          "result": "一份同时覆盖视觉、寿命与帧时间的比较记录。"
+          "result": "一份同时覆盖视觉、寿命与帧时间的比较记录。",
+          "setup": [
+            "另存L053_Cost，固定同一批对象、网格、相机、灯和分辨率。先用十个对象观察独立颜色与恢复是否串色，十只是便于逐个检查的规模，不是性能推荐上限。",
+            "Window > Analysis > Frame Debugger看绘制与批处理；Window > Analysis > Profiler看CPU/GPU与内存。Editor数据只能作为当前环境线索，正式设备结论要另测。",
+            "分别在独立场景副本使用共享、独立实例、属性块实现；保持视觉相同再采样。现成ColorPropertyProbe只在Start设置一次颜色，没有自动闪色计时或重建测试。"
+          ],
+          "purpose": "同时检查颜色正确、实例寿命和帧时间，避免只看副本少就下提速结论。"
         }
       ],
       "pitfalls": [
@@ -595,7 +643,8 @@ window.COURSE_MODULES.push({
             "自动生成不会影响批处理的独立材质"
           ],
           "answer": 0,
-          "explanation": "sharedMaterial指向共享对象，修改范围可能超出单个Renderer。"
+          "explanation": "sharedMaterial指向共享对象，修改范围可能超出单个Renderer。",
+          "scenario": "ColorOne和ColorTwo的Renderer引用同一Material，脚本对ColorOne.sharedMaterial的颜色属性赋红色。"
         },
         {
           "question": "MaterialPropertyBlock保证URP更快吗？",
@@ -606,7 +655,8 @@ window.COURSE_MODULES.push({
             "保证，只要每帧重新创建一个块"
           ],
           "answer": 1,
-          "explanation": "对象数量与渲染成本不是同一指标，属性块在具体路径可能降低性能。"
+          "explanation": "对象数量与渲染成本不是同一指标，属性块在具体路径可能降低性能。",
+          "scenario": "在URP项目中使用MaterialPropertyBlock减少了独立材质对象；没有测CPU/GPU时间，也还没检查批处理变化。"
         },
         {
           "question": "脚本创建的材质实例应由谁管理释放？",
@@ -617,7 +667,8 @@ window.COURSE_MODULES.push({
             "只要禁用Renderer就自动完成全部清理"
           ],
           "answer": 0,
-          "explanation": "先区分自己创建的实例和借用的共享资源，避免泄漏或误删。"
+          "explanation": "先区分自己创建的实例和借用的共享资源，避免泄漏或误删。",
+          "scenario": "某个脚本主动new Material创建专用副本，其他组件只借用它进行显示，现在这份资源要结束使用。"
         }
       ],
       "references": [
@@ -640,11 +691,11 @@ window.COURSE_MODULES.push({
         "walkthrough": [
           {
             "title": "确认共享关系",
-            "text": "选择敌人A和B，核对Renderer引用是否指向同一Material，并记录原始颜色和Shader属性。"
+            "text": "选择本课的ColorOne和ColorTwo，核对Renderer引用是否指向同一Material，并记录原始颜色和Shader属性。"
           },
           {
             "title": "修改共享颜色",
-            "text": "在测试材质上修改sharedMaterial的颜色，观察A和B同时变化，证明改的是公共资源。"
+            "text": "在测试材质上修改sharedMaterial的颜色，观察ColorOne和ColorTwo同时变化，证明改的是公共资源。"
           },
           {
             "title": "再比较隔离方案",
@@ -653,8 +704,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "属性块减少材质副本，能据此保证URP更快吗？",
-          "answer": "不能。它不兼容SRP Batcher，可能降低性能，必须按实际路径与目标设备测量。"
-        }
+          "answer": "不能。它不兼容SRP Batcher，可能降低性能，必须按实际路径与目标设备测量。",
+          "scenario": "你给每个Renderer使用MaterialPropertyBlock设置颜色，材质副本数量减少；URP启用SRP Batcher，但尚未在目标设备测时间和批处理路径。"
+        },
+        "scenario": "只想让一名敌人闪红，旁边那名却一起变色。把两个Cube明确命名为ColorOne和ColorTwo，并让它们使用同一份材质，接下来逐步看共享、实例与属性覆盖修改的是哪份数据。",
+        "purpose": "能选择只影响一个Renderer的颜色方案，并说清资源释放和URP性能比较的前提。"
       }
     },
     {
@@ -744,7 +798,13 @@ window.COURSE_MODULES.push({
             "逐步查看事件，记录目标、材质、排序和最终画面如何累积。",
             "故意隐藏或覆盖一个对象，再根据事件确定它未提交还是被后续覆盖。"
           ],
-          "result": "一份能由绘制事件解释的画面形成记录。"
+          "result": "一份能由绘制事件解释的画面形成记录。",
+          "setup": [
+            "保存一个含背景、角色和透明Sprite的简单场景L054_Frame；本课不需要挂脚本。先在Game窗口确认三者都实际可见。",
+            "从Window > Analysis > Frame Debugger打开窗口，在Play状态选择当前编辑器/Player目标并点击Enable；逐项选绘制事件观察累积画面。",
+            "保持相机与目标分辨率固定。需要Console可从Window > General > Console打开，但不要用日志打印速度判断绘制事件耗时。"
+          ],
+          "purpose": "沿绘制事件找未显示或被覆盖的对象，把最终画面变成可追踪过程。"
         },
         {
           "title": "提出并检验瓶颈假设",
@@ -754,7 +814,13 @@ window.COURSE_MODULES.push({
             "只改变分辨率、透明覆盖或提交方式之一，比较同条件多次采样。",
             "检查视觉与排序，保留支持或推翻假设的数据，并说明测量限制。"
           ],
-          "result": "一份包含假设、对照、结果和适用范围的优化报告。"
+          "result": "一份包含假设、对照、结果和适用范围的优化报告。",
+          "setup": [
+            "用Window > Analysis > Profiler打开分析器，选择能采集的CPU Usage和GPU Usage模块；若当前平台不支持GPU采样，明确记为未测，不拿FPS代替。",
+            "在Game窗口记录分辨率，Edit > Project Settings > Quality记录VSync，若脚本设置targetFrameRate也记录。让场景稳定运行后再取连续一段帧，而非只截最快一帧。",
+            "每次另存一份对照，只改分辨率、透明覆盖面积或提交方式之一；保留同一条移动路径和相同特效序列，检查视觉要求没有被删除。"
+          ],
+          "purpose": "用单变量对照找主要成本；多次采样减少某一帧偶然波动，不保证所有设备都相同。"
         }
       ],
       "pitfalls": [
@@ -805,7 +871,8 @@ window.COURSE_MODULES.push({
             "能，只要网格顶点数不多"
           ],
           "answer": 1,
-          "explanation": "提交数量只反映一部分工作，不代表CPU/GPU的全部时间。"
+          "explanation": "提交数量只反映一部分工作，不代表CPU/GPU的全部时间。",
+          "scenario": "一帧只有很少绘制提交，但它包含覆盖大部分屏幕的透明效果和复杂像素Shader；尚未测CPU/GPU时间。"
         },
         {
           "question": "降低分辨率明显改善GPU时间，支持哪种假设？",
@@ -816,7 +883,8 @@ window.COURSE_MODULES.push({
             "证明所有Draw Call都没有成本"
           ],
           "answer": 0,
-          "explanation": "分辨率主要改变像素规模，是定位线索而非对所有原因的绝对证明。"
+          "explanation": "分辨率主要改变像素规模，是定位线索而非对所有原因的绝对证明。",
+          "scenario": "同一设备、同一场景仅降低输出分辨率，GPU时间明显下降，CPU逻辑与对象数量未改。"
         },
         {
           "question": "Frame Debugger的核心用途是什么？",
@@ -827,7 +895,8 @@ window.COURSE_MODULES.push({
             "用事件数量直接计算最终FPS"
           ],
           "answer": 0,
-          "explanation": "它帮助解释画面如何生成，耗时仍需相应Profiler数据。"
+          "explanation": "它帮助解释画面如何生成，耗时仍需相应Profiler数据。",
+          "scenario": "一个Sprite在Game画面中没有显示，Scene中对象和Renderer仍存在；你准备打开Frame Debugger调查这帧。"
         }
       ],
       "references": [
@@ -863,8 +932,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "Frame Debugger能直接替代目标设备上的准确GPU计时吗？",
-          "answer": "不能。它主要解释绘制事件和状态，性能计时应使用相应分析工具与稳定目标环境。"
-        }
+          "answer": "不能。它主要解释绘制事件和状态，性能计时应使用相应分析工具与稳定目标环境。",
+          "scenario": "你暂停一帧，用Frame Debugger逐项查看绘制事件和状态；尚未在目标设备用GPU计时工具采样。"
+        },
+        "scenario": "合批后Draw Call少了，帧率却几乎不变；一层覆盖全屏的烟雾反而可能比许多小物体更贵。先在同一场景记录时间，再逐步看这一帧究竟画了什么。",
+        "purpose": "能提出可被数据推翻的渲染瓶颈判断，分清Frame Debugger解释画面和Profiler测量耗时的职责。"
       }
     },
     {
@@ -964,17 +1036,30 @@ window.COURSE_MODULES.push({
             "分别故意断开相机目标、内容层与UI引用，定位每种黑画面的原因。",
             "比较256与512分辨率，记录清晰度和资源设置。"
           ],
-          "result": "生产者、纹理和消费者三端都能独立验证。"
+          "result": "生产者、纹理和消费者三端都能独立验证。",
+          "setup": [
+            "新建L055_Preview，用Cube作PreviewTarget，Position=(0,0,0)。另用GameObject > Camera建PreviewCamera，Position=(0,0,-5)、Rotation=(0,0,0)、Projection=Orthographic、Size=2；本例让相机沿+Z看见Cube，先暂不挂OwnedCameraTarget。",
+            "Inspector右上Layer > Add Layer在空闲用户层新建Preview，只把PreviewTarget设到该层。PreviewCamera的Culling Mask只勾Preview；场景保留用于看UI的主相机与光源，避免测试相机拍进UI本身。若主相机与测试相机同时输出屏幕，先完成下一步Target Texture接线再观察。",
+            "在Project选实验目录，用Assets > Create > Rendering > Render Texture创建PreviewRT，Inspector设256×256；选PreviewCamera把Target Texture指定PreviewRT。",
+            "GameObject > UI > Raw Image建立屏幕Canvas与RawImage，在其Inspector的Texture拖同一份PreviewRT；调整RectTransform使区域可见。此处用的是RawImage，不是只接受Sprite的Image。"
+          ],
+          "purpose": "先用资产式纹理完整接通三端，再故意断开一端，看到黑画面不是一个笼统故障。"
         },
         {
           "title": "检查反复开启与资源结束",
           "minutes": 60,
           "steps": [
-            "首次打开时记录纹理实例与相机targetTexture；关闭RawImage但暂不关闭相机，在Frame Debugger或Profiler观察离屏相机是否仍提交工作。随后按功能关闭流程解除绑定并停止不用的生产者，再检查开关十次的资源数量。",
-            "关闭时确认消费者与相机解除绑定，再检查创建者释放后的稳定内存。",
+            "先在资产式对照中只关闭RawImage、保持相机开启，观察离屏工作是否继续；然后按本组准备切到专用运行时相机。逐次开关OwnedCameraTarget，记录实际纹理与相机绑定，查看资源是否随次数增长。",
+            "如果有外部消费者，先让它结束借用并清空引用，再停用创建者。当前最小脚本没有自动管理UI消费者，不能把只关相机脚本当成已经证明整条链清理正确。",
             "测试相机已有外部targetTexture的情况，确认示例拒绝覆盖它。"
           ],
-          "result": "无外部绑定被误改，重复使用后资源数量不持续增长。"
+          "result": "无外部绑定被误改，重复使用后资源数量不持续增长。",
+          "setup": [
+            "另存L055_Lifetime，删除资产式实验的UI消费者或先清空其Texture引用；选PreviewCamera清空Target Texture，确保初始为None。",
+            "保存OwnedCameraTarget.cs，选PreviewCamera用Add Component添加。它在OnEnable创建名为Learning Preview Target的运行时512纹理，不会自动把纹理交给UI；本组先观察Camera的Target Texture与Profiler资源，不假装UI已自动接线。",
+            "Play后从Window > Analysis > Profiler记录纹理数量，再单独开关OwnedCameraTarget组件。开关十次是用于观察是否随次数持续增长的小样本，不是引擎规定或无泄漏证明；每轮等结束销毁有机会执行后再看。"
+          ],
+          "purpose": "用独立运行时目标检查创建者责任，重复开关是为了发现每次多留一份的增长。"
         }
       ],
       "pitfalls": [
@@ -1025,7 +1110,8 @@ window.COURSE_MODULES.push({
             "8倍，与颜色格式无关"
           ],
           "answer": 1,
-          "explanation": "像素数等于宽乘高，两维各翻倍得到4倍。"
+          "explanation": "像素数等于宽乘高，两维各翻倍得到4倍。",
+          "scenario": "同一RenderTexture宽、高各自翻倍，其余格式与采样设置不变；这里只比较宽乘高得到的基础像素数。"
         },
         {
           "question": "借用共享RenderTexture的脚本可以随意Release吗？",
@@ -1036,7 +1122,8 @@ window.COURSE_MODULES.push({
             "可以，只要清空自己的字段"
           ],
           "answer": 1,
-          "explanation": "借用者的结束不代表所有使用者都结束，释放责任需要明确。"
+          "explanation": "借用者的结束不代表所有使用者都结束，释放责任需要明确。",
+          "scenario": "渲染纹理由系统甲创建，界面乙和界面丙都把它绑定到RawImage；现在乙要关闭自己的显示。"
         },
         {
           "question": "UI指定纹理能证明相机已经写入内容吗？",
@@ -1047,7 +1134,8 @@ window.COURSE_MODULES.push({
             "能，只要RawImage处于激活状态"
           ],
           "answer": 1,
-          "explanation": "引用存在与内容生成不同，应检查实际相机、目标和内容范围。"
+          "explanation": "引用存在与内容生成不同，应检查实际相机、目标和内容范围。",
+          "scenario": "RawImage的Texture字段已指定某RenderTexture，尚未检查生产相机是否启用、targetTexture、Culling Mask或实际内容。"
         }
       ],
       "references": [
@@ -1083,8 +1171,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "宽高同时从256改到512，基础像素数只是翻倍吗？",
-          "answer": "不是，宽高各翻倍使像素数约变为4倍，实际资源成本还受格式、深度和采样设置影响。"
-        }
+          "answer": "不是，宽高各翻倍使像素数约变为4倍，实际资源成本还受格式、深度和采样设置影响。",
+          "scenario": "RenderTexture的尺寸原为256×256，现在改为512×512；颜色格式、深度和采样等条件保持，只比较基础像素数量。"
+        },
+        "scenario": "相机预览纹理已经拖给UI，窗口里仍是一块黑；反复开关几次后，资源数量又开始增长。先把“相机写、纹理接、RawImage读”三端分开，再看谁应该创建和释放。",
+        "purpose": "做出能重复打开的角色预览，并能区分黑画面来自内容、绑定还是资源结束。"
       }
     }
   ]

@@ -34,51 +34,70 @@ window.COURSE_MODULES.push({
       "title": "从照着操作到提出可验证的问题",
       "prerequisites": [],
       "goals": [
-        "把角色移动拆成可以分别观察的步骤",
+        "找到编辑器窗口，创建并运行第一个环境探针",
         "记录版本与实验前后唯一改变的条件",
         "用手册和脚本参考区分观察与保证"
       ],
       "theory": [
         {
-          "title": "把最后的现象拆成中间步骤",
+          "title": "认识编辑器的六个窗口",
           "paragraphs": [
-            "按右方向键后，角色应该往右走。从按键到画面变化，至少要经过读取输入、计算方向、设置速度、推进位置和绘制对象。任一步没有接上，都可能表现为“不动”。只盯着最后一行移动代码，很容易错过更早的问题。",
-            "先分别问：读到的方向是否非零？刚体速度变了吗？位置变了但相机没拍到吗？这些问题都有可观察的数值。拆开以后，即使还不知道答案，也能知道接下来检查什么。先理解这条过程，再学每个接口，知识才有可以连接的位置。"
+            "先不急着写代码。Hierarchy（层级）列出当前场景的对象；Project（项目）列出 Assets 里的文件和文件夹；Inspector（检视）显示当前选中对象的组件或资源设置。它们是三种不同的视角：场景里有什么、磁盘中有什么、当前选中了什么。",
+            "Scene（场景）供你摆放和观察对象，Game（游戏）显示游戏相机看到的结果，Console（控制台）显示日志、警告和错误。Scene 中看得见某个编辑轮廓，不代表相机一定会在 Game 中画出它。",
+            "窗口位置可以被拖动，先认标签，不必追求与教程截图完全一致。缺失时依次用顶部 Window > General > Hierarchy、Project、Inspector、Scene、Game 或 Console 打开对应窗口；中文界面的含义分别就是层级、项目、检视、场景、游戏、控制台。下面提到“选择对象”，指在 Hierarchy 单击它，再看 Inspector。"
           ]
         },
         {
-          "title": "一次只改变一个条件",
+          "title": "创建并挂载第一个脚本",
           "paragraphs": [
-            "假设要检查禁用脚本是否阻止 Awake。先建立空对象，只挂一个打印脚本，保持对象活动，关闭脚本自己的勾选框，再运行。结果只对应“对象活动、脚本禁用”这一组条件，不能直接推广到关闭整个对象。",
-            "接着恢复脚本勾选，改为关闭对象，再从头测试。保留其他条件，才容易解释两次差别。若同时换脚本、场景和输入设置，即使恢复正常，也不知道是哪项起效。失败结果同样值得记录，因为它可以排除原先的一种解释。"
+          "本课只用一份 EnvironmentProbe.cs 和一个挂有它的 Probe。下面是第一次创建的详细操作；如果你读正文时已经照做，后面实验只检查已有结果，直接继续运行，不要再创建第二份文件、第二个 Probe 或重复添加组件。",
+          "在 Project 点开 Assets。若已有 Scripts 文件夹就打开它；没有时才在资源列表空白处右键，选 Create > Folder，命名 Scripts。点开 Scripts，再使用顶部 Assets > Create > Scripting > MonoBehaviour Script，立即将脚本命名 EnvironmentProbe，不要保留默认 NewMonoBehaviourScript。最终文件应为 EnvironmentProbe.cs，类名也必须是 EnvironmentProbe。已有这份脚本时直接打开检查，不再新建。",
+            "向下找到本课“环境探针：先记录实验前提”的代码示例，复制从 using UnityEngine; 到最后一个右大括号的完整内容。双击新脚本，在打开的代码编辑器中全选原模板并替换，保存。若没有配置代码编辑器，可以在 Project 右键脚本选 Show in Explorer（在资源管理器中显示），用已有文本编辑器打开这个 .cs 文件，再替换保存；确认文件仍叫 EnvironmentProbe.cs，没有变成 .cs.txt。",
+          "回到 Unity，等待代码编译完成，再看 Console。若红色错误文字包含 error CS 等编译信息，单击它可在下方面板查看完整错误、文件名和行号；已配置代码编辑器时可双击跳转。本课新探针出错时，先核对文件名 EnvironmentProbe.cs、类名 EnvironmentProbe，再重新完整替换本课示例并按 Ctrl+S 保存，回 Unity 等重新编译。未配置代码编辑器时，仍可用 Project 中的 Show in Explorer 打开已有文件，不必先学会完整的错误分析。若错误仍在，先保存完整错误文字、文件名与行号作为求助依据，不要随意删除代码或轮换设置。",
+          "即使编译红字来自旧的 movePlayer.cs 等其他脚本，也会阻止项目正常进入 Play；只改新探针还不够。如果不理解旧工程的错误，可在 Unity Hub 的 Projects > New project 中选择 Unity 6.3 与已安装的2D或3D基础模板，在新文件夹创建独立学习项目，再从本课第一步操作。新建场景仍属于原项目，不能隔离原项目的编译错误。这里只要求新学习项目中的完整探针能编译，不要求你在第一课凭空修复旧游戏的所有错误。",
+          "代码编译通过后，若 Hierarchy 已有本课的 Probe，就继续使用它；没有才用顶部 GameObject > Create Empty 建空对象并命名 Probe。Probe 只是我们起的名字，你也可以取别的名字；这个操作不会生成可见角色。",
+          "选中 Hierarchy 的 Probe，若 Inspector 已有 EnvironmentProbe 组件就不再添加；没有时才点 Add Component，搜索 EnvironmentProbe 并添加一次。组件出现在 Inspector 中，才表示脚本已挂到该对象；Project 中只有脚本文件还不会执行。"
           ]
         },
         {
-          "title": "记录环境才方便比较",
+          "title": "运行探针并找到结果",
           "paragraphs": [
-            "两个项目都使用 Unity，不表示环境相同。编辑器版本、包版本、渲染管线、目标平台和播放模式设置，都可能影响示例。除了记录 Unity 6.3 LTS，还应保留具体版本号，输入包则另外到 Package Manager 查看。",
-            "环境探针只证明它实际读取的内容，不能顺便证明所有包都匹配。截图适合保存 Inspector，日志适合记录调用与数值，Profiler 适合分析时间。先确认问题，再选择证据；一张角色能动的截图不能说明每个步骤如何执行。"
+            "打开 Console，点 Clear 清除旧记录。Collapse 会把相同消息折叠在一起，本课先将它关闭，便于看到原始输出。点击编辑器顶部三角形 Play 按钮进入播放，再看 Console；同一个按钮再次点击即可停止。",
+            "这个脚本的 Start 在实例符合启动条件时执行一次，所以一次 Play 应看到两条来自探针的日志，而不是每帧不断输出。第一条给出 Unity 的具体版本与平台，第二条给出 fixedDeltaTime 和 timeScale。场景若还有其他组件输出，先按内容识别这两条。没有出现小人或动画是正常的：我们只创建了空对象并打印信息。",
+          "记录时在 Console 单击第一条日志，按 Ctrl+C，再到笔记按 Ctrl+V；对第二条重复。若复制内容带调用栈或不方便整理，直接抄下 Unity、platform、fixedDeltaTime、timeScale 四个字段及其值也可以，并标上本轮设置。代码里的 Debug.Log 把内容送到 Console；Application 与 Time 提供本课读取的环境数据。目前只需把这段程序当作测量工具，后面再解释生命周期和不同时间值。"
+          ]
+        },
+      {
+        "title": "点击 Play 后没有两条日志，按顺序检查",
+        "paragraphs": [
+          "第一步先看是否真正进入 Play：顶部 Play 按钮应显示正在播放的状态；若 Unity 提示必须修复编译错误才能播放，就回到上一节的新探针恢复路线。Console 中单击红色错误读完整内容，区分本课 EnvironmentProbe.cs 与旧脚本，不把一切红字都交给新手盲改。编译通过后再开始下一步。",
+          "第二步检查挂载和启用。停止 Play，在 Hierarchy 选 Probe，Inspector 应有 EnvironmentProbe 组件，而且只添加一次。Inspector 顶部对象名称旁的活动勾选、该脚本标题旁的启用勾选都应开启。如果 Probe 被拖到另一个对象下面，先展开并检查父对象的活动勾选也开启。本课可让 Probe 保持顶层，避免父级条件干扰。然后重新 Play。",
+          "第三步检查日志有没有被隐藏。打开 Window > General > Console，将搜索框内容清空；在 Console 工具栏确认普通日志的开关已开启，它与黄色警告、红色错误的过滤图标并排。EnvironmentProbe 用 Debug.Log 输出普通日志，只显示错误时会把它们藏起来；Collapse 也先关闭，方便数清两条。",
+          "第四步重新取得一次输出。若你是在 Play 之后点 Clear，Start 已经打印过，不会为了 Console 清空而再执行。先停止，再 Clear，最后重新点 Play；不要只盯着已清空的窗口等待。这时仍没有输出，回查正在使用的场景是否含那个已挂载的 Probe，以及文件是否保存为完整示例，并记录 Console 内容与 Inspector 设置后求助。"
+        ]
+      },
+        {
+          "title": "只改变固定步长，再比较两次运行",
+          "paragraphs": [
+            "停止 Play，打开顶部 Edit > Project Settings，左侧选 Time。Fixed Timestep 是每个固定更新步骤使用的游戏时间长度；0.02秒对应计划每个游戏秒50步，0.01秒对应100步。它不是画面一秒刷新多少次，也不是独立线程的真实20毫秒闹钟。",
+            "抄下原 Fixed Timestep 与 Time Scale。先设 Fixed Timestep=0.02，Time Scale=1，清 Console 后 Play 并保存日志；停止，再只改 Fixed Timestep=0.01，清 Console 后重新 Play。因为日志只在 Start 打印一次，中途修改设置后不重播，旧日志不会自动更新。",
+            "把两组日志并排，指出第二组的哪一个值改变。脚本读到了固定步长设置，却没有测渲染帧率、实际固定步调用次数或物理耗时；这些问题需要后面更合适的计数与测量。比较结束后停止 Play，恢复刚才抄下的原值，避免下一课继承了未说明的实验条件。"
           ]
         },
         {
-          "title": "从问题进入官方文档",
+          "title": "从具体问题进入官方文档",
           "paragraphs": [
-            "不知道 Rigidbody 负责什么时，先读手册建立概念；要了解 AddForce 的参数和限制时，打开对应成员的脚本参考。依次找输入、结果、调用条件和注意事项，再看示例，避免只根据方法名猜测行为。",
-            "官方示例往往突出一个接口，可能没有展示完整错误处理。复制前要确认需要的组件、输入系统和对象寿命。把这些前提写进自己的笔记，再对照当前场景。文档保证、自己观察和工程建议可以互相帮助，却不应混为同一种证据。"
+            "手册适合先理解一个系统负责什么，脚本参考适合查某个成员的参数、返回值与使用限制。以本课为例，你可以沿参考链接查 Time.fixedDeltaTime 的含义，再与两次日志对照。读到“通常”“只在某条件下”时，把条件一起记下，不要只摘一个结论。",
+            "探针没有报告全部环境。需要输入包版本时，到 Window > Package Management > Package Manager 查看已安装包；需要渲染管线与目标平台时，另外记录相应项目设置。先准确说明当前测到了什么，再补足新问题需要的信息。",
+            "自测里还有一个 A/B 顺序的纸面例子：题目前会定义两个对象和各自打印的字母，它不是当前探针输出。连续运行十次只是作者选择的重复观察数量，用来检查当前结果是否稳定；无论重复多少次，都不能自行补出文档没有承诺的执行顺序。你暂时不用为这道题另写回调脚本。"
           ]
         },
         {
-          "title": "写成别人能重做的记录",
+          "title": "把一次观察写成可以重做的记录",
           "paragraphs": [
-            "记录应包括问题、预测、唯一改动、观察和仍未排除的原因。例如“对象活动时禁用脚本，仍打印 Awake”，比“关闭后还执行”明确得多，后者没有说明究竟关闭了哪个开关。下一次实验应优先回答仍然不确定的部分。",
-            "五小时包括阅读、搭建、比较、独立练习和复盘，不是网页打开的时间。完成后换一个对象或条件，再独立预测结果。如果能用同一规则解释变化，才说明经验开始变成可重复使用的知识。记录被证明错误的预测，也能看见自己的理解如何改变。"
-          ]
-        },
-        {
-          "title": "把一个猜想变成下一次预测",
-          "paragraphs": [
-            "假设你认为角色不动是因为没有读到输入，就先打印输入值。若数值始终为零，接下来检查设备、焦点和绑定；若数值已经变化，就暂时把输入链路放到一边，去看刚体速度。每次观测都应决定下一步，而不是在所有设置之间来回试。",
-            "这也说明为什么实验前要写预测。先写下来，结果出来后才能知道自己原本理解哪里有偏差。如果等结果出现再补一个理由，很容易把任何现象都说成早已知道，却没有形成能预测新情况的模型。保留原预测和修改后的解释，能避免这种错觉。"
+            "用五项记录本课：问题是什么、运行前预测什么、只改了哪个条件、两次实际输出是什么、还不能据此回答什么。比如“第二次 fixedDeltaTime 从0.02变成0.01”，比“引擎变快了”清楚，因为后一句没有指出哪个环节变快，也没有测量。",
+            "以后检查角色不动时，同样把过程拆开：是否读到输入，是否设置速度，位置是否变化，相机是否看到。每次观察决定下一步检查，不要同时更改许多设置后只说“现在能用了”。",
+            "本课的5小时是阅读、搭建、重复比较、独立练习、自测与复盘的建议投入，可以分次完成。实验中的60分钟包含首次找窗口、处理文件和编译问题、整理记录，不要求某一步恰好耗时60分钟。读得快可以把时间用于重做与解释，不用等待网页计时来代替学习产物。"
           ]
         }
       ],
@@ -88,7 +107,8 @@ window.COURSE_MODULES.push({
         "filename": "EnvironmentProbe.cs",
         "source": "using UnityEngine;\npublic sealed class EnvironmentProbe : MonoBehaviour\n{\n    void Start()\n    {\n        Debug.Log($\"Unity={Application.unityVersion}; platform={Application.platform}\");\n        Debug.Log($\"fixedDeltaTime={Time.fixedDeltaTime}; timeScale={Time.timeScale}\");\n    }\n}",
         "explanation": [
-          "在空场景创建 Probe，挂探针，清空 Console 后运行，将两条日志复制到笔记。包版本需要另外记录，脚本也没有测量实际帧率。"
+          "代码示例的文件名与类名都是 EnvironmentProbe。首次操作时把完整内容替换进 Assets/Scripts/EnvironmentProbe.cs，保存并等 Unity 编译，再把它添加到场景空对象 Probe；具体步骤见正文。已按正文完成的读者只需检查，不要为代码示例或后面的实验再建脚本、对象或重复挂载。",
+          "点击顶部 Play 后，到 Console 读取两条日志。Start 在本次实例启动时打印一次；脚本不生成图像或移动角色，也不测实际帧率。每次改设置后应停止再 Play，取得新一轮记录。"
         ]
       },
       "lab": [
@@ -96,21 +116,38 @@ window.COURSE_MODULES.push({
           "title": "建立独立实验场景",
           "minutes": 60,
           "steps": [
-            "新建空场景并保存，记录编辑器、输入包、渲染管线与目标平台。",
-            "创建Probe并挂环境探针，清空Console后运行，保存本轮两条日志。",
-            "把Fixed Timestep从0.02改成0.01后重跑，其余设置保持不变；比较后恢复原值。"
+          "检查准备中选定的场景已经保存；在 Project 的 Assets/Scripts 找到唯一一份 EnvironmentProbe.cs。若正文中已经创建并替换完整代码，直接检查并继续；尚未做才按正文创建、替换和保存。回 Unity 等编译；出错时按正文的完整替换与错误记录路线处理。",
+          "在 Hierarchy 选中同一个 Probe，检查 Inspector 中只有一个 EnvironmentProbe 组件。已经建好并挂载就直接继续；尚无 Probe 才用 GameObject > Create Empty 创建并命名，尚未挂载才用 Add Component 添加。不要为本步骤再建一个副本。",
+            "在 Edit > Project Settings > Time 抄下原设置，设 Fixed Timestep=0.02、Time Scale=1；回 Console 点 Clear，关闭 Collapse，点顶部 Play。",
+          "在 Console 单击一条日志后 Ctrl+C，到笔记 Ctrl+V，对另一条重复；也可直接抄四个字段及其值，标为“0.02基线”。然后点 Play 停止，解释为何 Game 没有出现可见角色；完全没有日志则按正文四步排查。",
+            "只将 Fixed Timestep 改成0.01，其余条件不变；Clear 后重新 Play，保存两条新日志。停止后恢复原 Fixed Timestep 与 Time Scale。",
+            "把两组输出并排，圈出改变的值，记录版本与平台；另注明本探针没有报告包版本、渲染帧率和实际物理耗时。"
           ],
-          "result": "记录能证明固定步长设置变化，并指出它没有测量帧率。"
+          "result": "记录能证明固定步长设置变化，并指出它没有测量帧率。",
+          "purpose": "把第一个探针从文件变成能运行的组件，并确认日志实际记录了哪些量。",
+          "setup": [
+            "停在非播放状态。先读本课“认识编辑器的六个窗口”一节，按页签名找到 Project、Hierarchy、Inspector 和 Console；它们的位置随布局改变，缺失时从 Window > General 中重开。若原项目仍有旧脚本编译错误，先修复或按正文在 Hub 新建独立6.3学习项目，新建场景不能隔离这些错误。",
+          "在 Project 的 Assets 下检查 Scenes、Scripts 文件夹，已有就使用，没有才新建。用 File > Save As 将当前练习场景保存为 Assets/Scenes/L001_Environment.unity；已经保存为这份练习场景就直接继续。若当前是正式游戏场景，先用 File > New Scene 新建 Basic 或 Empty 场景，再另存。",
+          "准备本课“环境探针”完整代码示例，阅读正文的创建与挂载指引即可。准备阶段不重复新建脚本和 Probe，正式步骤会检查它们；如果阅读正文时已做完，正式步骤同样只检查已有结果。全课始终复用同一份脚本和同一个 Probe。",
+            "打开 Edit > Project Settings > Time，抄下原有 Fixed Timestep 和 Time Scale，再开始实验。"
+          ]
         },
         {
-          "title": "纠正一个过强预测",
+          "title": "让结论对应实际测到的内容",
           "minutes": 60,
           "steps": [
-            "在笔记写下预测：禁用脚本后是否任何函数都不执行，并说明禁用的是哪个开关。",
-            "在实验副本把打印入口改为Awake，保持对象活动而禁用脚本，运行并保存结果。",
-            "再关闭整个对象重跑，对照官方说明，将原预测改成包含对象状态的结论。"
+            "用实验一的同一场景和探针，先在纸上写预测：“把固定步长减半后，探针中的哪个数会改变？画面帧率是否已被这个脚本测量？”",
+            "再次分别用0.02与0.01运行，Time Scale 保持1；每次先停止、改设置、Clear，再 Play，避免用旧日志代替新观察。",
+            "将原句“物理和画面都快一倍”拆开，逐项标注本课是否有对应证据。对未测量项写下一种下一步可采用的测量，而不猜测结果。",
+            "打开本课 Time.fixedDeltaTime 参考页，找到固定步长的说明；把官方含义与自己的日志分别写入记录，说明二者如何对应。",
+            "恢复原设置并保存场景。请另一位读者只看你的记录，指出从哪个窗口改了什么、怎样重新运行、结果在哪里；若无法重做，就补全漏掉的步骤。"
           ],
-          "result": "能分别解释禁用组件与未激活对象，而不使用含糊的“关闭后”。"
+          "result": "能用明确设置和日志支持有限结论，说明仍需测量的内容，并留下无需口头解释的重做步骤。",
+          "purpose": "用同一份探针的两次记录，练习为结论划定范围；现在还不要求你编写生命周期对照脚本。",
+          "setup": [
+            "继续使用实验一已能打印两条日志的 Probe，不更换代码、不添加角色。准备一张三列表：本次设置、日志记录、仍未测量的内容。",
+            "从 Edit > Project Settings > Time 确认 Time Scale=1，Fixed Timestep=0.02。打开 Console，找到 Clear 与 Collapse，准备保存两次独立 Play 的日志。"
+          ]
         }
       ],
       "pitfalls": [
@@ -123,10 +160,15 @@ window.COURSE_MODULES.push({
           "symptom": "日志数量少于实际执行次数",
           "cause": "Console 开启 Collapse 折叠相同日志",
           "fix": "关闭 Collapse 并在日志中加入帧号或计数器"
+      },
+      {
+        "symptom": "点击 Play 后 Console 没有探针日志",
+        "cause": "可能没有成功进入播放、对象或组件未启用、普通日志被过滤，或 Start 输出后又清空了记录。",
+        "fix": "依正文四步依次检查编译与播放状态、唯一 Probe 的挂载及活动勾选、Console 搜索与普通日志过滤，最后停止、Clear、重新 Play。新探针编译错误先核对文件/类名并完整替换示例；不理解的旧工程错误可用独立6.3学习项目隔离。"
         }
       ],
       "exercise": {
-        "brief": "选一个以前只会照着做的功能，提出3个关于运行过程的问题，再选择其中1个用对照实验回答。",
+        "brief": "任选本课一个问题，例如“只改 Fixed Timestep 会让本探针的哪些输出变化”，写出3个可观察的小问题，选1个完整重做；也可以提出关于 Play、日志或组件挂载的问题，不要求先会角色移动。",
         "deliverables": [
           "环境清单",
           "预测、对照、结果、限制四段实验记录",
@@ -161,7 +203,8 @@ window.COURSE_MODULES.push({
             "再运行一次就能推广到所有场景"
           ],
           "answer": 1,
-          "explanation": "重复观察不能补出文档没有承诺的顺序。记录观察条件，再查官方规定。"
+          "explanation": "重复观察不能补出文档没有承诺的顺序。记录观察条件，再查官方规定。",
+          "scenario": "这是一道纸面题：设场景中有两个空对象 OrderA、OrderB，它们及其父对象的活动勾选均开启；本题称这种状态为“活动”。各自脚本的 Awake 分别打印字母 A、B；现在只需把 Awake 理解为对象初始化时由 Unity 调用的那段代码，具体触发条件后面再学。项目没有人为设置这两种脚本的执行顺序。每次停止后重新 Play，共观察十次，想检查当前表现是否重复；十次是本次选择的观察数量，不要求你另外编写这组脚本。"
         },
         {
           "question": "查一个方法返回值及调用限制，优先读哪里？",
@@ -172,7 +215,8 @@ window.COURSE_MODULES.push({
             "只按方法名推断"
           ],
           "answer": 0,
-          "explanation": "成员页说明参数、返回值与调用限制，手册再补充系统背景。"
+          "explanation": "成员页说明参数、返回值与调用限制，手册再补充系统背景。",
+          "scenario": "你准备使用一个尚未学过的方法。现在需要知道它接收什么参数、返回什么、在哪些条件下可以调用，而不是仅模仿别人示例的写法。"
         },
         {
           "question": "五小时课程预算主要表示什么？",
@@ -183,7 +227,8 @@ window.COURSE_MODULES.push({
             "各项活动耗时必须完全相同"
           ],
           "answer": 2,
-          "explanation": "这是学习活动预算，应记录实际投入与产物。"
+          "explanation": "这是学习活动预算，应记录实际投入与产物。",
+          "scenario": "本教材把每课规划为5小时，并分给阅读、实验、独立练习、自测和复盘。学习者可以分多天完成，也会因基础不同而实际用时不同。"
         }
       ],
       "references": [
@@ -194,6 +239,14 @@ window.COURSE_MODULES.push({
         {
           "label": "MonoBehaviour.Awake",
           "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.Awake.html"
+        },
+        {
+          "label": "Time.fixedDeltaTime",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-fixedDeltaTime.html"
+        },
+        {
+          "label": "Time project settings reference",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/Manual/class-TimeManager.html"
         }
       ],
       "summary": [
@@ -205,22 +258,25 @@ window.COURSE_MODULES.push({
         "keyIdea": "设置值、实际执行和最终画面是不同的证据。先说清探针测到了什么，再判断它能支持哪个结论；没有测量的部分，不能顺带当成已经证明。",
         "walkthrough": [
           {
-            "title": "记录起点",
-            "text": "在空场景建立 Probe 并运行探针，记录编辑器版本、固定步长和时间缩放，暂时不加入角色和插件。"
+            "title": "让代码成为场景里的组件",
+            "text": "首次只需一份 EnvironmentProbe.cs、一个 Probe 及一次挂载；已经建立就检查已有结果。正文会逐步说明 Project 建脚本、复制保存代码、Hierarchy 建空对象和 Inspector 添加组件的操作。"
           },
           {
-            "title": "改变条件",
-            "text": "把 Fixed Timestep 从 0.02 改为 0.01，其他配置不变，重新运行并将两组日志并排比较。"
+            "title": "读第一次实际输出",
+            "text": "打开 Console，清空旧记录后 Play。确认两条日志分别包含版本/平台和固定步长/时间缩放，然后停止播放。"
           },
           {
-            "title": "限定结论",
-            "text": "日志能证明固定步长设置改变，却没有记录渲染帧率；要讨论画面流畅度，还需另测显示和时间。"
+            "title": "改一个设置并重做",
+            "text": "在 Edit > Project Settings > Time，只将 Fixed Timestep 从0.02改为0.01，保持 Time Scale=1，重新 Play 保存第二组输出，再恢复原值。"
           }
         ],
         "prediction": {
-          "question": "连续十次都是 A 先打印，能否断言 Unity 保证它在前？",
-          "answer": "不能。十次结果只能说明当前观察；是否保证顺序，应查看对应回调的官方说明和适用条件。"
-        }
+          "question": "第二次 fixedDeltaTime 变为0.01，能否只凭这两条日志认定画面帧率翻倍？",
+          "answer": "不能。探针只读到了固定步长设置，没有统计画面每秒刷新次数。若要讨论帧率，需要另测渲染帧间隔或使用相应分析工具；本次对照只能支持已经测量的内容。",
+          "scenario": "EnvironmentProbe 的 Start 只打印版本、平台、fixedDeltaTime 和 timeScale。第一次 Fixed Timestep=0.02，第二次为0.01；两次 timeScale 均为1，脚本没有计算每秒显示多少帧。"
+        },
+        "scenario": "你刚打开 Unity 6.3，本课先不制作角色。我们要在一个单独保存的场景中，让 EnvironmentProbe 脚本打印编辑器版本、固定步长和时间缩放，再只改变固定步长比较两次结果。Probe 是给场景空对象取的名字，不是菜单项或某种内置角色。",
+        "purpose": "先建立一条可以亲手重复的验证流程：找到窗口、创建脚本、挂到对象、运行、读日志。此后讨论引擎规则时，就有办法区分实际观察与自己的推断。"
       }
     },
     {
@@ -283,7 +339,7 @@ window.COURSE_MODULES.push({
         {
           "title": "相同类型可以有多个实例",
           "paragraphs": [
-            "A、B 两个对象挂相同脚本，会得到两个组件实例。普通实例字段各自保存数据：改 A 的 speed，不会自动改 B。脚本文件相同只说明行为定义相同，不表示运行中的所有字段只有一份。",
+            "设想有一个带普通 speed 数值字段的移动脚本，A、B 两个对象分别挂它，会得到两个组件实例。改 A 的 speed 不会自动改 B。这里用 speed 解释实例概念；本课 ActiveStateProbe 没有这个字段，实际实验改用各自已有的活动与组件开关。脚本文件相同只说明行为定义相同，不表示运行中的字段只有一份。",
             "两个组件也可以主动引用同一资源，或者通过 static 共享数据，但那是另外建立的关系。日志应带对象上下文，方便确认来自 A 还是 B；两个同名对象也可能是不同实例，不能只靠名字判断某个方法是否重复执行。"
           ]
         },
@@ -298,7 +354,7 @@ window.COURSE_MODULES.push({
           "title": "看不到的对象也要能找到",
           "paragraphs": [
             "关闭 Renderer 后，可以在 Hierarchy 选择对象，查看 Transform 是否仍改变，再通过受控的接触实验检查 Collider。不要只用 Game 画面判断它是否存在。反过来，Scene 视图里看见编辑辅助轮廓，也不能说明游戏相机一定会绘制该对象。",
-            "复制两个对象时，给它们临时命名为 A 和 B，并在日志中加入对象上下文。只修改 A 的字段，分别选中两者核对数值。这个小实验同时检查了组件分工、实例身份和显示证据的范围。以后排查复杂角色时，也可以先把问题缩到一个组件和一个明确实例。"
+            "复制 Root/Child 组后，给两组临时命名 RootA/ChildA、RootB/ChildB。只改变 ChildA 的活动或组件勾选，再选 ChildB 核对它自己的设置。日志中看清对象名；遇到同名对象时再结合选中实例检查，不凭文字相同判断同一个方法重复执行。"
           ]
         }
       ],
@@ -308,7 +364,7 @@ window.COURSE_MODULES.push({
         "filename": "ActiveStateProbe.cs",
         "source": "using UnityEngine;\npublic sealed class ActiveStateProbe : MonoBehaviour\n{\n    void OnEnable() => Debug.Log($\"{name}: OnEnable\");\n    void OnDisable() => Debug.Log($\"{name}: OnDisable\");\n    void Start() => Report();\n    [ContextMenu(\"Report state\")]\n    void Report()\n    {\n        Debug.Log($\"self={gameObject.activeSelf}, hierarchy={gameObject.activeInHierarchy}, enabled={enabled}\");\n    }\n}",
         "explanation": [
-          "在 Root 下创建 Child，将脚本挂到 Child。从组件菜单执行 Report state，比较自身活动与层级活动状态。菜单直接调用方法，不代表禁用组件仍会收到 Update。"
+          "创建空父对象 Root 与子对象 Child，把 ActiveStateProbe 挂到 Child。选 Child 后，在 Inspector 的组件右上角三点菜单点 Report state，Console 会报告三个状态；命令直接调用普通方法，不代表禁用组件仍会收到 Update。"
         ]
       },
       "lab": [
@@ -320,7 +376,13 @@ window.COURSE_MODULES.push({
             "每次只关闭Renderer、脚本或GameObject中的一个，测试后恢复，再检查其他项。",
             "分别记录画面、日志与受控碰撞结果，指出哪些变化属于哪个组件。"
           ],
-          "result": "得到开关与各系统结果的对应表，不用不可见推断不存在。"
+          "result": "得到开关与各系统结果的对应表，不用不可见推断不存在。",
+          "purpose": "把三个开关的影响分别落实到显示、接触和脚本日志。",
+          "setup": [
+            "File > New Scene 建 Basic 场景并另存。用 GameObject > 3D Object > Cube 创建 Cube；Inspector 可看到 Transform、Mesh Filter、Mesh Renderer、Box Collider。添加 ActiveStateProbe。",
+            "如需观察接触：再建 Plane 作为地面，将 Cube 的 Position Y 设为2，并通过 Add Component 添加 Rigidbody，保留 Use Gravity；每轮停止后重新 Play 从同一起点落下。",
+            "在 Inspector 顶部找到整个对象活动开关，再找到 Mesh Renderer 与 ActiveStateProbe 各自的组件开关，先确认三者都开启。"
+          ]
         },
         {
           "title": "比较父子活动状态",
@@ -328,9 +390,15 @@ window.COURSE_MODULES.push({
           "steps": [
             "建立Root/Child，Child保持自身开启，将探针挂Child。",
             "只关闭Root，从组件菜单报告Child状态，再开启Root并比较。",
-            "复制出A、B两个实例，只改A的字段，点击日志上下文确认来源。"
+            "复制整个Root/Child为RootA/ChildA与RootB/ChildB两组，只切换ChildA的组件勾选，再分别用Report state报告，核对ChildB设置没有自动同步。"
           ],
-          "result": "解释自身开关与层级结果不同，并能识别独立实例。"
+          "result": "解释自身开关与层级结果不同，并能识别独立实例。",
+          "purpose": "把“子对象自己的设置”与“父级使它能否活动”分开。",
+          "setup": [
+            "非播放时用 GameObject > Create Empty 创建 Root，再创建空对象 Child，拖动 Child 到 Hierarchy 的 Root 名称上成为子对象；给 Child 添加 ActiveStateProbe。",
+            "选中 Child，在 Inspector 的 ActiveStateProbe 右上角三点菜单找到 Report state。该命令是脚本声明的测试入口，可直接调用 Report，不等于引擎仍在调用 Update。",
+            "复制整个 Root，命名 RootA、RootB；两组子对象分别改名 ChildA、ChildB。比较两组独立的活动/组件勾选，不需要不存在的自定义数值字段。"
+          ]
         }
       ],
       "pitfalls": [
@@ -381,7 +449,8 @@ window.COURSE_MODULES.push({
             "activeSelf 假，activeInHierarchy 真"
           ],
           "answer": 1,
-          "explanation": "子对象自己的开关被保留，但父级关闭使它在层级中不活动。"
+          "explanation": "子对象自己的开关被保留，但父级关闭使它在层级中不活动。",
+          "scenario": "Root 是父对象，Child 是其子对象；Child 名称旁的活动勾选为开，Root 的为关。这里问的是 Child 的 activeSelf 与 activeInHierarchy。"
         },
         {
           "question": "只禁用 Renderer，通常会发生什么？",
@@ -392,7 +461,8 @@ window.COURSE_MODULES.push({
             "所有子对象自身开关都取消"
           ],
           "answer": 2,
-          "explanation": "Renderer 的开关只负责相关显示，没有等同于关闭整个对象。"
+          "explanation": "Renderer 的开关只负责相关显示，没有等同于关闭整个对象。",
+          "scenario": "一个活动的 Cube 同时有 MeshRenderer、BoxCollider 和启用的脚本。只取消 MeshRenderer 组件标题旁的勾选，其他组件与 GameObject 活动开关不变。"
         },
         {
           "question": "两个对象同类型组件中的普通实例字段通常是什么关系？",
@@ -403,7 +473,8 @@ window.COURSE_MODULES.push({
             "只有选中的组件可以保存数值"
           ],
           "answer": 0,
-          "explanation": "类型定义可以相同，具体实例仍各有自己的状态。"
+          "explanation": "类型定义可以相同，具体实例仍各有自己的状态。",
+          "scenario": "场景里有 SoldierA、SoldierB 两个不同对象，各自挂同一种脚本。讨论的是该脚本的普通非 static 数值字段，没有额外代码同步它们。"
         }
       ],
       "references": [
@@ -439,8 +510,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "重新打开 Root，需要再勾选原本开启的 Child 吗？",
-          "answer": "通常不需要。Child 自己的开启设置还在，父级恢复后它可以重新在层级中活动。"
-        }
+          "answer": "通常不需要。Child 自己的开启设置还在，父级恢复后它可以重新在层级中活动。",
+          "scenario": "Hierarchy 中 Root 是 Child 的父对象；Child 自己名称旁的活动勾选保持打开。只取消 Root 的活动勾选，然后再把 Root 打开，期间不改 Child 自己的设置。"
+        },
+        "scenario": "场景里放一个立方体 Cube，它同时有负责画面的 MeshRenderer、负责碰撞形状的 BoxCollider 和本课 ActiveStateProbe。再把它拖到空父对象 Root 下。我们分别操作显示、脚本、整个对象三个开关，检查影响是否相同。",
+        "purpose": "建立“对象由组件组合而成”的认识。以后遇到看不见、不会动或不能碰撞时，先定位负责该行为的组件。"
       }
     },
     {
@@ -489,7 +563,7 @@ window.COURSE_MODULES.push({
           "title": "模板产生多个具体实例",
           "paragraphs": [
             "敌人由身体、碰撞体和脚本组成，需要重复放十个时，可保存为 Prefab，再从模板创建实例。不必逐个重复搭结构，每个实例仍有自己的位置和运行状态。模板减少重复工作，却不会把所有敌人变成同一个场景对象。",
-            "实例可以有特殊设置。把 A 缩放改为两倍，这个属性可能形成实例覆盖，也就是 A 在此处另有数值。模板后来修改同一属性时，A 是否跟随变化受覆盖影响。因此要查看覆盖提示，判断当前值来自模板还是实例。"
+            "先把同一个 CubeTemplate Prefab 从 Project 拖到场景两次，分别命名 A、B。把 A 缩放改为两倍，这个属性可能形成实例覆盖，也就是 A 在此处另有数值。模板后来修改同一属性时，A 是否跟随变化受覆盖影响。查看覆盖提示，判断当前值来自模板还是实例。"
           ]
         },
         {
@@ -540,7 +614,13 @@ window.COURSE_MODULES.push({
             "只改A缩放，检查Overrides；再改源的一个未覆盖字段，观察B与A。",
             "分别应用与撤销一项覆盖，操作前写预期影响范围，之后逐项核对。"
           ],
-          "result": "能解释源修改、实例覆盖、应用和撤销的不同方向。"
+          "result": "能解释源修改、实例覆盖、应用和撤销的不同方向。",
+          "purpose": "看清模板传递、实例覆盖及 Apply/Revert 的方向。",
+          "setup": [
+            "在 Project 的 Assets 下创建 Prefabs 文件夹；GameObject > 3D Object > Cube 创建 Cube，将 Hierarchy 中的 Cube 拖入该文件夹生成 CubeTemplate.prefab。",
+            "把 Project 中的 CubeTemplate.prefab 拖到 Hierarchy 两次，场景对象分别命名 A、B；选中 A 后在 Inspector 改 Transform Scale。",
+            "选中实例时 Inspector 顶部可找到 Overrides。修改前先截图源与两个实例的 Scale；用 Box Collider 的 Size 作为另一项可独立观察的源配置。"
+          ]
         },
         {
           "title": "核对保存位置与身份",
@@ -550,7 +630,13 @@ window.COURSE_MODULES.push({
             "停止播放，对比Hierarchy、Prefab资源和场景未保存标记，说明哪些只是运行变化。",
             "在Unity内移动Prefab文件夹，检查引用及meta；不要在正式资源上删除meta试验。"
           ],
-          "result": "分清临时实例、编辑保存和资源身份。"
+          "result": "分清临时实例、编辑保存和资源身份。",
+          "purpose": "确认运行副本的寿命，以及在编辑器内移动资源时如何保留引用。",
+          "setup": [
+            "延用 CubeTemplate.prefab；它只能包含 Cube 本身的组件，不要把 PrefabSpawnProbe 挂到模板上。",
+            "GameObject > Create Empty 创建 Spawner，添加 PrefabSpawnProbe；从 Project 将 CubeTemplate.prefab 拖进其 Template 字段。保存场景。",
+            "打开 Hierarchy 与 Project 并排观察；仅在停止播放后，从 Project 内移动 Prefabs 文件夹。要查看 .meta，可对资源右键 Show in Explorer，查看而不删除。"
+          ]
         }
       ],
       "pitfalls": [
@@ -566,7 +652,7 @@ window.COURSE_MODULES.push({
         }
       ],
       "exercise": {
-        "brief": "建立一个基础目标Prefab和两个生命配置不同的实例，标出各字段来自源资源还是实例；查找目标不能只依赖名字。",
+        "brief": "建立 CubeTemplate Prefab 与两个实例 A、B，给它们设置不同的 Transform Scale 或 Box Collider Size，标出各值来自源资源还是实例覆盖。这里只用已有组件，不需要生命脚本；观察目标身份时结合选中对象与引用，不能只看名字。",
         "deliverables": [
           "Prefab 与场景",
           "Overrides 对照记录",
@@ -601,7 +687,8 @@ window.COURSE_MODULES.push({
             "只能在播放期间改实例名"
           ],
           "answer": 1,
-          "explanation": "实例修改和写回源资源是两个步骤。"
+          "explanation": "实例修改和写回源资源是两个步骤。",
+          "scenario": "Project 中有 Enemy.prefab；场景里有从它拖出的实例 EnemyA。你只在 Hierarchy 中给 EnemyA 改名，尚未执行任何 Apply 覆盖操作。"
         },
         {
           "question": "meta 文件重要的原因是？",
@@ -612,7 +699,8 @@ window.COURSE_MODULES.push({
             "仅记录打开时间，可任意删除"
           ],
           "answer": 2,
-          "explanation": "稳定身份关系到已有引用，原文件名不能替代丢失的 meta。"
+          "explanation": "稳定身份关系到已有引用，原文件名不能替代丢失的 meta。",
+          "scenario": "某个图片或 Prefab 文件旁有一个同名 .meta 文件，其他资源已通过 Unity 建立对它的引用。这里讨论保留资源身份与导入配置所需的信息。"
         },
         {
           "question": "未保存星号意味着什么？",
@@ -623,7 +711,8 @@ window.COURSE_MODULES.push({
             "项目无法进入播放"
           ],
           "answer": 0,
-          "explanation": "星号提示未保存修改，本身没有证明数据损坏。"
+          "explanation": "星号提示未保存修改，本身没有证明数据损坏。",
+          "scenario": "编辑模式中，你移动了场景对象，但尚未再次保存场景；场景名旁出现星号。没有其他损坏或丢失证据。"
         }
       ],
       "references": [
@@ -659,8 +748,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "在编辑器里移动 Prefab 文件夹，引用一定断开吗？",
-          "answer": "通常不会。资源身份和 meta 一起保留时，引用可以继续；丢失 meta 后不能只靠文件名保证。"
-        }
+          "answer": "通常不会。资源身份和 meta 一起保留时，引用可以继续；丢失 meta 后不能只靠文件名保证。",
+          "scenario": "Spawner 的 template 已指向 Project 中的 CubeTemplate.prefab。现在准备在 Unity 的 Project 窗口里把保存该 Prefab 的文件夹拖到另一个文件夹，不更名或删除 .meta 文件。"
+        },
+        "scenario": "Project 窗口中的 CubeTemplate.prefab 是模板资源；Hierarchy 中由它拖出的 A、B 是两个场景实例。第三个对象 RuntimeCopy 由 PrefabSpawnProbe 在 Play 后生成。三者让我们比较修改与保存发生在哪里。",
+        "purpose": "避免把运行时改动、场景保存和模板修改混为一件事，也为以后安全地复用角色资源打基础。"
       }
     },
     {
@@ -747,7 +839,7 @@ window.COURSE_MODULES.push({
         "filename": "HealthStateProbe.cs",
         "source": "using UnityEngine;\npublic sealed class HealthStateProbe : MonoBehaviour\n{\n    [SerializeField, Min(1)] int maximum = 5;\n    int current;\n    void Awake() { current = Mathf.Max(1, maximum); Report(); }\n    [ContextMenu(\"Damage once\")]\n    void DamageOnce() { current = Mathf.Max(0, current - 1); Report(); }\n    void Report() => Debug.Log($\"config={maximum}; runtime={current}\", this);\n    void OnValidate() => maximum = Mathf.Max(1, maximum);\n}",
         "explanation": [
-          "编辑模式配置 maximum，播放后执行 Damage once，比较配置与本次生命。停止不会保存受伤进度，同一实例重新启用也不自动重跑 Awake。"
+          "编辑模式在 Inspector 配置 Maximum，进入 Play 后在 HealthStateProbe 右上角三点菜单点 Damage once；每点一次调用一次方法。Inspector 显示最大值配置，Console 的 config/runtime 显示配置与当前生命。停止后不会保存受伤进度，同一实例重新启用也不自动重跑 Awake。"
         ]
       },
       "lab": [
@@ -759,7 +851,13 @@ window.COURSE_MODULES.push({
             "等编译后比较原组件与新添加组件，记录各自的maximum。",
             "在测试副本执行Reset、撤销与重新播放，逐次记录数值来源。"
           ],
-          "result": "用两个组件解释代码起点与保存配置，而非猜测编译失败。"
+          "result": "用两个组件解释代码起点与保存配置，而非猜测编译失败。",
+          "purpose": "用已有组件与新组件对照，识别保存配置与代码初值。",
+          "setup": [
+            "建立空对象 Existing，添加 HealthStateProbe，在 Inspector 将 Maximum 设为9，用 File > Save 保存场景。复制场景作为实验副本。",
+            "打开 HealthStateProbe.cs，只在实验副本对应项目把声明初值5改为6，保存并返回 Unity 等待编译。新建空对象 Fresh，再 Add Component 添加同一脚本。",
+            "组件右上角三点菜单里的 Reset 会重置配置；此操作先只对实验对象做，记录后可以 Edit > Undo。完成实验后还原示例初值5。"
+          ]
         },
         {
           "title": "跟踪一次生命变化",
@@ -769,7 +867,13 @@ window.COURSE_MODULES.push({
             "禁用启用组件，再关闭开启对象，记录是否新建实例及current是否改变。",
             "停止并重新播放，比较Awake初始化；再写出显式复活方法应重置哪些状态。"
           ],
-          "result": "说明状态改变、重新启用与重新初始化的区别。"
+          "result": "说明状态改变、重新启用与重新初始化的区别。",
+          "purpose": "跟踪同一实例受伤、停用与重新开始时的状态。",
+          "setup": [
+            "选中挂有 HealthStateProbe 的对象，打开 Window > General > Console。进入 Play，先读 config 与 runtime 的初始化日志。",
+            "在该组件右上角三点菜单选择 Damage once；每点一次调用一次伤害方法。Maximum 在 Inspector 查看，current 是未序列化字段，应读日志里的 runtime。",
+            "找到组件勾选和 Inspector 顶部对象活动勾选，分别测试；每轮注明是原实例重新开启，还是停止后重新 Play。"
+          ]
         }
       ],
       "pitfalls": [
@@ -820,7 +924,8 @@ window.COURSE_MODULES.push({
             "重新播放必定覆盖旧配置"
           ],
           "answer": 1,
-          "explanation": "已有实例保存值与代码初值是不同来源，比较新建组件更容易验证。"
+          "explanation": "已有实例保存值与代码初值是不同来源，比较新建组件更容易验证。",
+          "scenario": "已有组件的 Maximum 被设为9并保存。随后把脚本声明中的初值改为6，等待 Unity 编译结束；没有 Reset、删除重加组件或明确写回字段。"
         },
         {
           "question": "OnValidate 应主要承担什么？",
@@ -831,7 +936,8 @@ window.COURSE_MODULES.push({
             "唯一可靠的玩家存档入口"
           ],
           "answer": 0,
-          "explanation": "OnValidate 是编辑器辅助，不替代运行初始化或保存策略。"
+          "explanation": "OnValidate 是编辑器辅助，不替代运行初始化或保存策略。",
+          "scenario": "编辑模式下，设计者可能在 Inspector 输入不合法的最大生命。你准备使用 OnValidate 进行配置校验，尚未涉及玩家存档或运行循环。"
         },
         {
           "question": "哪个设计最能说明当前生命值来源？",
@@ -842,7 +948,8 @@ window.COURSE_MODULES.push({
             "只靠变量名约定"
           ],
           "answer": 2,
-          "explanation": "这样能区分配置、当前状态和修改入口。"
+          "explanation": "这样能区分配置、当前状态和修改入口。",
+          "scenario": "角色需要可配置最大生命，进入游戏建立当前生命，受伤后逐次减少。希望从代码和日志判断每次修改由谁发起。"
         }
       ],
       "references": [
@@ -878,8 +985,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "伤害后禁用再启用组件，会重新 Awake 回满血吗？",
-          "answer": "不会仅因同一实例重新启用而重跑 Awake；需要复活时应提供明确的重置方法。"
-        }
+          "answer": "不会仅因同一实例重新启用而重跑 Awake；需要复活时应提供明确的重置方法。",
+          "scenario": "HealthStateProbe 已在本次 Play 中执行 Awake，随后通过组件菜单 Damage once 受伤。只取消再勾回同一个组件的启用开关，没有销毁或重新创建对象。"
+        },
+        "scenario": "一个对象已经挂了 HealthStateProbe，Inspector 中 Maximum 被你设成9并保存。代码仍写 maximum=5；它在 Awake 用配置建立 current，然后 Damage once 只减少 current。当前生命通过 Console 查看，并没有独立的 Inspector 字段。",
+        "purpose": "让你能解释“数字从哪里来”：代码提供新组件起点，保存的数据提供配置，运行方法改变本次状态。"
       }
     },
     {
@@ -928,7 +1038,8 @@ window.COURSE_MODULES.push({
           "title": "报错行是显露问题的位置",
           "paragraphs": [
             "NullReferenceException 常表示解引用了空引用；Unity 对象已被销毁后再访问，还可能出现 MissingReferenceException，具体诊断会受运行环境影响。读取 target.position 失败，只能先确定使用时目标不可用。它可能从未赋值，也可能查找失败，或在等待期间被别处销毁。应把异常类型、调用栈和引用来源一起看，不能仅凭报错行认定最早根因。",
-            "双击错误后继续追问 target 在哪里获得、何时确认有效。应从失败使用处往前查，而不是删除报错行。必要引用缺失时，一次说明缺少什么并停止无效逻辑，比每帧重复异常更好；但真正修复仍需建立正确引用。"
+            "双击错误后继续追问 target 在哪里获得、何时确认有效。应从失败使用处往前查，而不是删除报错行。必要引用缺失时，一次说明缺少什么并停止无效逻辑，比每帧重复异常更好；但真正修复仍需建立正确引用。",
+            "本课 ReferenceProbe 特意在读取前检查 target，并用 Debug.LogError 主动报告 Missing target 后停用。它没有在该分支抛出 NullReferenceException；红色日志也可能是你主动写出的诊断。下面的异常讨论是未做此保护时的另一种情况，应先读清 Console 的具体内容再分类。"
           ]
         },
         {
@@ -966,7 +1077,7 @@ window.COURSE_MODULES.push({
         "filename": "ReferenceProbe.cs",
         "source": "using UnityEngine;\npublic sealed class ReferenceProbe : MonoBehaviour\n{\n    [SerializeField] Transform target;\n    void Start()\n    {\n        if (target == null)\n        {\n            Debug.LogError($\"Missing target on {name}, frame={Time.frameCount}\", this);\n            enabled = false;\n            return;\n        }\n        Debug.Log($\"Target={target.name}, distance={Vector3.Distance(transform.position, target.position):F2}\", this);\n    }\n}",
         "explanation": [
-          "脚本挂到 Probe，先不指定 target，运行查看一次错误与对象上下文；再赋目标重试。停用组件只停止无效行为，没有替你补上引用。"
+          "将 ReferenceProbe 挂到 Probe。先保留 Target 为 None，Play 后检查一次 Missing target 诊断及对象上下文；再停止，把 Hierarchy 的 TargetCube 拖入 Inspector 的 Target 槽，重新 Play。Start 不会因你临时补引用而在同一实例自动重跑，禁用组件也没有替你补上引用。"
         ]
       },
       "lab": [
@@ -978,7 +1089,14 @@ window.COURSE_MODULES.push({
             "运行未赋target的探针，双击错误并点击上下文，查明哪一个实例缺引用。",
             "赋正确目标后将其移出相机，比较没有异常却不可见的另一种故障。"
           ],
-          "result": "三类故障使用不同入口，而非全部靠空值判断。"
+          "result": "三类故障使用不同入口，而非全部靠空值判断。",
+          "purpose": "把不同故障放在可重复的场景中，避免用同一招处理所有问题。",
+          "setup": [
+            "在 Basic 场景创建空对象 Probe，添加 ReferenceProbe；再用 GameObject > 3D Object > Cube 创建 TargetCube，保持默认 MeshRenderer。",
+            "选 Probe，在 Inspector 找到 Target 槽；赋值方式是将 Hierarchy 的 TargetCube 拖到该槽，不是把脚本文件拖入。第一轮先保持槽为 None。",
+            "打开 Console。ReferenceProbe 只在 Start 运行一次；修改 Target 后应停止并重新 Play，不能只等待它自动重试。",
+            "可见性测试先确认 Game 视图能看到 Cube；再改它的位置使其离开相机。若使用断点，先按所用代码编辑器的 Unity 调试说明配置，未配置时先用带上下文日志完成定位。"
+          ]
         },
         {
           "title": "缩减到最小复现",
@@ -988,7 +1106,13 @@ window.COURSE_MODULES.push({
             "加入帧号与上下文，用断点查看一次调用的变量与调用栈。",
             "逐步去掉无关对象，每次确认问题仍在，最后写出两对象场景的完整操作步骤。"
           ],
-          "result": "另一个人可按记录复现并验证修复。"
+          "result": "另一个人可按记录复现并验证修复。",
+          "purpose": "写出别人也能重现的最小步骤，并识别同名对象中的正确实例。",
+          "setup": [
+            "复制 Probe 两份并分别设为不同 Target；可以先取不同名字做基线，再故意改为同名。创建一个空父对象，将其中一个 Probe 拖入其下。",
+            "选中 Console 的一条日志：下方面板显示调用栈；日志传入 this，可通过对应对象上下文定位发出日志的组件。",
+            "如果已配置 Unity 调试器，在 ReferenceProbe.Start 的检查处设断点，连接 Unity Editor 后进入 Play；否则先记录 Target 槽、对象位置及调用栈，不把未做的断点检查写成已完成。"
+          ]
         }
       ],
       "pitfalls": [
@@ -1039,7 +1163,8 @@ window.COURSE_MODULES.push({
             "空引用只可能来自 Inspector"
           ],
           "answer": 1,
-          "explanation": "错误位置说明使用失败，还应追查引用如何获取和何时失效。"
+          "explanation": "错误位置说明使用失败，还应追查引用如何获取和何时失效。",
+          "scenario": "某个未做空值保护的脚本在读取 target.position 时抛出 NullReferenceException。target 原本应由更早的查找或赋值提供；本题不是 ReferenceProbe 主动打印的 Missing target 日志。"
         },
         {
           "question": "测量脚本真实性能更适合什么？",
@@ -1050,7 +1175,8 @@ window.COURSE_MODULES.push({
             "只数 Console 行数"
           ],
           "answer": 2,
-          "explanation": "日志和断点会扰动时间，Profiler 才提供相应耗时证据。"
+          "explanation": "日志和断点会扰动时间，Profiler 才提供相应耗时证据。",
+          "scenario": "移动功能在复杂场景里偶尔变慢。你想测量正常运行中的脚本耗时，而大量 Debug.Log 或断点会改变运行节奏。"
         },
         {
           "question": "故障修复完成的必要证据是什么？",
@@ -1061,7 +1187,8 @@ window.COURSE_MODULES.push({
             "捕获全部异常并忽略"
           ],
           "answer": 2,
-          "explanation": "需要重走原触发步骤，不能只把证据隐藏。"
+          "explanation": "需要重走原触发步骤，不能只把证据隐藏。",
+          "scenario": "已经能用固定步骤重现一个引用故障。现在修改了代码或配置，准备判断是否修复，而不是仅隐藏 Console 中旧记录。"
         }
       ],
       "references": [
@@ -1097,8 +1224,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "清空 Console，是否证明问题已经修好？",
-          "answer": "不能。Clear 只删记录；应按原步骤再次触发，并验证行为和错误两方面。"
-        }
+          "answer": "不能。Clear 只删记录；应按原步骤再次触发，并验证行为和错误两方面。",
+          "scenario": "你运行未赋 Target 的 ReferenceProbe，Console 出现 Missing target。现在只点击 Console 的 Clear，尚未赋值，也未重新运行验证。"
+        },
+        "scenario": "Probe 挂 ReferenceProbe，Target 应引用另一个场景对象。代码已主动检查缺失引用，并用 Debug.LogError 报告；它不会在该分支抛出 NullReferenceException。另用可见 Cube 作为目标，才有条件检查相机之外的“不可见”故障。",
+        "purpose": "根据编译失败、引用缺失、显示配置三类不同问题选择工具，修复后回到同一触发条件验证。"
       }
     }
   ]

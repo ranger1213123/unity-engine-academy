@@ -19,8 +19,9 @@ const directory=fs.mkdtempSync(path.join(os.tmpdir(),'unity-atlas-compile-'));
 const modules=loadContent();
 const results=[];
 for(const lesson of modules.flatMap(module=>module.lessons)){
-  const files=lesson.code?.files || (lesson.code?.source?[lesson.code]:[]);
-  if(!files.length||lesson.code.language!=='csharp')continue;
+  const allFiles=lesson.code?.files || (lesson.code?.source?[lesson.code]:[]);
+  const files=allFiles.filter(file=>(file.language||lesson.code.language)==='csharp');
+  if(!files.length)continue;
   const source=files.map(file=>file.source).join('\n');
   if(/using Unity\.Entities|using Unity\.AI\.Navigation|using UnityEngine\.AddressableAssets|using Unity\.Cinemachine|using Cinemachine/.test(source)){
     results.push({lesson:lesson.id,status:'skipped',reason:'示例依赖未安装的可选包；教材需明确安装前提。'});continue;

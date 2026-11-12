@@ -1,4 +1,4 @@
-// 学者修订：补足具体推导、实验起点及教学边界。
+// 语境修订：题目背景、实验准备与学习用途。
 window.COURSE_MODULES.push({
   "id": "m07",
   "number": 7,
@@ -99,7 +99,13 @@ window.COURSE_MODULES.push({
             "在 Inspector 切换 Is Kinematic，记录是否下落；把“是否可见”和“是否受模拟推进”分开记录。",
             "关闭第三个箱子的Renderer，观察显示消失但重力与接触仍存在；再恢复显示并禁用本课的只读状态探针，确认探针停止工作不等于Rigidbody停止模拟。"
           ],
-          "result": "一张列出组件组合、可见性、下落和阻挡结果的表。"
+          "result": "一张列出组件组合、可见性、下落和阻挡结果的表。",
+          "setup": [
+            "在练习项目用File > New Scene新建空场景，File > Save As保存为L031_Components；需要的窗口可从Window > General打开Hierarchy、Inspector和Console。",
+            "用GameObject > 3D Object > Cube建Floor，Inspector的Transform设Position=(0,-0.5,0)、Scale=(10,1,10)。再建Cube命名Box，Position=(0,3,0)；菜单建的Cube自带BoxCollider。",
+            "要添加脚本，先把本课代码保存为Assets/EngineLabs/RigidbodyStateProbe.cs，回Unity等编译结束；选中第三组箱子，在Inspector点Add Component搜索RigidbodyStateProbe。不要把探针挂到“仅显示”组，因为它会要求自动添加Rigidbody。"
+          ],
+          "purpose": "分清看得见、能被碰到和会自己运动，得到后续碰撞实验可复用的组件基线。"
         },
         {
           "title": "检查尺度与整体形状",
@@ -109,7 +115,13 @@ window.COURSE_MODULES.push({
             "只缩放显示子对象，再对比缩放整个物理根，观察碰撞体实际尺寸。",
             "建立一个根 Rigidbody 和两个子 Collider，撞击其中一侧，确认整体如何运动。"
           ],
-          "result": "能用场景截图说明视觉大小、碰撞形状和刚体归属。"
+          "result": "能用场景截图说明视觉大小、碰撞形状和刚体归属。",
+          "setup": [
+            "先完成组件实验，退出Play，用File > Save As另存L031_Scale。保留Floor和一个动态Box，Box的Scale=(1,1,1)、Position=(0,5,0)。",
+            "选中Box，在Inspector > Rigidbody将Use Gravity打开、Is Kinematic关闭、Linear Damping设0。每轮退出再进入Play复位；质量在Mass字段改1或2。",
+            "复合形状组用GameObject > Create Empty建Body，Add Component添加Rigidbody；在Body下建两个Cube，只保留子对象BoxCollider，不给子对象加Rigidbody。"
+          ],
+          "purpose": "用同一高度与不同质量分开检验重力、尺寸和复合形状；不是凭外观看组件职责。"
         }
       ],
       "pitfalls": [
@@ -160,7 +172,8 @@ window.COURSE_MODULES.push({
             "会，只要两者处于同一 Layer"
           ],
           "answer": 0,
-          "explanation": "MeshRenderer 只提交绘制信息。物理系统需要 Collider 等条件才能建立接触。"
+          "explanation": "MeshRenderer 只提交绘制信息。物理系统需要 Collider 等条件才能建立接触。",
+          "scenario": "一个可见模型只有MeshRenderer，没有任何Collider；另一个球有动态Rigidbody和SphereCollider，朝模型运动，双方层允许交互。"
         },
         {
           "question": "动态箱子的移动脚本已禁用，箱子仍下落，最合理的解释是？",
@@ -171,7 +184,8 @@ window.COURSE_MODULES.push({
             "必须等待下一帧，禁用脚本才会同时关闭重力"
           ],
           "answer": 1,
-          "explanation": "禁用一个 MonoBehaviour 不会自动禁用同对象的 Rigidbody。应分别检查脚本与模拟设置。"
+          "explanation": "禁用一个 MonoBehaviour 不会自动禁用同对象的 Rigidbody。应分别检查脚本与模拟设置。",
+          "scenario": "箱子带动态Rigidbody，Use Gravity开启；你只禁用同对象上的移动MonoBehaviour，没有关闭GameObject或改变刚体配置。"
         },
         {
           "question": "Rigidbody2D 与普通 BoxCollider 放在相同位置会形成二维接触吗？",
@@ -182,7 +196,8 @@ window.COURSE_MODULES.push({
             "会，只要将项目设为二维模式"
           ],
           "answer": 2,
-          "explanation": "二维物理要求对应的 Collider2D。编辑器的二维视图不会把三维组件转换成二维组件。"
+          "explanation": "二维物理要求对应的 Collider2D。编辑器的二维视图不会把三维组件转换成二维组件。",
+          "scenario": "角色带Rigidbody2D，障碍只带三维BoxCollider。二者坐标重叠，未添加任何Collider2D。"
         }
       ],
       "references": [
@@ -222,8 +237,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "只禁用 Cube 上的移动脚本，重力会自动关闭吗？",
-          "answer": "不会。只要刚体仍在参与动态模拟且重力开启，物理系统仍会推进运动。"
-        }
+          "answer": "不会。只要刚体仍在参与动态模拟且重力开启，物理系统仍会推进运动。",
+          "scenario": "箱子有启用的动态Rigidbody和BoxCollider，Use Gravity开启；另有一个移动MonoBehaviour。只取消该脚本组件标题旁的勾选，保持整个对象活动。"
+        },
+        "scenario": "你把一个箱子放到地板上方，画面里都看得见，按下编辑器顶部三角形Play后，箱子却不落下。本课使用三维Cube箱子与Cube地板，先不接动画或输入，逐项检查显示、碰撞形状和运动组件。",
+        "purpose": "学完能判断“没画出来”“没有碰撞形状”和“没有运动模拟”分别应查哪个组件，避免角色不动时到处改设置。"
       }
     },
     {
@@ -318,7 +336,13 @@ window.COURSE_MODULES.push({
             "四模式对照使用独立脚本副本：将持续加速度设为零，在待处理请求被消费的分支中只保留一次 AddForce。每次重新运行并清零初速度，分别输入 Force=10N、Acceleration=10m/s²、Impulse=10N·s、VelocityChange=10m/s。先预测下一模拟步的增量，再读数。",
             "将固定步长减半，先按公式预测一步和一秒后的差别，再记录模拟后的速度。"
           ],
-          "result": "包含单位、质量、步长、调用次数和速度增量的对照表。"
+          "result": "包含单位、质量、步长、调用次数和速度增量的对照表。",
+          "setup": [
+            "用File > New Scene建空场景并保存L032_Forces；GameObject > 3D Object > Cube建ForceBox，Position=(0,3,0)。保存本课ForceModeProbe.cs到Assets/EngineLabs后，在选中箱子的Inspector > Add Component添加它。",
+            "在Inspector > Rigidbody设Mass=2、Use Gravity关闭、Linear Damping=0；ForceModeProbe的Acceleration设(1,0,0)。删除或停用其他会移动箱子的脚本。",
+            "用Edit > Project Settings > Time查看Fixed Timestep并记下原值，先设0.02。打开Window > General > Console；Play后通过ForceModeProbe组件标题右侧菜单选择Queue impulse。实验后恢复原时间设置。"
+          ],
+          "purpose": "把源码的真实数值与公式对齐，查明质量、时间和输入单位分别在哪一步起作用。"
         },
         {
           "title": "比较速度控制与平台移动",
@@ -328,7 +352,13 @@ window.COURSE_MODULES.push({
             "建立运动学平台，在 FixedUpdate 中计算世界目标位置并调用 MovePosition。",
             "给平台加乘客，再检查接触；写出此实验尚未解决的坡面或平台相对速度问题。"
           ],
-          "result": "能说明每个接口接收什么，以及哪些运动被保留。"
+          "result": "能说明每个接口接收什么，以及哪些运动被保留。",
+          "setup": [
+            "另存场景L032_Controls。比较速度分量时给箱子打开Use Gravity，并停用ForceModeProbe，避免它继续叠加水平加速度。",
+            "本课没有现成MovePosition平台脚本。这组是独立编写练习：先用GameObject > 3D Object > Cube建Platform，Add Component添加Rigidbody并勾Is Kinematic，记录起点。",
+            "平台控制只在FixedUpdate计算“当前位置+速度×Time.fixedDeltaTime”并交给MovePosition；只给这个新脚本写平台位置。先不放乘客，确认平台轨迹后再加动态箱子。"
+          ],
+          "purpose": "验证一次完整速度赋值到底覆盖了什么，再把严格轨迹的平台与动态箱子区分开。"
         }
       ],
       "pitfalls": [
@@ -379,7 +409,8 @@ window.COURSE_MODULES.push({
             "不需要，因为所有 ForceMode 都忽略质量"
           ],
           "answer": 0,
-          "explanation": "Impulse 已经具有时间积分后的含义。是否乘时间必须看单位，不能只看调用函数所在的位置。"
+          "explanation": "Impulse 已经具有时间积分后的含义。是否乘时间必须看单位，不能只看调用函数所在的位置。",
+          "scenario": "质量2kg的动态箱子初速度为零，无重力与阻尼。在一个物理步前只执行一次AddForce，模式为Impulse，输入冲量为10N·s。"
         },
         {
           "question": "向 linearVelocity 写入一个完整的新向量会发生什么？",
@@ -390,7 +421,8 @@ window.COURSE_MODULES.push({
             "只改变水平分量，竖直分量永远保留"
           ],
           "answer": 1,
-          "explanation": "赋值不是叠加。希望保留重力或击退时，需要显式保留或组合相应分量。"
+          "explanation": "赋值不是叠加。希望保留重力或击退时，需要显式保留或组合相应分量。",
+          "scenario": "箱子当前linearVelocity=(0,-3,0)，脚本接着执行body.linearVelocity=new Vector3(5,0,0)，没有其他写入者。"
         },
         {
           "question": "MovePosition 的参数表示什么？",
@@ -401,7 +433,8 @@ window.COURSE_MODULES.push({
             "相对父对象的固定偏移"
           ],
           "answer": 2,
-          "explanation": "调用方通常根据当前位置、速度和时间计算目标世界位置，再提交给接口。"
+          "explanation": "调用方通常根据当前位置、速度和时间计算目标世界位置，再提交给接口。",
+          "scenario": "运动学平台本步位置为(2,0,0)，计划向右移动。脚本准备调用三维Rigidbody.MovePosition，需要决定传入值的含义。"
         }
       ],
       "references": [
@@ -441,8 +474,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "质量不变，把物理步长减半，一次 Impulse 的理论速度增量也会减半吗？",
-          "answer": "不会。一次冲量的速度增量不再乘模拟步长；持续 Force 每步的增量才会随步长变化。"
-        }
+          "answer": "不会。一次冲量的速度增量不再乘模拟步长；持续 Force 每步的增量才会随步长变化。",
+          "scenario": "同一个质量2kg、初速度为零且无阻尼的箱子，每轮只接收一次相同10N·s的Impulse；唯一改变是固定步长从0.02秒变为0.01秒。"
+        },
+        "scenario": "同样是把箱子向右推，有时质量加倍就明显变慢，有时却毫无变化。先把试验箱子设为2kg，关闭重力和阻尼，再看“力”“冲量”和“直接指定速度”究竟各输入了什么。",
+        "purpose": "把运动参数连同单位和调用次数一起读懂，遇到跳跃太弱或移动慢几十倍时能算出原因。"
       }
     },
     {
@@ -537,7 +573,13 @@ window.COURSE_MODULES.push({
             "每次只改变 Is Trigger、刚体模式或层矩阵中的一个条件，再进入 Play。",
             "用两列分别记录“是否阻挡”和“是否通知”，不要把两者当成同一个成功条件。"
           ],
-          "result": "一张能解释消息前提与实体阻挡差异的配置表。"
+          "result": "一张能解释消息前提与实体阻挡差异的配置表。",
+          "setup": [
+            "新建并保存L033_Contact。GameObject > 3D Object > Cube建Floor，放在(0,-0.5,0)并缩放为(10,1,10)；建Sphere命名Ball，Position=(0,3,0)，Add Component添加Rigidbody。",
+            "建Cube命名Zone，Position=(0,1.5,0)、Scale=(3,1,3)；在Inspector取消Mesh Renderer勾选并勾BoxCollider > Is Trigger。保存TriggerFactProbe.cs并通过Zone的Add Component添加。",
+            "打开Window > General > Console。Edit > Project Settings > Physics中的Layer Collision Matrix先保留两者允许交互的基线，每次只改一项。"
+          ],
+          "purpose": "看到同一配置中的阻挡和通知各是什么，知道为什么取消Trigger后应换看碰撞消息。"
         },
         {
           "title": "观察重复接触与异常清理",
@@ -547,7 +589,13 @@ window.COURSE_MODULES.push({
             "按角色记录接触数，再测试只离开一个子形状、销毁角色和禁用区域。",
             "将球放在同一斜面上，对照两组摩擦与弹性，保持速度、尺度和刚体设置不变。"
           ],
-          "result": "能解释角色人数、形状数量和材质效果分别来自什么。"
+          "result": "能解释角色人数、形状数量和材质效果分别来自什么。",
+          "setup": [
+            "另存L033_Members。用GameObject > Create Empty建Character，Add Component添加Rigidbody并关闭Use Gravity；在它下面建BodyShape与FootShape两个Cube，沿X错开，子物体只保留Collider。",
+            "Zone触发区沿X的宽度要大于两个形状合计跨度，保证能出现两个形状同时在区内的阶段。把角色起点放在Zone左侧，Play中用Scene的移动工具缓慢穿过，仅用于观察接触。",
+            "现成TriggerFactProbe只打印，不会维护人数；先记录它输出的形状名和attachedRigidbody，再在实验副本按同一个刚体累计接触数。物理材质对照另用GameObject > 3D Object > Cube搭斜面，避免和计数同时修改。"
+          ],
+          "purpose": "把多个形状归到同一角色，验证部分离开与突然结束为什么需要不同清理路径。"
         }
       ],
       "pitfalls": [
@@ -598,7 +646,8 @@ window.COURSE_MODULES.push({
             "仅取消摩擦，仍保留所有普通碰撞反弹"
           ],
           "answer": 0,
-          "explanation": "感应区与墙的用途不同。要同时需要两种效果时，应明确配置相应形状和规则。"
+          "explanation": "感应区与墙的用途不同。要同时需要两种效果时，应明确配置相应形状和规则。",
+          "scenario": "商店范围有BoxCollider并勾Is Trigger，角色有动态Rigidbody和普通Collider；双方Layer允许接触。商店只需知道角色是否进入范围。"
         },
         {
           "question": "Enter 的次数一定等于进入区域的角色数吗？",
@@ -609,7 +658,8 @@ window.COURSE_MODULES.push({
             "不一定，但可以直接按 Collider 名称去重"
           ],
           "answer": 1,
-          "explanation": "一个刚体可以带多个碰撞形状。应选择稳定的角色身份，不能靠形状名字假定唯一性。"
+          "explanation": "一个刚体可以带多个碰撞形状。应选择稳定的角色身份，不能靠形状名字假定唯一性。",
+          "scenario": "一个角色根上有Rigidbody，两个子对象各有Collider，两个形状先后进入同一个触发区。区域代码在每次Enter时计数。"
         },
         {
           "question": "区域成员清理只依赖 Exit，有什么风险？",
@@ -620,7 +670,8 @@ window.COURSE_MODULES.push({
             "Unity 会自动清空脚本中的集合，所以没有风险"
           ],
           "answer": 2,
-          "explanation": "脚本自己的集合需要自己清理。物理退出通知不能替代对象停用与销毁时的状态管理。"
+          "explanation": "脚本自己的集合需要自己清理。物理退出通知不能替代对象停用与销毁时的状态管理。",
+          "scenario": "区域脚本维护自己的成员集合，只在OnTriggerExit中移除角色；角色可能在仍重叠时被销毁，区域也可能被停用。"
         }
       ],
       "references": [
@@ -664,8 +715,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "两个形状中只有一个退出区域，可以立即隐藏“角色在范围内”的提示吗？",
-          "answer": "不能仅凭这一次 Exit 决定。另一个形状仍重叠时，该角色仍应视为在范围内。"
-        }
+          "answer": "不能仅凭这一次 Exit 决定。另一个形状仍重叠时，该角色仍应视为在范围内。",
+          "scenario": "同一角色根有一个Rigidbody，脚和身体各有一个子Collider；两个形状都已进入同一触发区。现在只有脚退出，身体仍与区域重叠。"
+        },
+        "scenario": "角色走进商店区域，提示却出现两次；把区域改成Trigger后，墙又挡不住角色。场景里有动态球、普通地板和一个感应区，先分开“要阻挡”与“要知道进入了谁”这两个需求。",
+        "purpose": "建立能解释回调数量和角色人数差异的传感器，避免一次接触被当成多次奖励。"
       }
     },
     {
@@ -756,21 +810,33 @@ window.COURSE_MODULES.push({
           "title": "从空间问题选查询",
           "minutes": 60,
           "steps": [
-            "在场景建立地板、墙和窄门，分别写下“脚下是否有地面”“身体能否过门”“范围内有谁”三个问题。",
-            "为每个问题选择射线、形状投射或重叠查询，画出范围并记录命中对象。",
-            "把环境对象设为第8层。先记录错误掩码8，再用1 << 8得到256，最后在 Inspector 勾选第8层复测；画出实际命中对象，解释层编号与对应位为何不是同一整数。"
+            "先只用现成FilteredRayProbe运行：把一个带BoxCollider的Cube放到Probe正前方，确认射线由绿变红，并在命中面画出黄色法线。再把Cube移出射线路径，确认颜色恢复。",
+            "把门框放在Probe前方，中央留0.6单位缝，用宽1单位的角色参照物比较：中心射线能穿过缝，不代表有宽度的身体也能通过。在纸上画出射线与身体各覆盖哪里；形状投射与重叠查询的代码实现留作官方文档扩展。",
+            "把门框设为第8层Environment。先在Inspector只勾该层，再记录对应位掩码应为1 << 8，即256；说明直接写整数8会选择另一组位。现成脚本使用LayerMask字段，本组不需要另写转换代码。"
           ],
-          "result": "每个查询都有明确问题、几何图和过滤设置。"
+          "result": "现成射线可运行，能解释无宽度的命中结果与身体通行判断为何不同，并写出第8层的掩码。",
+          "setup": [
+            "新建场景L034_Queries。GameObject > Create Empty建Probe，Position=(0,1,0)、Rotation=(0,0,0)，保存FilteredRayProbe.cs后从Inspector > Add Component添加。此代码沿Probe的世界forward，也就是初始+Z查询。",
+            "在Probe前方Z=3附近用两个Cube作门框，BoxCollider保持开启，中央留0.6单位缝；另建宽1单位的角色参照物。Inspector右上Layer > Add Layer把空闲的User Layer 8命名Environment，再选门框把Layer设为Environment。若该层已有用途，在独立实验项目中操作，不覆盖正式项目层名。",
+            "选Probe，将脚本Targets只勾Environment，Distance设10；Scene窗口右上打开Gizmos，Console从Window > General > Console打开。"
+          ],
+          "purpose": "把实际要问的空间问题画出来，再证实层编号与查询掩码确实不同。"
         },
         {
-          "title": "检查时点与高速路径",
+          "title": "逐项检查射线为什么命中",
           "minutes": 60,
           "steps": [
-            "固定小球尺寸、速度和薄墙厚度，先计算一步位移，再比较离散与连续模式。",
-            "对比插值开关，分别记录碰撞是否正确和画面是否平滑。",
-            "逐步增加多结果查询中的目标数量，检查数组装满时的处理，并核对具体重载的排序保证。"
+            "另存场景后，先把单个带BoxCollider的墙放到Probe正前方，并确认Targets只勾Environment。只改变墙的Layer，观察射线红绿变化；恢复后再只改变Targets，每轮记录实际条件。",
+            "把墙的Is Trigger勾选再取消，保持其他条件不变。现成脚本明确传入QueryTriggerInteraction.Ignore，核对触发形状是否被忽略；再到Edit > Project Settings > Physics记录Queries Hit Triggers的当前值，解释显式Ignore为什么不依赖该全局默认。",
+            "恢复普通Collider，把探针移到墙形状内部，再移回外部，观察起点位置带来的差异。最后在Scene只改BoxCollider的Center或Size而保持墙的外观不变，核对射线依据的是碰撞形状；测完恢复原配置。"
           ],
-          "result": "能区分几何、同步、容量和高速漏检四类问题。"
+          "result": "能从Layer、显式Trigger策略、射线起点与Collider形状解释同一画面中的不同查询结果。",
+          "setup": [
+            "把第一组场景另存为L034_Filter，删除多余参照物，只留Probe和一面墙。墙的Position=(0,1,3)、Scale=(2,2,0.2)，保留BoxCollider，Layer=Environment。",
+            "Probe保持Position=(0,1,0)、Rotation=(0,0,0)，Targets只勾Environment，Distance=10。进入Play后在Scene打开Gizmos；脚本只画线和命中法线，不自动打印命中对象名称或多结果数量。",
+            "墙的BoxCollider > Is Trigger、Center和Size在Inspector调整；每轮只改一项并记录。高速刚体和固定数组容量属于正文的进一步问题，现成单射线代码不提供发射或多结果驱动，本组不要求自行实现。"
+          ],
+          "purpose": "先用已经能运行的探针逐项排除过滤与形状原因，再研究需要新增代码的查询种类。"
         }
       ],
       "pitfalls": [
@@ -821,7 +887,8 @@ window.COURSE_MODULES.push({
             "能，只要关闭 Trigger 查询"
           ],
           "answer": 0,
-          "explanation": "应通过 LayerMask 字段或正确位操作建立集合，不能把索引值直接当掩码。"
+          "explanation": "应通过 LayerMask 字段或正确位操作建立集合，不能把索引值直接当掩码。",
+          "scenario": "环境对象的Layer编号是8，脚本要让Physics.Raycast只检查该层，查询参数要求LayerMask。"
         },
         {
           "question": "插值主要解决什么问题？",
@@ -832,7 +899,8 @@ window.COURSE_MODULES.push({
             "把射线转换为身体形状"
           ],
           "answer": 1,
-          "explanation": "插值调整显示采样。碰撞检测是否正确仍取决于模拟、接口与配置。"
+          "explanation": "插值调整显示采样。碰撞检测是否正确仍取决于模拟、接口与配置。",
+          "scenario": "刚体在固定步中更新，渲染帧更频繁；开发者开启Rigidbody的Interpolate观察显示，但没有改变Fixed Timestep。"
         },
         {
           "question": "固定结果数组已经装满，能够确定什么？",
@@ -843,7 +911,8 @@ window.COURSE_MODULES.push({
             "所有查询重载都会自动扩容"
           ],
           "answer": 2,
-          "explanation": "容量是结果完整性的限制。需要明确溢出处理，并只读取本次有效区间。"
+          "explanation": "容量是结果完整性的限制。需要明确溢出处理，并只读取本次有效区间。",
+          "scenario": "某次多结果查询使用长度4的固定数组，返回有效结果数4；没有执行额外查询，也不知道场景中总目标数。"
         }
       ],
       "references": [
@@ -883,8 +952,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "把射线加长两倍，会使它开始具备角色的身体宽度吗？",
-          "answer": "不会。距离改变检查长度，不改变几何形状。判断宽度问题仍需要合适的形状查询。"
-        }
+          "answer": "不会。距离改变检查长度，不改变几何形状。判断宽度问题仍需要合适的形状查询。",
+          "scenario": "角色身体宽1个世界单位，门缝宽0.6；一条没有宽度的中心射线沿门缝穿过，其他条件不变，只将最大距离翻倍。"
+        },
+        "scenario": "你画出一根穿过门缝的射线，检测说前方没墙，角色身体却卡在门框上。门缝宽0.6个单位，角色宽1个单位；本课先看一条线与一个有宽度的身体到底在问什么不同问题。",
+        "purpose": "用几何、过滤和取样时点说明查询结果，避免把“查不到”一律当成碰撞系统失效。"
       }
     },
     {
@@ -989,7 +1061,14 @@ window.COURSE_MODULES.push({
             "以半径0.12的小球检查 groundPoint：平地Y=0时，分别将球心放在Y=0.08与Y=0.2，记录重叠结果。站到边缘后复测，说明这不是射线，也不能用一个布尔值判断坡度。",
             "按空格检查一次请求只起跳一次；再比较落地前约0.10秒和更早提出请求，按0.15秒有效期解释是否接受。记录游戏时间、grounded与竖直速度，而非只凭画面判断缓冲。"
           ],
-          "result": "一段可以逐项解释输入、判地与速度结果的运行记录。"
+          "result": "一段可以逐项解释输入、判地与速度结果的运行记录。",
+          "setup": [
+            "新建L035_Motor场景。用Cube建Floor，Position=(0,-0.5,0)、Scale=(20,1,20)；Inspector > Layer > Add Layer建Ground后给Floor设置Ground。",
+            "用GameObject > 3D Object > Capsule建Player，Position=(0,1,0)；把两个代码块分别保存为Assets/EngineLabs/SimpleGroundMotor.cs和GroundMotorKeyboardProbe.cs。等Console无编译错后，选Player用Add Component添加两个类。",
+            "Player的Rigidbody关闭Is Kinematic、开启Use Gravity，在Constraints冻结旋转；Player保持Default层。其下GameObject > Create Empty建GroundPoint，调整到站立时世界Y约0.08，拖进运动脚本Ground Point；Ground Layers只勾Ground。",
+            "从Window > Package Management > Package Manager确认Input System已安装；Edit > Project Settings > Player > Other Settings > Active Input Handling启用Input System。按提示重启后进入Play并点Game窗口取得焦点。"
+          ],
+          "purpose": "亲手接通输入到物理的最短路径，分辨按键未调用、接地配置错和速度覆盖三个位置。"
         },
         {
           "title": "验证停止和不支持的情况",
@@ -999,7 +1078,13 @@ window.COURSE_MODULES.push({
             "分别加入墙、斜坡和移动平台，记录可正常工作的条件及失败现象。",
             "列出所有写根位置或速度的组件，关闭多余写入者；比较 CharacterController 时使用独立对象。"
           ],
-          "result": "分别记录组件开关、缓存与刚体速度；能解释仅停运动层时身体仍可惯性运动，仅停输入层时活动运动层会在下一物理步用零方向接管水平速度，并检查旧跳跃不被消费。"
+          "result": "分别记录组件开关、缓存与刚体速度；能解释仅停运动层时身体仍可惯性运动，仅停输入层时活动运动层会在下一物理步用零方向接管水平速度，并检查旧跳跃不被消费。",
+          "setup": [
+            "先完成平地实验，退出Play另存L035_Boundaries，保留Player上的两个独立脚本组件，均先启用。",
+            "用Window > General > Inspector选Player，辨认组件标题勾选框与对象名称旁总开关：前者只停该组件，后者停整个对象。分别测试，不一次全关。",
+            "在Floor旁另建Cube作墙和坡面；移动平台尚未实现，本组先记录需求与失败，不声称现成平地控制器已经带平台相对速度处理。"
+          ],
+          "purpose": "证明清输入、停止控制器和停止整个对象并非一件事，同时给未支持地形建立扩展边界。"
         }
       ],
       "pitfalls": [
@@ -1050,7 +1135,8 @@ window.COURSE_MODULES.push({
             "把所有运动改为 Update"
           ],
           "answer": 0,
-          "explanation": "完整赋值会替换旧速度。应先明确哪些分量被接管，再写组合结果。"
+          "explanation": "完整赋值会替换旧速度。应先明确哪些分量被接管，再写组合结果。",
+          "scenario": "动态角色当前竖直速度为-3m/s。水平控制代码准备用一个Y=0的新完整向量覆盖linearVelocity，而不读取原速度。"
         },
         {
           "question": "一次跳跃按下为什么不宜只保留一个渲染帧？",
@@ -1061,7 +1147,8 @@ window.COURSE_MODULES.push({
             "因为按键回调只能访问 Transform"
           ],
           "answer": 1,
-          "explanation": "两种更新频率不一致。需要按接收、保留和消费的规则传递一次请求。"
+          "explanation": "两种更新频率不一致。需要按接收、保留和消费的规则传递一次请求。",
+          "scenario": "输入在Update中发现空格刚按下，这个渲染帧恰好没有FixedUpdate；运动层只会在随后物理步检查跳跃请求。"
         },
         {
           "question": "平地控制器能移动后，下一步合理结论是什么？",
@@ -1072,7 +1159,8 @@ window.COURSE_MODULES.push({
             "只要冻结旋转就能保证任何场景都正确"
           ],
           "answer": 2,
-          "explanation": "在有限条件下成立的控制器，应通过新增场景验证扩展能力，不能由一次正常移动推导全部正确。"
+          "explanation": "在有限条件下成立的控制器，应通过新增场景验证扩展能力，不能由一次正常移动推导全部正确。",
+          "scenario": "你只在平坦地板完成了移动和跳跃验收，还没有试过斜坡、台阶、墙边或移动平台。"
         }
       ],
       "references": [
@@ -1116,8 +1204,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "每步都将完整速度设为“水平输入乘速度”，会怎样影响自由下落？",
-          "answer": "这个向量的竖直分量通常为零，会反复抹掉已有下落速度。若希望保留重力效果，应明确保留相应分量。"
-        }
+          "answer": "这个向量的竖直分量通常为零，会反复抹掉已有下落速度。若希望保留重力效果，应明确保留相应分量。",
+          "scenario": "动态角色正下落，当前竖直速度为-3m/s；输入要求水平5m/s。讨论的是每步直接把完整速度赋成水平向量、把Y分量设0的写法，场景没有其他速度写入者。"
+        },
+        "scenario": "角色左右移动正常，一加跳跃就像悬在空中；还有人复制运动脚本后按键毫无反应。这个平地实验把键盘输入、接地球和刚体速度连接起来，两个文件各负责一段，不让动画同时移动身体。",
+        "purpose": "从一个能实际操作的最小控制器看清数据怎样穿过更新阶段，并能解释为何要保留竖直速度和消费一次请求。"
       }
     }
   ]

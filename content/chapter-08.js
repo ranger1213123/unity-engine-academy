@@ -1,4 +1,4 @@
-// 学者修订：补足具体推导、实验起点及教学边界。
+// 语境修订：题目背景、实验准备与学习用途。
 window.COURSE_MODULES.push({
   "id": "m08",
   "number": 8,
@@ -95,11 +95,18 @@ window.COURSE_MODULES.push({
           "title": "比较三种身体",
           "minutes": 60,
           "steps": [
-            "给三个相同方块设置同样 Collider2D，分别选择 Dynamic、Kinematic、Static，先比较重力作用。",
-            "用同一个环境测试接触，并记录身体组合及相关选项，不把某一次运动学阻挡推广到所有组合。",
-            "用一条能命中方块的 Physics2D.Raycast 作探针。依次仅关闭 SpriteRenderer、移动脚本和 simulated，每轮恢复基线，分别记录可见性、运动与命中；不要用画面消失推断碰撞也消失。"
+            "给三个相同方块设置同样Collider2D，分别选择Dynamic、Kinematic、Static。先不挂速度脚本，进入Play比较重力作用，记录哪个身体下落、哪个保持初始位置。",
+            "让DynamicBox落到地板上，记录双方身体类型、Collider2D及Layer。Kinematic或Static不自行下落，不足以证明它们在任意移动接口下都能阻挡任意身体；把这一限制写入结果。",
+            "另开一轮，只给DynamicBox挂本课TopDownBodyProbe并设Gravity Scale=0、Target Velocity=(2,0)。依次仅关闭SpriteRenderer、速度脚本和Rigidbody2D的Simulated，每轮退出再进Play恢复起点，记录显示与运动。停用脚本后已有速度可能继续，不能把禁用写入者等同于清零速度。"
           ],
-          "result": "能解释各开关影响哪个系统的配置表。"
+          "result": "一张区分身体类型、显示、速度写入和模拟参与的配置表，并明确停用脚本不会自动清除已有刚体速度。",
+          "setup": [
+            "用File > New Scene建L036_Bodies。GameObject > 2D Object > Sprites > Square建三个方块，分别命名DynamicBox、KinematicBox、StaticBox，Position设(-2,3,0)、(0,3,0)、(2,3,0)。",
+            "逐个选方块，Inspector > Add Component添加BoxCollider2D和Rigidbody2D，Body Type分别设Dynamic、Kinematic、Static；先不挂速度脚本。另建Square命名Floor，Position=(0,0,0)、Scale=(12,0.5,1)，只加BoxCollider2D作地板。",
+            "第二轮把本课TopDownBodyProbe.cs保存到Assets/EngineLabs，等编译后只给DynamicBox添加；Gravity Scale=0、Linear Damping=0、冻结Rotation Z，Target Velocity=(2,0)。窗口入口为Window > General > Scene、Inspector和Console。",
+            "本组必做只比较身体、显示和运动，不需要未来课程的射线代码。完成第38课后，可返回加RayProbe2D独立检查Simulated关闭前后的查询结果。"
+          ],
+          "purpose": "把身体类型、隐藏、禁用脚本和退出模拟分开，看清“不动”背后的不同原因。"
         },
         {
           "title": "用位移检查速度单位",
@@ -109,7 +116,13 @@ window.COURSE_MODULES.push({
             "将速度改为10个世界单位/秒，再将固定步长减半，每次单独复测。",
             "开关插值，分别记录实际位移和可见平滑程度。"
           ],
-          "result": "速度、时间、位移一致，且能区分显示与模拟。"
+          "result": "速度、时间、位移一致，且能区分显示与模拟。",
+          "setup": [
+            "另存L036_Speed，只保留一个Square；Add Component添加Dynamic Rigidbody2D与BoxCollider2D，Gravity Scale=0、Linear Damping=0，在Constraints冻结Rotation Z。",
+            "保存本课TopDownBodyProbe.cs到Assets/EngineLabs，等编译结束后选方块Add Component添加；Target Velocity设(5,0)。原脚本默认(2,0)，本组特意改为5。",
+            "Edit > Project Settings > Time查看Fixed Timestep，记录原值；每轮从同一位置退出再进Play，按相同游戏时长记录坐标，结束后恢复步长。"
+          ],
+          "purpose": "直接测量每秒速度，避免重复乘时间把5单位/秒变成0.1单位/秒；另看插值只改变哪一层。"
         }
       ],
       "pitfalls": [
@@ -160,7 +173,8 @@ window.COURSE_MODULES.push({
             "相对屏幕的像素每帧"
           ],
           "answer": 0,
-          "explanation": "物理系统根据速度与步长推进位置，因此赋值速度不再额外乘步长。"
+          "explanation": "物理系统根据速度与步长推进位置，因此赋值速度不再额外乘步长。",
+          "scenario": "二维动态身体的脚本给linearVelocity赋值(5,0)，没有额外时间乘法。问题只问这个属性所用的单位。"
         },
         {
           "question": "Kinematic 身体撞向静态墙时，应该怎样预期？",
@@ -171,7 +185,8 @@ window.COURSE_MODULES.push({
             "只要画面上重叠就必然收到所有碰撞消息"
           ],
           "answer": 1,
-          "explanation": "身体类型决定运动与接触规则，不能把动态身体的行为直接套到运动学身体。"
+          "explanation": "身体类型决定运动与接触规则，不能把动态身体的行为直接套到运动学身体。",
+          "scenario": "角色改成Kinematic Rigidbody2D，墙是静态BoxCollider2D；你还没有确认Full Kinematic Contacts及所用移动接口。"
         },
         {
           "question": "插值会提高物理求解频率吗？",
@@ -182,7 +197,8 @@ window.COURSE_MODULES.push({
             "不会，但会自动启用连续碰撞检测"
           ],
           "answer": 2,
-          "explanation": "插值和固定时间步属于不同层次，画面平滑不代表碰撞检测增加。"
+          "explanation": "插值和固定时间步属于不同层次，画面平滑不代表碰撞检测增加。",
+          "scenario": "身体的固定步长保持0.02秒，仅将Rigidbody2D的Interpolation从None改为Interpolate。"
         }
       ],
       "references": [
@@ -218,8 +234,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "保持速度5个世界单位/秒，把步长减半，相同一秒里的理想位移会减半吗？",
-          "answer": "不会。每步位移减半，但每秒步数增加；在无阻碍等相同条件下，一秒仍约走5个世界单位。"
-        }
+          "answer": "不会。每步位移减半，但每秒步数增加；在无阻碍等相同条件下，一秒仍约走5个世界单位。",
+          "scenario": "在无重力、无阻尼、无障碍的二维场景，动态身体的linearVelocity始终为(5,0)。比较固定步长0.02秒与0.01秒，各运行相同1秒游戏时间。"
+        },
+        "scenario": "俯视骑士刚加入Rigidbody2D就往画面下方掉，关闭移动脚本后它还在动。先不用正式角色：用一个方形Sprite、一个BoxCollider2D和三种身体类型，查清每个开关实际停了什么。",
+        "purpose": "能独立配置俯视身体，并用速度单位解释角色移动，不靠照搬重力、阻尼和步长数值。"
       }
     },
     {
@@ -314,7 +333,13 @@ window.COURSE_MODULES.push({
             "保存六行对照：基线；仅关闭双方层交互；仅关角色 simulated；仅关区域 Collider2D；仅取消区域 Is Trigger；仅把角色形状换成三维 BoxCollider。每次从基线重做，记录触发消息是否仍符合条件。",
             "取消 Trigger 那一组另外观察实体阻挡，并使用 OnCollisionEnter2D(Collision2D other) 检查普通接触。将“没有触发消息”和“没有任何物理接触”分开，不把换了消息类型误判为输入失效。"
           ],
-          "result": "至少六种配置与消息结果，能够说明各失败原因。"
+          "result": "至少六种配置与消息结果，能够说明各失败原因。",
+          "setup": [
+            "新建L037_Filter。GameObject > 2D Object > Sprites > Square建Player，加Dynamic Rigidbody2D和BoxCollider2D；Gravity Scale=0。另建Square命名Zone，加BoxCollider2D并勾Is Trigger。",
+            "保存TriggerProbe2D.cs到Assets/EngineLabs并通过Zone的Inspector > Add Component添加。把Player起点放在Zone左侧；进入Play后用Scene移动工具让它穿过区域，仅用于接触观察。",
+            "物理Layer在对象Inspector右上Layer设置；层矩阵在Edit > Project Settings > Physics 2D。显示用的Sorting Layer在SpriteRenderer内，先记录这两个位置，别改错面板。Console入口是Window > General > Console。"
+          ],
+          "purpose": "一次只破坏一个接触条件，学会区分没有触发消息、没有实体阻挡和错误方法签名。"
         },
         {
           "title": "分清形状数和角色数",
@@ -324,7 +349,13 @@ window.COURSE_MODULES.push({
             "比较回调中的碰撞体标识与 attachedRigidbody，画出形状到角色的对应关系。",
             "按角色计数后测试部分离开、角色禁用和区域禁用，检查是否遗留成员。"
           ],
-          "result": "人数不随子碰撞体数量错误增加，异常结束能清理。"
+          "result": "人数不随子碰撞体数量错误增加，异常结束能清理。",
+          "setup": [
+            "另存L037_Members，在Player根下面新建两个子Square，命名BodyShape和FootShape；根保留一个Rigidbody2D，子对象各有Collider2D，不各自添加刚体。",
+            "Zone宽度应能同时容纳两个形状；沿行进方向错开两个子形状，使它们先后进入、先后离开。",
+            "现成TriggerProbe2D只打印进入/离开，人数和清理属于本组要扩展的逻辑。先做“形状名→attachedRigidbody”的记录表，再编写计数，不能把输出日志次数直接当人数。"
+          ],
+          "purpose": "让日志中的两个形状对应同一个骑士，亲眼检查部分离开为什么不等于角色已经离开。"
         }
       ],
       "pitfalls": [
@@ -375,7 +406,8 @@ window.COURSE_MODULES.push({
             "能，但必须把物体放在相同 Z 位置"
           ],
           "answer": 1,
-          "explanation": "物理过滤使用对象 Layer 与相关 Physics 2D 配置，显示排序不是碰撞规则。"
+          "explanation": "物理过滤使用对象 Layer 与相关 Physics 2D 配置，显示排序不是碰撞规则。",
+          "scenario": "二维角色与墙的物理Layer相同并允许交互；开发者只改SpriteRenderer的Sorting Layer，未改Collider2D或Physics 2D设置。"
         },
         {
           "question": "两个子 Collider2D 属于同一角色时，怎样维护区域人数？",
@@ -386,7 +418,8 @@ window.COURSE_MODULES.push({
             "按 Collider 名称去重即可"
           ],
           "answer": 2,
-          "explanation": "需要同时保留逻辑身份和形状接触状态，才能正确处理部分形状先离开。"
+          "explanation": "需要同时保留逻辑身份和形状接触状态，才能正确处理部分形状先离开。",
+          "scenario": "骑士根有一个Rigidbody2D，脚和身体各有Collider2D；区域需要统计角色人数，而不是碰撞形状数量。"
         },
         {
           "question": "二维触发消息始终不出现，首先检查什么？",
@@ -397,7 +430,8 @@ window.COURSE_MODULES.push({
             "将所有消息统一改为三维签名"
           ],
           "answer": 1,
-          "explanation": "先建立有效物理条件。增加业务代码无法补齐不存在的二维接触关系。"
+          "explanation": "先建立有效物理条件。增加业务代码无法补齐不存在的二维接触关系。",
+          "scenario": "角色与区域看起来重叠，Console一直没有OnTriggerEnter2D记录；目前还未核对Collider2D、身体模拟、Layer及方法签名。"
         }
       ],
       "references": [
@@ -433,8 +467,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "将角色的 Sorting Layer 调到最前，会恢复被 Physics 2D 层矩阵禁止的接触吗？",
-          "answer": "不会。排序层决定显示顺序，物理 Layer 与接触配置决定能否交互。"
-        }
+          "answer": "不会。排序层决定显示顺序，物理 Layer 与接触配置决定能否交互。",
+          "scenario": "角色有两个Collider2D，区域有Is Trigger的BoxCollider2D。Physics 2D层矩阵已禁止双方交互；现在只改变SpriteRenderer的Sorting Layer，其他物理设置不变。"
+        },
+        "scenario": "同一张骑士图片，改到最前面的Sorting Layer后仍然穿过检查点；另一个检查点又把一个骑士算成两个人。本课在一个二维动态角色和一个感应区里，分别查物理过滤和形状身份。",
+        "purpose": "看日志前先确认接触条件，人数统计能在多形状、禁用或销毁时保持正确。"
       }
     },
     {
@@ -529,7 +566,13 @@ window.COURSE_MODULES.push({
             "在 if (hit) 分支临时输出 hit.collider.name、hit.distance 和 hit.fraction。射线长2、表面距起点0.5时先预测fraction约0.25，再将起点放进墙，记录 Physics 2D 的 Queries Start In Colliders 设置及实际结果。",
             "将角色自身加入查询层观察自命中，再改用仅环境掩码。"
           ],
-          "result": "能够用图解释普通表面命中和内部起点命中。"
+          "result": "能够用图解释普通表面命中和内部起点命中。",
+          "setup": [
+            "新建L038_Ray。用Square建Wall，Position=(1,0,0)，BoxCollider2D宽1；新建空Probe，Position=(0,0,0)。保存RayProbe2D.cs并加到Probe。",
+            "Inspector > Layer > Add Layer创建Environment，给Wall设置该层；Probe脚本Environment只勾它，Distance设2。代码沿世界+X发射，不会随Probe旋转自动改方向。",
+            "打开Window > General > Console；Scene右上打开Gizmos。Edit > Project Settings > Physics 2D查Queries Start In Colliders，记录开关状态后再把Probe移入墙内。"
+          ],
+          "purpose": "用画出的线与命中字段对应普通表面命中和内部起点命中，排除“探针其实查到了自己”。"
         },
         {
           "title": "用反例选择几何与容量",
@@ -539,7 +582,13 @@ window.COURSE_MODULES.push({
             "在范围内逐步增加目标数量，检查固定数组装满时是否遗漏。",
             "重复查询前后移动目标，只遍历本次有效结果，确认没有读入上轮残留。"
           ],
-          "result": "查询形状、容量和有效区间都有明确处理。"
+          "result": "查询形状、容量和有效区间都有明确处理。",
+          "setup": [
+            "另存L038_Shape，用两个带BoxCollider2D的Square夹出0.6单位缝隙，准备宽1单位的角色参照物。保留空Probe的射线作基准。",
+            "本组需要把查询改为与身体匹配的Collider2D.Cast或形状投射；现成RayProbe2D只做单射线和单命中，不能自动产生多目标数组。先打开本课官方对应接口页选择重载，再在实验副本实现。",
+            "容量对照先放3个可命中目标，结果数组设4格；再逐一增加到4、5个。每次只读本次返回的有效数量，不遍历数组上轮残留。"
+          ],
+          "purpose": "证明中心线通行不等于身体通行，并检查固定数组装满是否漏掉了目标。"
         }
       ],
       "pitfalls": [
@@ -590,7 +639,8 @@ window.COURSE_MODULES.push({
             "能，只要查询放在 FixedUpdate"
           ],
           "answer": 1,
-          "explanation": "身体通行与线相交是不同几何问题，需选择合适的形状查询。"
+          "explanation": "身体通行与线相交是不同几何问题，需选择合适的形状查询。",
+          "scenario": "门缝宽0.6个世界单位，角色身体宽1；一条无宽度的中心Physics2D射线朝门缝发射，没有命中门框。"
         },
         {
           "question": "LayerMask 的数值表示什么？",
@@ -601,7 +651,8 @@ window.COURSE_MODULES.push({
             "查询距离的整数部分"
           ],
           "answer": 1,
-          "explanation": "一个掩码可以同时包含多个层。单个层编号不能直接替代对应位集合。"
+          "explanation": "一个掩码可以同时包含多个层。单个层编号不能直接替代对应位集合。",
+          "scenario": "环境层编号为8，查询需要同时允许地面和墙所在的若干Layer；参数类型为LayerMask，不是gameObject.layer。"
         },
         {
           "question": "二维射线从形状内部出发，可能得到什么？",
@@ -612,7 +663,8 @@ window.COURSE_MODULES.push({
             "自动将起点移到形状表面再查询"
           ],
           "answer": 1,
-          "explanation": "需结合命中对象与 fraction 识别内部起点，不能假定每个命中都有普通进入表面。"
+          "explanation": "需结合命中对象与 fraction 识别内部起点，不能假定每个命中都有普通进入表面。",
+          "scenario": "探针起点位于墙的Collider2D内部；本题启用Queries Start In Colliders，从内部向右发射一条非零方向射线。"
         }
       ],
       "references": [
@@ -648,8 +700,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "结果数组长度四，本次恰好返回4个，能据此证明没有第五个目标吗？",
-          "answer": "不能。数组可能已满，需要明确容量不足时的处理，才能判断结果是否完整。"
-        }
+          "answer": "不能。数组可能已满，需要明确容量不足时的处理，才能判断结果是否完整。",
+          "scenario": "某次二维多结果查询使用4格数组，返回本次有效数量4。调用者没有进行扩容重查，也还不知道范围内真实目标总数。"
+        },
+        "scenario": "你站在窄缝前，中心射线没有变红，角色却挤不过去；把探针挪进墙里，命中距离又突然变成0。这个二维实验让起点、方向、最大距离和身体宽度都能在Scene里看见。",
+        "purpose": "每个查询结果都能说清“查的是什么、从哪出发、被什么过滤”，不再只拿一个true或false猜问题。"
       }
     },
     {
@@ -744,7 +799,13 @@ window.COURSE_MODULES.push({
             "对照原向量、normalized 和 ClampMagnitude 三种处理。",
             "直接依次提供(0,0)、(1,0)、(1,1)、(0.25,0)作为测试输入，不要求先接手柄；记录每种处理后的向量和目标速度，再解释哪些规则保留了慢走。"
           ],
-          "result": "能根据输入设备说明为什么选择某种向量处理。"
+          "result": "能根据输入设备说明为什么选择某种向量处理。",
+          "setup": [
+            "新建L039_Keyboard。GameObject > 2D Object > Sprites > Square建Player，添加Dynamic Rigidbody2D和BoxCollider2D；Gravity Scale=0、Linear Damping=0，冻结Rotation Z。",
+            "保存TopDownKeyboardMotor.cs到Assets/EngineLabs，选Player用Inspector > Add Component添加，Speed=5，关闭其他移动脚本。Window > Package Management > Package Manager确认Input System已安装；Player Settings启用相应Active Input Handling。",
+            "按Play后先点Game窗口取得键盘焦点。记录Inspector的Transform坐标；向量算法对照在学习项目的脚本副本改input处理，不改正式角色代码。"
+          ],
+          "purpose": "先用固定向量证明归一化和限幅各保留什么，再用相同时间位移验证键盘结果。"
         },
         {
           "title": "定位两个系统同时移动身体",
@@ -754,7 +815,13 @@ window.COURSE_MODULES.push({
             "分别关闭 Animator 与移动脚本，记录哪个组合会出现抖动。",
             "删除实验位置曲线，将图片放到 Visual，只翻转显示；再测试停用恢复是否留下旧输入。"
           ],
-          "result": "身体移动与图片表现分开，故障定位有对照过程。"
+          "result": "身体移动与图片表现分开，故障定位有对照过程。",
+          "setup": [
+            "先把键盘移动场景另存L039_Visual。选Player，GameObject > Create Empty建Visual子对象，将SpriteRenderer放到Visual，根保留身体和运动脚本。",
+            "Window > Animation > Animation打开动画窗口。在实验副本中给根Transform录制一条Position曲线，与刚体移动同时运行；记下这条临时曲线，测试后删除。",
+            "翻转先改Visual的SpriteRenderer > Flip X；不要同时给根对象负缩放。每轮分别记录输入、速度和根位置，停用恢复也只关一个组件。"
+          ],
+          "purpose": "定位动画与物理都在改根位置的冲突，避免把抖动归咎于输入设备。"
         }
       ],
       "pitfalls": [
@@ -805,7 +872,8 @@ window.COURSE_MODULES.push({
             "把输入长度乘上渲染帧率"
           ],
           "answer": 1,
-          "explanation": "限制上界不会把小输入放大，因而能保留轻推强度。"
+          "explanation": "限制上界不会把小输入放大，因而能保留轻推强度。",
+          "scenario": "手柄输出(0.25,0)，表示向右轻推四分之一幅度；希望保留慢走，同时避免对角输入长度超过1。"
         },
         {
           "question": "Update 与 FixedUpdate 分工说明什么？",
@@ -816,7 +884,8 @@ window.COURSE_MODULES.push({
             "FixedUpdate 无法使用前面缓存的输入"
           ],
           "answer": 1,
-          "explanation": "Unity 的更新调度不等于多线程。要考虑一帧零次或多次物理更新的情况。"
+          "explanation": "Unity 的更新调度不等于多线程。要考虑一帧零次或多次物理更新的情况。",
+          "scenario": "一个MonoBehaviour在Update缓存持续移动方向，在FixedUpdate用缓存写Rigidbody2D速度；两个方法都按Unity主循环调度。"
         },
         {
           "question": "只改变角色图片朝向时，通常优先修改哪里？",
@@ -827,7 +896,8 @@ window.COURSE_MODULES.push({
             "每次重建 Rigidbody2D"
           ],
           "answer": 1,
-          "explanation": "纯显示变化尽量局限于显示层，避免连带改变身体和探针的空间关系。"
+          "explanation": "纯显示变化尽量局限于显示层，避免连带改变身体和探针的空间关系。",
+          "scenario": "角色根放Rigidbody2D和Collider2D，Visual子对象只放SpriteRenderer；本次需求仅是让图片面向左方，不改变身体和探针。"
         }
       ],
       "references": [
@@ -863,8 +933,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "角色顶住墙时仍有输入长度1，实际速度为0，动画应读取哪一个？",
-          "answer": "取决于希望表现奋力跑步还是停步。前者可读输入，后者可读实际速度，关键是明确参数表示什么。"
-        }
+          "answer": "取决于希望表现奋力跑步还是停步。前者可读输入，后者可读实际速度，关键是明确参数表示什么。",
+          "scenario": "骑士持续按向右，输入向量长度为1；动态身体被墙阻挡，当前实际速度为0。你正在选择动画参数描述“想移动”还是“真的在移动”。"
+        },
+        "scenario": "骑士单按D走得正常，同时按W和D却突然加速；修好后又发现手柄轻推也满速。先在无墙的二维场景比较输入向量，再让墙、刚体和动画分别加入，看到每一层改变了什么。",
+        "purpose": "把设备意图、身体结果和图片朝向分开，既能解释斜向速度，也能决定顶墙时动画该怎样表现。"
       }
     },
     {
@@ -956,10 +1029,16 @@ window.COURSE_MODULES.push({
           "minutes": 60,
           "steps": [
             "固定圆球半径、墙厚、起点和物理步长，计算一步位移。",
-            "每个速度先从固定起点重复至少十次；然后将起点沿路径平移0、0.02、0.04等距离，各自重新重复。记录接触次数、首次接触位置和失败数，把重复稳定性与起点覆盖分开。",
+            "每个速度先从固定起点重复十次，检查失败是否会再次发生；十次只是本课便于完成的小样本，不是引擎规定，也不能证明故障概率为零。再将起点沿路径平移0、0.02、0.04单位，各自重复，比较接触与失败记录。",
             "分别只改连续模式或步长，再用同样次数测试，并观察物理耗时。"
           ],
-          "result": "可复现条件、失败统计与成本观察齐全的表。"
+          "result": "可复现条件、失败统计与成本观察齐全的表。",
+          "setup": [
+            "新建L040_Fast。用GameObject > 2D Object > Sprites > Circle建Ball，加CircleCollider2D和Dynamic Rigidbody2D；Gravity Scale=0、Linear Damping=0。",
+            "保存FastBody2D.cs后从Ball的Add Component添加，Speed先设50（代码默认80）。用Square建Wall，BoxCollider2D沿X厚0.1，放在球右侧；Is Trigger关闭，双方Layer允许交互。",
+            "Edit > Project Settings > Time记下Fixed Timestep原值，先设0.02。Window > General > Console观察Contact日志。每次退出再进入Play，让Start重新发射；不要在同次运行拖回球当成已重置速度。"
+          ],
+          "purpose": "重复是为了检查结果稳定性，变化起点则覆盖不同采样相位；两者都不构成永远不穿墙的保证。"
         },
         {
           "title": "分别验证平滑和命中",
@@ -969,7 +1048,13 @@ window.COURSE_MODULES.push({
             "加入跟随相机，再回到薄墙实验，分别记录可见抖动和命中正确性。",
             "增加一个直接写 Transform 传送的反例，说明它为何不属于普通速度积分的同一条件。"
           ],
-          "result": "能够区分显示、控制接口和碰撞精度问题。"
+          "result": "能够区分显示、控制接口和碰撞精度问题。",
+          "setup": [
+            "另存L040_Smooth，先移走薄墙，保留Ball和静止相机。Inspector > Rigidbody2D分别设Interpolation=None与Interpolate，速度和步长保持相同。",
+            "本课没有现成跟随相机脚本；先完成静止相机比较，再按第51课的跟随实验扩展，别把未知相机代码同时引入。",
+            "回到薄墙组时恢复同一组起点和墙尺寸；插值对照记录画面平滑与Contact日志两列。直接传送Transform的反例要另存副本，不与普通速度发射混在一轮。"
+          ],
+          "purpose": "先固定相机排查身体显示，再加入跟随，判断顺滑是否掩盖了仍然失败的命中。"
         }
       ],
       "pitfalls": [
@@ -1020,7 +1105,8 @@ window.COURSE_MODULES.push({
             "物体直径乘质量"
           ],
           "answer": 0,
-          "explanation": "速度的单位是每秒位移，乘秒得到本步距离，再与障碍尺寸比较。"
+          "explanation": "速度的单位是每秒位移，乘秒得到本步距离，再与障碍尺寸比较。",
+          "scenario": "小球在无加速度的一步里速度为50世界单位/秒，固定步长0.02秒；这里只估算这一物理步的移动距离。"
         },
         {
           "question": "插值主要改善哪一项？",
@@ -1031,7 +1117,8 @@ window.COURSE_MODULES.push({
             "让所有身体自动获得连续检测"
           ],
           "answer": 1,
-          "explanation": "显示平滑与碰撞正确性需要分开验证。"
+          "explanation": "显示平滑与碰撞正确性需要分开验证。",
+          "scenario": "一个动态Rigidbody2D的位置由固定步推进；你仅开启Interpolation，未改变检测模式或Fixed Timestep。"
         },
         {
           "question": "测试一次没有穿墙，能宣布修复吗？",
@@ -1042,7 +1129,8 @@ window.COURSE_MODULES.push({
             "能，只要最后位置恰好在墙前"
           ],
           "answer": 1,
-          "explanation": "采样相位和起点可能隐藏偶发问题，应保留重复次数和失败数据。"
+          "explanation": "采样相位和起点可能隐藏偶发问题，应保留重复次数和失败数据。",
+          "scenario": "薄墙试验只发射了一次，球这次停在墙前；还没改变起点或重复发射，也没有保存接触记录。"
         }
       ],
       "references": [
@@ -1078,8 +1166,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "只打开插值，能据此期待薄墙命中必然修复吗？",
-          "answer": "不能。插值主要改善显示采样，不提高物理检测频率，也不替代连续路径检测。"
-        }
+          "answer": "不能。插值主要改善显示采样，不提高物理检测频率，也不替代连续路径检测。",
+          "scenario": "高速球与薄墙已能正常产生接触，Layer和Trigger配置未改。现在仅将Rigidbody2D的Interpolation开启，固定步长、碰撞检测模式与速度全部保持。"
+        },
+        "scenario": "小球大多能撞墙，偶尔却穿过去；开启插值后画面更顺，穿墙仍没消失。设球速度50单位/秒、固定步长0.02秒、墙厚0.1，先算一物理步会越过多长，再决定测哪种改动。",
+        "purpose": "把碰撞正确性与显示平滑分开，能用可复现条件比较连续检测的收益与成本。"
       }
     }
   ]

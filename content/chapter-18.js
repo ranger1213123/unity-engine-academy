@@ -83,7 +83,13 @@ window.COURSE_MODULES.push({
             "多选具有不同 speed 的对象，观察混合值。",
             "创建 Prefab 实例，修改字段并检查覆盖。"
           ],
-          "result": "编辑行为与 Unity 数据机制一致。"
+          "result": "编辑行为与 Unity 数据机制一致。",
+          "setup": [
+            "在 Project 建 Assets/EngineLab/Runtime 与 Assets/EngineLab/Editor，分别保存 LabTuning.cs、LabTuningEditor.cs。已有 asmdef 时，让 Editor-only 程序集引用 Runtime，按第78课核对平台。",
+            "在场景建互不为父子的 TuningA、TuningB，都挂 LabTuning，在 Inspector 分别设3与5。打开 Window > General > Inspector，再按 Ctrl 多选两者。",
+            "将一个对象拖到 Project 制作 Prefab 并放回实例；编辑模式下分别验证单选、Undo/Redo、多选混合值、实例覆盖。每项记录修改对象范围。"
+          ],
+          "purpose": "四组对应不同编辑机制：控件显示正常不能替代撤销、多选与资源关系的正确性。"
         },
         {
           "title": "界面不是更新循环",
@@ -94,7 +100,13 @@ window.COURSE_MODULES.push({
             "对非法配置只显示诊断，避免自动破坏数据。",
             "构建一次 Player，确认 UnityEditor 不进入运行程序集。"
           ],
-          "result": "工具副作用与界面重绘分离。"
+          "result": "工具副作用与界面重绘分离。",
+          "setup": [
+            "保留已通过四类对照的脚本版本。只在副本给 OnInspectorGUI 加计数，并留意计数日志自身会引起额外编辑器活动。",
+            "点击对象、修改字段、切换窗口，比较调用次数。昂贵扫描按钮由你作为扩展实现，明确仅在按钮事件中扫描。",
+            "打开 File > Build Profiles，用最小保存场景构建 Player，核对 UnityEditor 未泄漏进 Runtime；结束后移除计数日志。"
+          ],
+          "purpose": "亲眼看到界面回调与游戏帧不同，避免一次重绘就修改业务数据或触发昂贵扫描。"
         }
       ],
       "pitfalls": [
@@ -144,7 +156,8 @@ window.COURSE_MODULES.push({
             "只在 Play Mode 可以"
           ],
           "answer": 1,
-          "explanation": "它响应编辑器的布局、重绘和输入等事件，次数不等于运行时每帧一次，不能用作游戏更新循环。"
+          "explanation": "它响应编辑器的布局、重绘和输入等事件，次数不等于运行时每帧一次，不能用作游戏更新循环。",
+          "scenario": "编辑器正在反复绘制 LabTuning 的 Inspector。问题讨论 OnInspectorGUI 的调用时机，不是 MonoBehaviour.Update。"
         },
         {
           "question": "多对象编辑应关注？",
@@ -154,7 +167,8 @@ window.COURSE_MODULES.push({
             "只调用 SetDirty 就完整支持多选与撤销"
           ],
           "answer": 0,
-          "explanation": "同时选择不同值时要明确显示混合状态，并按实际选择范围应用修改；单写 target 或 SetDirty 不能代替这些处理。"
+          "explanation": "同时选择不同值时要明确显示混合状态，并按实际选择范围应用修改；单写 target 或 SetDirty 不能代替这些处理。",
+          "scenario": "同时选中的甲速度3、乙速度5；自定义 Inspector 声明支持多对象编辑，需要既显示差异也正确应用新值。"
         },
         {
           "question": "Editor 应依赖哪一层？",
@@ -164,7 +178,8 @@ window.COURSE_MODULES.push({
             "Player 必须引用 UnityEditor"
           ],
           "answer": 0,
-          "explanation": "工具读取运行数据，运行代码不反向依赖 UnityEditor，才能使 Player 编译边界成立。"
+          "explanation": "工具读取运行数据，运行代码不反向依赖 UnityEditor，才能使 Player 编译边界成立。",
+          "scenario": "运行组件 LabTuning 要进入 Player，自定义 LabTuningEditor 使用 UnityEditor，只在编辑器提供界面。"
         }
       ],
       "references": [
@@ -223,8 +238,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "把资源扫描无条件放在 OnInspectorGUI 中，只会每帧执行一次吗？",
-          "answer": "不能这样假定。布局、重绘和输入可能多次调用它，扫描应由明确操作触发，并有适当范围。"
-        }
+          "answer": "不能这样假定。布局、重绘和输入可能多次调用它，扫描应由明确操作触发，并有适当范围。",
+          "scenario": "自定义 Inspector 正在处理布局、重绘和鼠标输入等编辑器事件。工具作者准备把一次昂贵资源扫描无条件写入 OnInspectorGUI，而不设置单独触发按钮。"
+        },
+        "scenario": "你给 LabTuning 做自定义 Inspector，想让选中的两个对象一次改速度。对象甲原为3、乙原为5；界面出现一个输入框并不代表多选、撤销和 Prefab 覆盖都已处理。",
+        "purpose": "让编辑工具沿 Unity 的序列化数据流程修改字段，并用四类实际操作验证编辑行为。"
       }
     },
     {
@@ -296,7 +314,13 @@ window.COURSE_MODULES.push({
             "故意把 RecordObjects 移到赋值之后，在副本实验比较。",
             "恢复正确代码并检查无选择时无动作。"
           ],
-          "result": "记录时机与数据所有者都正确。"
+          "result": "记录时机与数据所有者都正确。",
+          "setup": [
+            "将 AlignSelectedTools.cs 保存在 Assets/EngineLab/Editor，等待编译后，顶部出现由代码添加的 Engine Lab > Align Selected X。",
+            "新建场景空对象 ObjectA=(2,1,0)、ObjectB=(-4,3,0)，都放场景根下，另放未选 Control。按 Ctrl 在 Hierarchy 同时选前两者。",
+            "编辑模式执行菜单，用 Inspector 查看位置；按 Ctrl+Z 撤销、Ctrl+Y 重做。记录时机错误的版本只在副本修改。"
+          ],
+          "purpose": "用不同初始 X 与 Y 验证只改世界 X，并用一次撤销检验同次操作记录的对象范围。"
         },
         {
           "title": "Prefab 覆盖验证",
@@ -307,7 +331,13 @@ window.COURSE_MODULES.push({
             "查看甲子对象的位置覆盖并对它执行 Revert，核对局部X恢复1、世界X恢复3，而甲根仍在世界X=2。不要用 Prefab 根的 Position/Rotation 作普通显式覆盖对照。",
             "再执行一次对子对象的修改，保存并重开实验场景，核对该覆盖仍在；结合第一组独立场景对象实验，分别说明 Undo 与 Revert 恢复的来源。"
           ],
-          "result": "子对象覆盖可保存并恢复到源资产局部值；根变换的默认行为与普通显式覆盖分别解释，源资产和其他实例未被误改。"
+          "result": "子对象覆盖可保存并恢复到源资产局部值；根变换的默认行为与普通显式覆盖分别解释，源资产和其他实例未被误改。",
+          "setup": [
+            "创建 Root 空对象及其 Marker 子对象，Marker 局部位置设(1,0,0)，将 Root 从 Hierarchy 拖到 Project 制成 Prefab。",
+            "在场景放 PrefabA、PrefabB，根旋转为0、缩放为1；PrefabA 根世界 X=2。只选它的 Marker，先核对该子对象世界 X=3。",
+            "执行 Engine Lab > Align Selected X 后，在实例 Inspector 查看子对象位置覆盖，通过其覆盖菜单 Revert；不要 Apply 到源资产，也不用根 Position/Rotation 代替这项普通覆盖测试。"
+          ],
+          "purpose": "用子对象可计算的局部值与世界值，分别检查覆盖、Revert 与保存；避免根变换的特殊默认行为干扰结论。"
         }
       ],
       "pitfalls": [
@@ -357,7 +387,8 @@ window.COURSE_MODULES.push({
             "只在保存场景时记录"
           ],
           "answer": 0,
-          "explanation": "先记录修改前状态，再赋新值，才有依据恢复原数据；赋值之后记录不能替你找回已覆盖内容。"
+          "explanation": "先记录修改前状态，再赋新值，才有依据恢复原数据；赋值之后记录不能替你找回已覆盖内容。",
+          "scenario": "工具即将修改已存在对象的 Transform。现在要决定记录 Undo 与赋新值的先后。"
         },
         {
           "question": "SetDirty 等同完整 Undo 吗？",
@@ -367,7 +398,8 @@ window.COURSE_MODULES.push({
             "等同，实例覆盖会补齐所有撤销记录"
           ],
           "answer": 1,
-          "explanation": "脏标记、撤销历史和 Prefab 实例覆盖分别处理不同问题，不能用 SetDirty 代替完整编辑流程。"
+          "explanation": "脏标记、撤销历史和 Prefab 实例覆盖分别处理不同问题，不能用 SetDirty 代替完整编辑流程。",
+          "scenario": "工具已经把对象标为 dirty，场景可能提示保存；问题只问这是否等价于保存修改前的撤销状态。"
         },
         {
           "question": "修改实例位置后应验证什么？",
@@ -377,7 +409,8 @@ window.COURSE_MODULES.push({
             "控制台没有异常就不必检查覆盖"
           ],
           "answer": 0,
-          "explanation": "只选一个实例时，源资产及其他实例应保持不变，同时确认本实例覆盖可撤回和保存。"
+          "explanation": "只选一个实例时，源资产及其他实例应保持不变，同时确认本实例覆盖可撤回和保存。",
+          "scenario": "场景有同一 Prefab 的两个实例，工具只选择其中一个实例的 Marker 子对象，不应修改另一个或源资产。"
         }
       ],
       "references": [
@@ -440,8 +473,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "调用 SetDirty 后，是否已经获得完整撤销历史？",
-          "answer": "没有。它涉及数据修改标记，不等于记录了修改前状态；仍要使用适合的 Undo 或序列化编辑方式。"
-        }
+          "answer": "没有。它涉及数据修改标记，不等于记录了修改前状态；仍要使用适合的 Undo 或序列化编辑方式。",
+          "scenario": "某工具直接给 Transform 新位置，并调用 EditorUtility.SetDirty，但尚未在赋值前记录 Undo，也没有走序列化属性编辑。"
+        },
+        "scenario": "你写了顶部菜单 Align Selected X，要把选中对象的世界 X 设为0。甲在(2,1,0)，乙在(-4,3,0)，且互不为父子。工具运行后还应支持一次撤销，并只修改选择范围。",
+        "purpose": "把“数据改了”“能撤销”“实例覆盖已保存”分开验证，避免编辑工具造成难以恢复的场景改动。"
       }
     },
     {
@@ -504,6 +540,10 @@ window.COURSE_MODULES.push({
           {
             "filename": "Editor/WorldRadiusEditor.cs",
             "source": "// Editor/WorldRadiusEditor.cs\nusing UnityEditor;\nusing UnityEngine;\n[CustomEditor(typeof(WorldRadius))]\npublic sealed class WorldRadiusEditor : Editor\n{\n    private void OnSceneGUI()\n    {\n        var value = (WorldRadius)target;\n        EditorGUI.BeginChangeCheck();\n        float next = Handles.RadiusHandle(Quaternion.identity, value.transform.position, value.radius);\n        if (!EditorGUI.EndChangeCheck()) return;\n        Undo.RecordObject(value, \"Change World Radius\");\n        value.radius = Mathf.Max(0f, next);\n        PrefabUtility.RecordPrefabInstancePropertyModifications(value);\n    }\n}"
+          },
+          {
+            "filename": "Runtime/WorldRadiusQueryProbe.cs",
+            "source": "using UnityEngine;\n\n[RequireComponent(typeof(WorldRadius))]\npublic sealed class WorldRadiusQueryProbe : MonoBehaviour\n{\n    [ContextMenu(\"Report Sphere Hits\")]\n    private void Report()\n    {\n        if (!Application.isPlaying) return;\n        WorldRadius range = GetComponent<WorldRadius>();\n        Collider[] hits = Physics.OverlapSphere(range.transform.position, range.radius);\n        Debug.Log($\"3D sphere hits={hits.Length}\", this);\n        foreach (Collider hit in hits) Debug.Log($\"Hit: {hit.name}\", hit);\n    }\n}"
           }
         ],
         "explanation": [
@@ -521,7 +561,13 @@ window.COURSE_MODULES.push({
             "加入旋转和非均匀缩放父级，确认仍是世界半径。",
             "明确使用三维 Physics.OverlapSphere，以相同世界圆心和半径做查询；在球面内外各放一个带 3D Collider 的测试对象，比较命中与可视范围。不要用 2D 查询来验证这个三维球。"
           ],
-          "result": "查询与图形使用同一世界空间定义。"
+          "result": "查询与图形使用同一世界空间定义。",
+          "setup": [
+            "分别把 WorldRadius.cs、WorldRadiusQueryProbe.cs 放在 Runtime，把 WorldRadiusEditor.cs 放在 Editor；按第78课配置已有程序集。",
+            "创建Range放到(10,0,0)，挂两个运行组件，Radius留2，Range自身不加Collider。打开Window > General > Scene并选它，确认Gizmos可见；旁边用缩放为1的单位Cube作尺子，移除尺子的Box Collider，避免它进入查询结果。",
+            "在(11,0,0)与(13,0,0)各放一个Scale=(0.2,0.2,0.2)且带Box Collider的Cube，分别在球内与球外；不使用Collider2D。播放后从查询驱动组件⋮菜单Report Sphere Hits查看命中。移动Collider后先继续播放让物理状态更新，再查询。"
+          ],
+          "purpose": "圆心离开原点、父级变换后仍比较同一三维球，检查绘图和查询是否真的共享世界单位。"
         },
         {
           "title": "编辑行为回归",
@@ -532,7 +578,13 @@ window.COURSE_MODULES.push({
             "测试零半径、大半径和父级变化。",
             "比较 Play Mode 临时修改与编辑模式保存修改。"
           ],
-          "result": "空间正确性与编辑器数据机制同时成立。"
+          "result": "空间正确性与编辑器数据机制同时成立。",
+          "setup": [
+            "保留上组空间配置，停止播放后再编辑；一次只选一个带 WorldRadius 的对象，此句柄没有声明多选语义。",
+            "把范围对象做成 Prefab并放回实例。拖动 Scene 的半径句柄，检查 Inspector 数值、Ctrl+Z/重做，以及实例覆盖 Revert。",
+            "零半径与大半径分别测，再对比 Play Mode 临时编辑与停止后保留的编辑模式修改；每次先保存正常场景。"
+          ],
+          "purpose": "空间画对与编辑数据可恢复是两项要求，分别检查才不会只凭一张正确的球形图宣布工具完成。"
         }
       ],
       "pitfalls": [
@@ -582,7 +634,8 @@ window.COURSE_MODULES.push({
             "只乘 lossyScale.x 就适用于所有非均匀缩放"
           ],
           "answer": 1,
-          "explanation": "世界半径已经是最终距离，再乘缩放会改变含义；非均匀缩放也不是用单个分量就能统一修正。"
+          "explanation": "世界半径已经是最终距离，再乘缩放会改变含义；非均匀缩放也不是用单个分量就能统一修正。",
+          "scenario": "radius 已定义为最终世界距离，父级 Scale 从(1,1,1)改成(2,1,3)，范围仍需表示原来的距离。"
         },
         {
           "question": "每次 OnSceneGUI 都写字段会怎样？",
@@ -592,7 +645,8 @@ window.COURSE_MODULES.push({
             "能自动保证物理查询与图形一致"
           ],
           "answer": 1,
-          "explanation": "绘制事件不等于用户修改。无条件赋值可能带来无意义脏状态或历史记录。"
+          "explanation": "绘制事件不等于用户修改。无条件赋值可能带来无意义脏状态或历史记录。",
+          "scenario": "Scene 视图不断发生重绘，而用户仅观察，没有操作句柄；工具每次回调都打算写字段并记录修改。"
         },
         {
           "question": "最能暴露空间错误的实验是？",
@@ -602,7 +656,8 @@ window.COURSE_MODULES.push({
             "只比较字段声明值是否为正"
           ],
           "answer": 1,
-          "explanation": "旋转和非均匀缩放会暴露坐标空间假设；只在原点默认变换下测，错误可能碰巧看不出来。"
+          "explanation": "旋转和非均匀缩放会暴露坐标空间假设；只在原点默认变换下测，错误可能碰巧看不出来。",
+          "scenario": "一个范围工具在原点、无父级时看着正确，现在要选择更容易暴露局部/世界空间混用的测试。"
         }
       ],
       "references": [
@@ -661,8 +716,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "每次重绘都写回 radius，会提高精度吗？",
-          "answer": "不会。应在真实交互改变时才记录和写入，否则可能制造无意义修改与撤销记录，不能改善空间定义。"
-        }
+          "answer": "不会。应在真实交互改变时才记录和写入，否则可能制造无意义修改与撤销记录，不能改善空间定义。",
+          "scenario": "OnSceneGUI 正在重绘半径句柄，用户这一轮没有拖动或改值。工具考虑每次回调都把相同 radius 写回字段。"
+        },
+        "scenario": "攻击范围字段 radius=2 被明确规定为世界距离2。范围对象放在世界(10,0,0)，父对象还会旋转和非均匀缩放；Scene 画出的三维球与真实三维查询应使用同一个圆心和半径。",
+        "purpose": "让可视化与真实查询共享清楚的空间单位，并在拖动句柄时保留可撤销的编辑行为。"
       }
     },
     {
@@ -734,7 +792,13 @@ window.COURSE_MODULES.push({
             "导入后比较四张图片的 importer。",
             "连续 Reimport 三次，确认没有追加资源或额外变化。"
           ],
-          "result": "规则范围与幂等性有对照证据。"
+          "result": "规则范围与幂等性有对照证据。",
+          "setup": [
+            "把 PixelArtImportPolicy.cs 保存到 Assets/EngineLab/Editor，准备自己制作的几张小 PNG 副本，不在正式素材目录测试。",
+            "在 Project 创建准确路径 Assets/EngineLab/PixelArt，将三张图放进去；另把一张对照图放 Assets/EngineLab/UI。选图在 Inspector 记录原始导入设置。",
+            "在 Project 右键图像选择 Reimport（重新导入），再查看 Texture Type、Filter Mode、Generate Mip Maps 与压缩设置。目录名大小写与末尾斜杠按源码范围匹配。"
+          ],
+          "purpose": "三张范围内图检查规则在多个资源上工作，一张范围外图检查没有越界；三次重导入检查幂等，不是导入三次才会生效。"
         },
         {
           "title": "从政策到批量工具计划",
@@ -745,7 +809,13 @@ window.COURSE_MODULES.push({
             "为例外纹理和失败资源规定处理行为。",
             "用版本控制查看实验改动，不批量修改全部第三方素材。"
           ],
-          "result": "自动化政策具有范围和回滚说明。"
+          "result": "自动化政策具有范围和回滚说明。",
+          "setup": [
+            "保留像素角色图与普通 UI 图两类样本，各写它们实际需要的 PPU、切片、枢轴、压缩，不假设参数相同。",
+            "本组要求你设计扩展工具：先列只读扫描报告字段，再决定哪些差异能自动修、哪些必须保留为例外。最小示例不包含这份扫描器。",
+            "保存版本控制基线，只对实验副本批处理；在差异中核对 .meta 与资源变化，写下恢复这些改动的方法。"
+          ],
+          "purpose": "把一条局部规则扩展成有例外和回退的政策，同时清楚标出当前代码未实现的部分。"
         }
       ],
       "pitfalls": [
@@ -795,7 +865,8 @@ window.COURSE_MODULES.push({
             "合理，之后所有使用者会自动修正类型"
           ],
           "answer": 1,
-          "explanation": "PNG 可能用于精灵、界面或材质。导入政策要按用途与范围决定，不能只按扩展名统一。"
+          "explanation": "PNG 可能用于精灵、界面或材质。导入政策要按用途与范围决定，不能只按扩展名统一。",
+          "scenario": "同一工程内的 PNG 分别用于像素角色、普通 UI 与3D材质。现在想只按扩展名统一导入设置。"
         },
         {
           "question": "导入回调里无条件 SaveAndReimport 风险是？",
@@ -805,7 +876,8 @@ window.COURSE_MODULES.push({
             "自动处理所有平台覆盖"
           ],
           "answer": 1,
-          "explanation": "回调中的再次重导入可能触发自身，形成重复请求或循环，需要差异检测和明确终止条件。"
+          "explanation": "回调中的再次重导入可能触发自身，形成重复请求或循环，需要差异检测和明确终止条件。",
+          "scenario": "OnPreprocessTexture 本身已在导入流程中执行，开发者还准备在每次回调里无条件调用 SaveAndReimport。"
         },
         {
           "question": "无压缩示例是否等于发布最佳格式？",
@@ -815,7 +887,8 @@ window.COURSE_MODULES.push({
             "是，编辑器显示正确就无需设备验证"
           ],
           "answer": 1,
-          "explanation": "实验里的无压缩便于观察，不代表发布最优；仍要按平台支持、视觉和内存预算选择。"
+          "explanation": "实验里的无压缩便于观察，不代表发布最优；仍要按平台支持、视觉和内存预算选择。",
+          "scenario": "教学工具为便于观察选了无压缩，项目之后要发布到有显存预算和纹理格式约束的目标平台。"
         }
       ],
       "references": [
@@ -874,8 +947,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "设置 Point 后，PPU、切片和枢轴也自动正确了吗？",
-          "answer": "没有。最小工具只处理已声明的参数，其他设置仍需根据资源用途配置和验证。"
-        }
+          "answer": "没有。最小工具只处理已声明的参数，其他设置仍需根据资源用途配置和验证。",
+          "scenario": "导入工具已经设置 Texture Type=Sprite、Filter Mode=Point、关闭 Mip Map 和压缩，但源码没有写 Pixels Per Unit、切片或 Pivot。"
+        },
+        "scenario": "项目里 PNG 有像素角色，也有 UI 和材质纹理。本课导入规则只匹配 Assets/EngineLab/PixelArt/，目录外图片必须保持原设置；相似名字 PixelArtwork 也不能误命中。",
+        "purpose": "先确定自动化作用范围，再验证重复导入不会继续制造变化，避免批量工具破坏第三方素材配置。"
       }
     },
     {
@@ -947,7 +1023,13 @@ window.COURSE_MODULES.push({
             "重复扫描，确认场景没有因扫描产生新修改。",
             "空选择、多个对象和含子对象时验证已声明范围。"
           ],
-          "result": "扫描结果准确且没有隐藏修改。"
+          "result": "扫描结果准确且没有隐藏修改。",
+          "setup": [
+            "将 SelectionAuditWindow.cs 保存到 Assets/EngineLab/Editor，编译后从顶部 Engine Lab > Selection Audit 打开；它是本课添加的菜单。",
+            "在专用场景建 Normal 与 MissingProbe。给后者挂一个只用于测试的临时脚本，保存场景后移除该临时脚本文件、等待重新编译，确认 Inspector 显示 Missing Script；不要删除正式脚本。",
+            "打开 Window > General > Console，分别选对象并点窗口里的“只读扫描”。点带对象上下文的警告可定位对象；扫描前先保存，之后观察场景是否出现新修改标记。"
+          ],
+          "purpose": "用已知正常、已知缺失、空选择和多选验证边界；重复扫描检查工具没有暗中写数据。"
         },
         {
           "title": "为 Idle 建立诊断规则",
@@ -958,7 +1040,13 @@ window.COURSE_MODULES.push({
             "只读扫描，区分确定错误和可能合法的静态图。",
             "设计独立修复动作的 Undo/Prefab 方案，但不自动删数据。"
           ],
-          "result": "报告能指导下一步操作而不误解设计意图。"
+          "result": "报告能指导下一步操作而不误解设计意图。",
+          "setup": [
+            "另建 StaticDecoration（只有 SpriteRenderer）、MissingController（有 Animator但无Controller）、WorkingIdle（已验证Idle可播）三个命名对象。",
+            "先写清哪个对象按设计需要动画；StaticDecoration允许没有Animator。保存当前组件与Controller配置作为已知样本。",
+            "本组是扩展设计练习：现有扫描器不会检查Idle，需要你逐条实现只读规则并保留范围说明；任何修改按钮另做 Undo/Prefab 验证。"
+          ],
+          "purpose": "把配置事实与设计要求结合，避免静态装饰被当作错误，也避免最小扫描器的零问题被误当作动画验收。"
         }
       ],
       "pitfalls": [
@@ -1008,7 +1096,8 @@ window.COURSE_MODULES.push({
             "只要按钮名字叫修复就不用说明影响"
           ],
           "answer": 1,
-          "explanation": "了解问题与改变项目是两件事。先报告，再让作者根据具体影响决定修复，能避免隐藏修改。"
+          "explanation": "了解问题与改变项目是两件事。先报告，再让作者根据具体影响决定修复，能避免隐藏修改。",
+          "scenario": "验证窗口能找到缺失组件，但作者尚未查看影响；工具设计者考虑打开窗口时直接删除所有问题组件。"
         },
         {
           "question": "磁盘场景与实时场景扫描可能不同吗？",
@@ -1018,7 +1107,8 @@ window.COURSE_MODULES.push({
             "只要代码编译成功就不会不同"
           ],
           "answer": 1,
-          "explanation": "实时场景可能有未保存变化，磁盘文件则仍是上次保存的状态，报告必须说明读取哪一个。"
+          "explanation": "实时场景可能有未保存变化，磁盘文件则仍是上次保存的状态，报告必须说明读取哪一个。",
+          "scenario": "打开的场景修改后尚未保存。扫描器甲读实时对象，扫描器乙读上次保存的场景文件，二者结果要比较。"
         },
         {
           "question": "好的诊断至少包含什么？",
@@ -1028,7 +1118,8 @@ window.COURSE_MODULES.push({
             "只有扫描耗时，避免显示对象名称"
           ],
           "answer": 1,
-          "explanation": "对象、原因和建议能让用户找到并处理问题；只有数量或颜色不足以指导行动。"
+          "explanation": "对象、原因和建议能让用户找到并处理问题；只有数量或颜色不足以指导行动。",
+          "scenario": "扫描发现 Player 的具体配置问题，下一步希望让另一位学习者准确找到并修复该对象。"
         }
       ],
       "references": [
@@ -1091,8 +1182,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "有 SpriteRenderer、无 Animator 的对象一定是错误吗？",
-          "answer": "不一定。它可能是静态装饰；只有明确要求播放动画时，这才成为需要修复的配置条件。"
-        }
+          "answer": "不一定。它可能是静态装饰；只有明确要求播放动画时，这才成为需要修复的配置条件。",
+          "scenario": "一个对象有 SpriteRenderer 没有 Animator。你尚未说明它是需要播放 Idle 的玩家，还是只显示静态图的装饰物。"
+        },
+        "scenario": "你想知道 Player 的 Idle 为什么不播放，但本课最小扫描器目前只检查选中对象本身是否有 Missing Script，不递归子对象，也不检查 Animator 状态。报告“0个缺失脚本”只能回答这一项问题。",
+        "purpose": "学会写有对象、有范围、有处理建议的诊断，既不漏报已声明规则，也不把“未发现”夸大成整个场景正确。"
       }
     }
   ]

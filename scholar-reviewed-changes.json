@@ -1,8 +1,24 @@
 {
-  "reviewedAt": "2026-11-12T07:34:19.546Z",
+  "reviewedAt": "2026-11-12T08:48:51.104Z",
   "baseline": "artifacts/editorial-baseline.json",
-  "scope": "逐项登记的技术纠错与支持性官方引用；哈希不匹配的后续变化必须重新复核。",
+  "scope": "逐课登记技术纠错、必要实验驱动与支持性官方引用；保留原始基线，哈希不匹配的后续变化必须重新复核。",
   "changes": [
+    {
+      "lesson": "l001",
+      "fields": [
+        "references"
+      ],
+      "before": "483256375fe19190eeef1212766256e22fdba9edf9752ae8e19625276c36b59a",
+      "after": "3c7db4ab180cc9d333589b0e63370acbda58bdfd3a1c64638ff43a32fcd732ba",
+      "reason": "补充固定步长与Time项目设置的直接官方依据，支撑第一课的两个对照值与实际设置入口。",
+      "reviewDocument": "CONTEXT-foundations-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Application-unityVersion.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.Awake.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-fixedDeltaTime.html",
+        "https://docs.unity3d.com/6000.3/Documentation/Manual/class-TimeManager.html"
+      ]
+    },
     {
       "lesson": "l008",
       "fields": [
@@ -84,6 +100,21 @@
       ]
     },
     {
+      "lesson": "l028",
+      "fields": [
+        "code"
+      ],
+      "before": "907bde5f2aacd257b9b4f9d81d670fef6b736f788ffc35ff83d7e5f50d17a24c",
+      "after": "7a2976a05a3d07f10996706d444a85c89af3e6715ca08dc38b8ba4b64a93e43e",
+      "reason": "新增完整输入消费者，提供四动作响应、可见缓存、显式清理和失焦对照，补齐原实验只有切Map却要求观察缓存的断点。",
+      "reviewDocument": "CONTEXT-systems-review.md",
+      "references": [
+        "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/api/UnityEngine.InputSystem.PlayerInput.html",
+        "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/Actions.html",
+        "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/Settings.html"
+      ]
+    },
+    {
       "lesson": "l030",
       "fields": [
         "references"
@@ -126,6 +157,177 @@
       ]
     },
     {
+      "lesson": "l064",
+      "fields": [
+        "code"
+      ],
+      "before": "2d87ff28bdbe60288897545c4a614c20f097a1bbbad9450a06e7493bdc0cfbfc",
+      "after": "b0c62f07edbb3cc7305e95a4eeb03114ec17282cbb7550fd0ead435f85699b62",
+      "reason": "新增粒子池实验驱动，显式触发请求并报告实例ID，补齐等待回收、同帧饱和与停用对照的调用入口。",
+      "reviewDocument": "CONTEXT-systems-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Pool.ObjectPool_1.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ParticleSystem.IsAlive.html"
+      ]
+    },
+    {
+      "lesson": "l065",
+      "fields": [
+        "code"
+      ],
+      "before": "78479258605136414a157fa53867376e2e70287d80fa03997bc072f0479fa74d",
+      "after": "5bd2dfd2ad4829d92f182d2610197fea4e2769b383b8ec53f4ca8cf3a9ad7be7",
+      "reason": "新增受击反馈实验驱动，分开记录生命变化、请求与反馈接受，补齐缺失的触发与观察通路。",
+      "reviewDocument": "CONTEXT-systems-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-unscaledTime.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AudioSource.PlayOneShot.html"
+      ]
+    },
+    {
+      "lesson": "l066",
+      "fields": [
+        "code"
+      ],
+      "before": "f67d7325410341d3d15175ac20ff5ac58dc8ab55f82f591d77bf36d8037cf584",
+      "after": "cfd3e264d1ea4b561e8046a85e9f7fa6105b79ce4a56ca55c0c07bbdf93e1d1b",
+      "reason": "新增常驻引用持有组件，补齐卸载场景后引用状态实验的可挂载对象与字段。",
+      "reviewDocument": "CONTEXT-advanced-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/SceneManagement.SceneManager.LoadSceneAsync.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/SceneManagement.SceneManager.SetActiveScene.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/SceneManagement.SceneManager.UnloadSceneAsync.html"
+      ]
+    },
+    {
+      "lesson": "l068",
+      "fields": [
+        "code"
+      ],
+      "before": "ad1661c00777d8f9ab69b988c3594d54c00cd4f34be96634f3586ff7a2078169",
+      "after": "af7dacd456553eee2cced712781922d806284c28da44e819f1334769cfa5e2df",
+      "reason": "新增重复访问与切换场景观察组件，使回访时的重复订阅和卸载信号有完整触发路径。",
+      "reviewDocument": "CONTEXT-advanced-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Object.DontDestroyOnLoad.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/RuntimeInitializeOnLoadMethodAttribute.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/SceneManagement.SceneManager-sceneLoaded.html"
+      ]
+    },
+    {
+      "lesson": "l069",
+      "fields": [
+        "code"
+      ],
+      "before": "79ec582a51b59351a60a0dd2090065c610a9c2ec8014c7156f4618604faed6d1",
+      "after": "5be2538d861e909aa4c42d611a28fe6e213b0c89497185a30646a34822c4f23f",
+      "reason": "新增显式纹理持有组件，补齐Resources加载及清理实验的引用链与报告。",
+      "reviewDocument": "CONTEXT-advanced-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Resources.Load.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Resources.UnloadUnusedAssets.html",
+        "https://docs.unity3d.com/Packages/com.unity.addressables@2.7/manual/memory-assets.html"
+      ]
+    },
+    {
+      "lesson": "l073",
+      "fields": [
+        "code"
+      ],
+      "before": "1f6c5d194b8263647774bbd7ccb5cfafed3124a10fb4fda5d8f6bdcef50667b3",
+      "after": "a79354ab19349bf10a2a771ef2e5a23dc0c1cf74c3455a7afa12385b00657f61",
+      "reason": "新增只读存档路径探针，补齐原JsonSaveProbe未打印路径而实验要求读日志的断点。",
+      "reviewDocument": "CONTEXT-advanced-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/JsonUtility.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Application-persistentDataPath.html"
+      ]
+    },
+    {
+      "lesson": "l074",
+      "fields": [
+        "code"
+      ],
+      "before": "82512283d9228be3a725def0498a06b0c03152c38f86ded6bbb1392e43fa64ac",
+      "after": "3011c1015874c31ce235fa45da4741f652360e7014461548456fc0f01ee2b059",
+      "reason": "新增迁移实验驱动，提供旧数据输入、迁移调用与输出，避免普通方法无人调用。",
+      "reviewDocument": "CONTEXT-advanced-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/JsonUtility.FromJson.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Application-persistentDataPath.html"
+      ]
+    },
+    {
+      "lesson": "l075",
+      "fields": [
+        "code"
+      ],
+      "before": "b6415d8b8707fe6c41d683b060b22b9323e469591cfd8070664be590422ea99c",
+      "after": "4d26b3b4c8d0cee39ca1b34e4b4feac7b890b09fda221c4c42defdfe4eb749f8",
+      "reason": "新增配置读取驱动，连接资源字段和读取入口，区分共享配置与运行实例。",
+      "reviewDocument": "CONTEXT-advanced-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/SerializeReference.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ISerializationCallbackReceiver.html"
+      ]
+    },
+    {
+      "lesson": "l076",
+      "fields": [
+        "code"
+      ],
+      "before": "2b954fa32b811771c570aebee5912dc0dc9bee6bc24cf6526432fea589fe9664",
+      "after": "902053a51bd827ea09f4b2c0fcebf6c9e779cb2d87ccde7f764cbcb6ba1d54ff",
+      "reason": "新增意图与冲突速度实验驱动，补齐非自动public方法调用及第二写入方的对照。",
+      "reviewDocument": "CONTEXT-advanced-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/RequireComponent.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponent.html"
+      ]
+    },
+    {
+      "lesson": "l077",
+      "fields": [
+        "code"
+      ],
+      "before": "4600ffcaaefbc7c102b6b3342962053056475fb0441bef909fbdef172404db62",
+      "after": "400ff838cc9264a3cdebfb522ce606213f3b243d64c40dfa2cbfe47218bf309d",
+      "reason": "新增伤害实验驱动，以组件菜单触发领域方法并观察状态，保留既有规则源码。",
+      "reviewDocument": "CONTEXT-advanced-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.OnEnable.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.OnDisable.html"
+      ]
+    },
+    {
+      "lesson": "l078",
+      "fields": [
+        "code"
+      ],
+      "before": "296ac4ac694767a044143ad925af575648f67e82939493e3127076740dde356f",
+      "after": "175f8e0c84e9810cec028caea4d643221b3b955bd90cf6875ce019d6b03479df",
+      "reason": "新增最小纯规则、运行适配和Editor菜单及两份asmdef，按文件标明C#/JSON；补齐有配置无测试代码的问题。独立编译不替代真实程序集边界实验。",
+      "reviewDocument": "CONTEXT-advanced-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/Manual/assembly-definition-files.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Compilation.CompilationPipeline.GetAssemblies.html"
+      ]
+    },
+    {
+      "lesson": "l082",
+      "fields": [
+        "code"
+      ],
+      "before": "a9c0aa58a9c0b8e6be71c2256e161b6524e55a22d1f650305cba7d2c6cf77776",
+      "after": "641b8a49c866eca01b1aeb2d7dd54c1b768f8975c4e32b281672a46c42c1ed17",
+      "reason": "新增可控制分配工作驱动，使性能对照有明确调用入口和测量阶段。",
+      "reviewDocument": "CONTEXT-advanced-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Unity.Profiling.ProfilerRecorder.html",
+        "https://docs.unity3d.com/6000.3/Documentation/Manual/Profiler.html"
+      ]
+    },
+    {
       "lesson": "l083",
       "fields": [
         "references"
@@ -137,6 +339,34 @@
       "references": [
         "https://docs.unity3d.com/6000.3/Documentation/Manual/SRPBatcher.html",
         "https://docs.unity3d.com/6000.3/Documentation/Manual/GPUInstancing.html"
+      ]
+    },
+    {
+      "lesson": "l084",
+      "fields": [
+        "code"
+      ],
+      "before": "36acec82bc68d7b962ec6bd16381fcc90bfc8e0ff0e6220f2543aa06f890bdd1",
+      "after": "178fe073d057b697a5ff7124d60f650a1954d9e99c2f146904f5d380a4421f57",
+      "reason": "新增池批次、可重复场景进退与专用静态纹理持有/释放夹具，修复借还无触发、自动单次入口无法连续采样及静态持有无实现三个断点。",
+      "reviewDocument": "CONTEXT-advanced-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Resources.UnloadUnusedAssets.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Object.DontDestroyOnLoad.html"
+      ]
+    },
+    {
+      "lesson": "l085",
+      "fields": [
+        "code"
+      ],
+      "before": "9cccef96c55d7853e32dac6d608511435e79855feaaa7ddb223fdd57eeea091b",
+      "after": "7d0a525228074808ad3d798f98d033a0d57f831fafd3233ff557254103e5594d",
+      "reason": "新增最近邻查询实验驱动，明确目标、触发和结果，不要求自行发明调用方。",
+      "reviewDocument": "CONTEXT-advanced-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/Manual/Profiler.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Unity.Profiling.ProfilerMarker.html"
       ]
     },
     {
@@ -153,6 +383,20 @@
       ]
     },
     {
+      "lesson": "l088",
+      "fields": [
+        "code"
+      ],
+      "before": "0eb4cb9f3d13412579df2bcb6d7f08dfea836aad01922e43b15a5fa6823ca83a",
+      "after": "899c9656c52c988e9f60a3bff1bc685d9ec0b9e4a662363d7846e7adbed55067",
+      "reason": "新增三维查询运行驱动，补齐配置资产的真实运行读取与查询触发。",
+      "reviewDocument": "CONTEXT-advanced-review.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Handles.RadiusHandle.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Transform.TransformPoint.html"
+      ]
+    },
+    {
       "lesson": "l090",
       "fields": [
         "references"
@@ -163,6 +407,48 @@
       "reviewDocument": "SCHOLAR-writing-review.md",
       "references": [
         "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Debug.LogWarning.html"
+      ]
+    },
+    {
+      "lesson": "l091",
+      "fields": [
+        "code"
+      ],
+      "before": "f7b5028f4635730d3f349dcece383c9d3aee9da224b626d437f2f6f7e7f22164",
+      "after": "f64267a3eeed536de42faa15d70acc4c07f93bad52f2982ab5e92b20b654110c",
+      "reason": "新增导航状态观察组件，提供SetDestination及路径状态菜单触发，不假定普通方法自动执行。",
+      "reviewDocument": "CONTEXT-advanced-review.md",
+      "references": [
+        "https://docs.unity3d.com/Packages/com.unity.ai.navigation@2.0/manual/index.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AI.NavMeshAgent.SetDestination.html"
+      ]
+    },
+    {
+      "lesson": "l093",
+      "fields": [
+        "code"
+      ],
+      "before": "ed79947b39a141a509f1ef1fbc0fd4abdf063d0cb1e2e3f457ba7ee3efab75e9",
+      "after": "5fc9704552eea96ffd88e8b07c39455df95d429113323a09020870205a3f019c",
+      "reason": "新增Burst平方计算调用驱动，让调度、完成与结果核对能按实验触发。",
+      "reviewDocument": "CONTEXT-advanced-review.md",
+      "references": [
+        "https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/index.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Unity.Jobs.IJobParallelFor.html"
+      ]
+    },
+    {
+      "lesson": "l094",
+      "fields": [
+        "code"
+      ],
+      "before": "e3e7ad2157f1ead5356a1b047991bbc12ed3cac8e031ed6e3afb4da3a0648788",
+      "after": "d34d425737b58350428b1a4caf8c0f9dd2dec03802d84916ab935d076de6e107",
+      "reason": "新增无Lifetime但确实烘焙成实体的比较Authoring，使查询过滤对照真实存在。",
+      "reviewDocument": "CONTEXT-advanced-review.md",
+      "references": [
+        "https://docs.unity3d.com/Packages/com.unity.entities@1.4/manual/index.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Unity.Jobs.IJob.html"
       ]
     }
   ]

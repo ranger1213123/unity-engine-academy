@@ -110,7 +110,13 @@ window.COURSE_MODULES.push({
             "让两个Transform变量引用同一对象，经其中一个改位置，再经另一个读取。",
             "画出数值副本与引用箭头，逐句解释两组变化为什么不同。"
           ],
-          "result": "分清改局部数值、换引用和改对象成员。"
+          "result": "分清改局部数值、换引用和改对象成员。",
+          "purpose": "分别观察结构体副本和指向同一对象的两个变量。",
+          "setup": [
+            "创建空对象 ValueProbe，另建 CopyProbe.cs 并挂上；在 Start 中依次写 Vector3 a=new Vector3(1,2,3); Vector3 b=a; b.x=9;，随后用 Debug.Log 分别打印 a、b。",
+            "在同一 Start 的后半段用 Transform first=transform; Transform second=first;，通过 second.position 赋新位置，再打印 first.position。两变量都指 ValueProbe 自身，不是两个副本。",
+            "保持 Console 的 Collapse 关闭，按输出标签区分数值 a/b 与引用 first/second。"
+          ]
         },
         {
           "title": "观察销毁后的两种空值",
@@ -120,7 +126,13 @@ window.COURSE_MODULES.push({
             "在实验副本等待后尝试读取已销毁目标，记录错误，再恢复安全检查。",
             "改为恢复时先用Unity空值判断，再与普通C#类的空引用比较。"
           ],
-          "result": "理解包装引用与原生对象寿命不同，等待后重新检查。"
+          "result": "理解包装引用与原生对象寿命不同，等待后重新检查。",
+          "purpose": "把 C# 包装引用是否为空与引擎对象是否仍存在分别观察。",
+          "setup": [
+            "创建空对象 NullHost，添加完整 UnityNullProbe，Console 清空后 Play；Temporary 由代码创建，不需要事先在 Hierarchy 手动创建。",
+            "复制脚本实验版时更换文件名与类名，避免同名编译冲突；只在副本中增加销毁后的成员访问，观察后删除该不安全访问。",
+            "每次改动后保存、等编译，再重新 Play。等待结束后用 target==null 检查，普通 C# 类的对照对象则没有 Unity 原生对象这一层。"
+          ]
         }
       ],
       "pitfalls": [
@@ -171,7 +183,8 @@ window.COURSE_MODULES.push({
             "普通赋值仍共享，必须Clone才复制"
           ],
           "answer": 0,
-          "explanation": "赋值复制结构体值，修改 b 不会反向写入 a。"
+          "explanation": "赋值复制结构体值，修改 b 不会反向写入 a。",
+          "scenario": "方法中声明 Vector3 a=new Vector3(1,2,3)，再执行 Vector3 b=a，最后只执行 b.x=9；没有将 b 再赋回 a。"
         },
         {
           "question": "销毁后 == null 为真而 ReferenceEquals 为假，说明什么？",
@@ -182,7 +195,8 @@ window.COURSE_MODULES.push({
             "Destroy会自动把所有持有变量赋成C# null"
           ],
           "answer": 1,
-          "explanation": "两种检查面对不同层次：Unity 比较还检查关联的引擎对象。"
+          "explanation": "两种检查面对不同层次：Unity 比较还检查关联的引擎对象。",
+          "scenario": "UnityNullProbe 的局部 GameObject target 指向新建 Temporary；Destroy(target) 后等一帧，再输出 target==null 为 true、ReferenceEquals(target,null) 为 false。"
         },
         {
           "question": "等待数帧后使用目标，正确做法是？",
@@ -193,7 +207,8 @@ window.COURSE_MODULES.push({
             "用 ?. 就保证检查原生对象寿命"
           ],
           "answer": 2,
-          "explanation": "等待期间目标可能销毁，便捷语法也不能替代 Unity 的对象有效性判断。"
+          "explanation": "等待期间目标可能销毁，便捷语法也不能替代 Unity 的对象有效性判断。",
+          "scenario": "协程开始时保存了场景目标的 Transform，在 yield 等待数帧后打算读取 position；其他系统可在等待期间销毁目标。"
         }
       ],
       "references": [
@@ -229,8 +244,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "等待前检查目标有效，等一帧后还能无条件读取它吗？",
-          "answer": "不能。等待期间别的代码可能销毁目标；恢复执行后应重新用适合 Unity 对象的方式检查。"
-        }
+          "answer": "不能。等待期间别的代码可能销毁目标；恢复执行后应重新用适合 Unity 对象的方式检查。",
+          "scenario": "某个流程取得 Transform target 并检查它有效，然后等待一帧。等待期间另一个脚本可能调用 Destroy(target.gameObject)，之后原流程将继续执行。"
+        },
+        "scenario": "本课比较两次赋值：Vector3 a=(1,2,3)，b=a；另有 first、second 两个 Transform 变量，都指向场景中的同一个对象。最后 UnityNullProbe 在 Start 中创建 Temporary、请求销毁并等一帧，比较两种空值检查。",
+        "purpose": "区分复制数值、复制引用与对象销毁，避免把“变量仍有包装引用”误认为目标还能使用。"
       }
     },
     {
@@ -318,7 +336,8 @@ window.COURSE_MODULES.push({
         "filename": "SpeedSettings.cs",
         "source": "using UnityEngine;\npublic sealed class SpeedSettings : MonoBehaviour\n{\n    [SerializeField, Min(0f)] float speed = 5f;\n    public float Speed => speed;\n    public bool TrySetSpeed(float value)\n    {\n        if (float.IsNaN(value) || float.IsInfinity(value) || value < 0f) return false;\n        speed = value;\n        return true;\n    }\n}",
         "explanation": [
-          "挂组件后在 Inspector 配置 speed。外部读取 Speed，修改时调用 TrySetSpeed 并检查布尔结果。该组件只管理速度设置，不会自行移动对象。"
+          "挂组件后在 Inspector 配置 speed。外部读取 Speed，修改时调用 TrySetSpeed 并检查布尔结果。该组件只管理速度设置，不会自行移动对象。",
+          "测试方法需要调用者：把 SpeedCaller 挂到同一对象，在 Start 通过 GetComponent<SpeedSettings>() 取得设置组件后，调用 TrySetSpeed 并打印返回值和 Speed。仅在 Inspector 看见字段，不会自动执行这些方法；本课实验准备给出具体输入。"
         ]
       },
       "lab": [
@@ -330,7 +349,13 @@ window.COURSE_MODULES.push({
             "先记录Inspector显示，再保存并重开场景，比较各自数值。",
             "对照官方序列化规则，分别写谁能在代码访问、哪些数据会保存。"
           ],
-          "result": "不把公开访问与参与保存当作同一开关。"
+          "result": "不把公开访问与参与保存当作同一开关。",
+          "purpose": "观察代码访问权限与编辑器保存能力的区别。",
+          "setup": [
+            "创建空对象 Settings，添加 SpeedSettings，先在 Inspector 改 Speed 并保存场景；该脚本没有 Update，不会让对象自动移动。",
+            "另建 SerializationComparison.cs 测试组件，分别声明不同名字的 private、[SerializeField] private、public、static 数值字段及一个普通属性，挂到另一个空对象。",
+            "先记录哪些成员能在 Inspector 看见，再修改可见字段、保存并重新打开场景；static 与普通属性的代码访问测试在独立调用脚本中完成。"
+          ]
         },
         {
           "title": "测试修改方法的结果",
@@ -340,7 +365,13 @@ window.COURSE_MODULES.push({
             "每次记录返回值和Speed，核对失败后原速度是否保留。",
             "复制两个组件只改其中一个，再在实验副本比较static效果，结束后恢复。"
           ],
-          "result": "验证修改入口，并观察实例数据与共享数据。"
+          "result": "验证修改入口，并观察实例数据与共享数据。",
+          "purpose": "验证方法拒绝非法值后保留原状态，而不是只看函数返回。",
+          "setup": [
+            "创建 SpeedCaller.cs 挂到 Settings 同一对象；在 Start 先用 GetComponent<SpeedSettings>() 取得引用，检查非空后再调用 TrySetSpeed。",
+            "在 Start 中逐项传入 -2f、3f、float.NaN、float.PositiveInfinity；每次调用后用 Debug.Log 同时记录本次参数、布尔返回值和 settings.Speed。不要直接访问私有 speed。",
+            "复制 Settings 为 SettingsB，每个调用脚本应读取自身的 SpeedSettings；在日志加 name 区分实例。static 对照仅放实验副本，结束后还原。"
+          ]
         }
       ],
       "pitfalls": [
@@ -391,7 +422,8 @@ window.COURSE_MODULES.push({
             "禁止字段在播放期间变化"
           ],
           "answer": 1,
-          "explanation": "访问权限与保存规则是不同问题；SerializeField 不会把 private 改成 public。"
+          "explanation": "访问权限与保存规则是不同问题；SerializeField 不会把 private 改成 public。",
+          "scenario": "组件中有 private float speed，设计者要在 Inspector 配置并保存它，同时希望其他脚本不能直接写 speed；该字段的类型符合 Unity 序列化规则。"
         },
         {
           "question": "哪个最适合每个角色自己的当前生命？",
@@ -402,7 +434,8 @@ window.COURSE_MODULES.push({
             "不区分角色身份的共享计数"
           ],
           "answer": 2,
-          "explanation": "每角色的当前状态应能分别保存，并与该角色的寿命对应。"
+          "explanation": "每角色的当前状态应能分别保存，并与该角色的寿命对应。",
+          "scenario": "场景中有两个角色，每个角色各自受伤与恢复，需要独立保存当前生命；这里讨论运行实例状态，而不是所有角色共同使用的设计常量。"
         },
         {
           "question": "只读属性一定没有成本吗？",
@@ -413,7 +446,8 @@ window.COURSE_MODULES.push({
             "只要不提供 setter 就没有任何开销"
           ],
           "answer": 0,
-          "explanation": "属性是调用接口；其成本取决于具体实现和调用频率。"
+          "explanation": "属性是调用接口；其成本取决于具体实现和调用频率。",
+          "scenario": "你看到公开只读属性 Speed，尚未阅读其 getter。其他脚本会频繁读取这个属性，想判断读取是否便宜。"
         }
       ],
       "references": [
@@ -449,8 +483,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "Inspector 有 Min(0)，运行代码调用设置方法时是否就不必检查负数？",
-          "answer": "仍要检查。Inspector 辅助限制不等于所有运行调用都经过验证；实际修改入口应保证自己的条件。"
-        }
+          "answer": "仍要检查。Inspector 辅助限制不等于所有运行调用都经过验证；实际修改入口应保证自己的条件。",
+          "scenario": "SpeedSettings 的 speed 声明带 Min(0)，外部调用者打算执行 TrySetSpeed(-2)。这次输入来自 C# 方法调用，未经过 Inspector 控件。"
+        },
+        "scenario": "SpeedSettings 有一个 Inspector 可编辑的私有 speed 字段、只供读取的 Speed 属性，以及允许外部请求修改的 TrySetSpeed。它只保存设置，不移动物体；我们用另一个调用组件传入正常值和非法值，检查返回结果。",
+        "purpose": "把数据是否保存、代码能否直接访问以及允许怎样修改三个问题分开，给组件设计可理解的使用入口。"
       }
     },
     {
@@ -545,7 +582,8 @@ window.COURSE_MODULES.push({
         "filename": "RendererDependency.cs",
         "source": "using UnityEngine;\n[RequireComponent(typeof(SpriteRenderer))]\npublic sealed class RendererDependency : MonoBehaviour\n{\n    SpriteRenderer view;\n    void Awake()\n    {\n        if (!TryGetComponent(out view))\n        {\n            Debug.LogError(\"SpriteRenderer required on this object.\", this);\n            enabled = false;\n        }\n    }\n    public void SetVisible(bool value) { if (view != null) view.enabled = value; }\n}",
         "explanation": [
-          "RendererDependency 挂到空对象时会要求同对象有 SpriteRenderer。SetVisible 只控制显示组件，不会关闭碰撞或其他脚本；示例也没有自动指定图片。"
+          "RendererDependency 挂到空对象时会要求同对象有 SpriteRenderer。SetVisible 只控制显示组件，不会关闭碰撞或其他脚本；示例也没有自动指定图片。",
+          "正文的 Root/View 是查找范围对照，RendererDependency 则要求同对象依赖，不能把它直接挂在只有子级 SpriteRenderer 的 Root 上再当作子级查找示例。显示 Sprite 还需要为 SpriteRenderer 指定 Sprite，查找实验可以先不指定图片。"
         ]
       },
       "lab": [
@@ -557,7 +595,13 @@ window.COURSE_MODULES.push({
             "比较GetComponent与子级查找，每次输出找到的对象上下文。",
             "移动子级后重测，再比较Inspector直接引用，说明各自依赖哪种结构。"
           ],
-          "result": "能找到组件，也能说明为什么是这个实例。"
+          "result": "能找到组件，也能说明为什么是这个实例。",
+          "purpose": "用已知层级验证查找范围和返回对象身份。",
+          "setup": [
+            "创建空对象 Ancestor、Root、View；在 Hierarchy 拖成 Ancestor/Root/View。分别通过 Add Component 给三者添加 SpriteRenderer，并记录名字。Sprite 槽可以暂空，查找不依赖画面是否可见。",
+            "另建 ComponentLookupProbe 挂 Root，在 Start 中分别调用 GetComponent<SpriteRenderer>()、GetComponentInChildren<SpriteRenderer>()；打印结果对象名与上下文。先保留 Root 组件，再移除 Root 组件重做，避免误以为子级查找必定跳过自身。",
+            "若有多个候选，预先说明想要哪个 View；新增一个 [SerializeField] SpriteRenderer 槽，从 Hierarchy 将指定 View 拖进去作为直接引用对照。"
+          ]
         },
         {
           "title": "测试依赖缺失和引用失效",
@@ -567,7 +611,13 @@ window.COURSE_MODULES.push({
             "另写需要外部引用的探针，故意漏赋，核对一次错误是否明确说明对象与原因。",
             "取得外部目标后销毁它，再使用缓存，加入安全停止或明确重新绑定。"
           ],
-          "result": "缺失与失效都有可解释处理，不依赖缓存自动恢复。"
+          "result": "缺失与失效都有可解释处理，不依赖缓存自动恢复。",
+          "purpose": "区分添加时辅助、外部必需引用和已经缓存后的失效。",
+          "setup": [
+            "另建空对象 RequiredView，添加本课 RendererDependency，观察 Inspector 自动出现同对象 SpriteRenderer；此实验不沿用只有子级 Renderer 的布置。",
+            "需要外部引用的对照可沿用第5课 ReferenceProbe，将 Target 槽留空并重新 Play，检查一次诊断。",
+            "销毁后检查用另外一个始终活动的持有者保存目标引用；只销毁目标、不销毁持有者。通过 Play 中 Hierarchy 的删除操作制造失效，再由持有者检查并停止使用缓存。"
+          ]
         }
       ],
       "pitfalls": [
@@ -618,7 +668,8 @@ window.COURSE_MODULES.push({
             "找不到时自动创建目标组件"
           ],
           "answer": 0,
-          "explanation": "查找范围由方法决定，需要子级时应选择相应接口或明确引用。"
+          "explanation": "查找范围由方法决定，需要子级时应选择相应接口或明确引用。",
+          "scenario": "脚本挂在 Root，SpriteRenderer 只挂在它的子对象 View；Root 本身没有该组件。现在仅调用 Root.GetComponent<SpriteRenderer>()。"
         },
         {
           "question": "缓存 Transform 后，目标能被别人销毁吗？",
@@ -629,7 +680,8 @@ window.COURSE_MODULES.push({
             "缓存会留下独立复制的目标"
           ],
           "answer": 1,
-          "explanation": "记住引用不等于拥有目标的创建和销毁权。"
+          "explanation": "记住引用不等于拥有目标的创建和销毁权。",
+          "scenario": "组件把另一个对象的 Transform 存入字段 cachedTarget；该对象的拥有者仍可在之后调用 Destroy。缓存操作没有复制或接管目标。"
         },
         {
           "question": "必需依赖缺失时更好的反馈是？",
@@ -640,7 +692,8 @@ window.COURSE_MODULES.push({
             "把引用改 static 就保证存在"
           ],
           "answer": 2,
-          "explanation": "必要条件失败应明确暴露，随机替换会把故障变成错误对象控制。"
+          "explanation": "必要条件失败应明确暴露，随机替换会把故障变成错误对象控制。",
+          "scenario": "一个必须有目标才能工作的组件在初始化时发现目标缺失。随便找另一个同类对象可能控制错人，也没有证据表明稍后一定会补齐。"
         }
       ],
       "references": [
@@ -680,8 +733,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "加上 RequireComponent 后，运行时可以完全不检查现有依赖吗？",
-          "answer": "不能把声明当作所有历史配置的证明。它帮助添加依赖，但已有对象或后来变化仍要按实际需求验证。"
-        }
+          "answer": "不能把声明当作所有历史配置的证明。它帮助添加依赖，但已有对象或后来变化仍要按实际需求验证。",
+          "scenario": "某脚本类型写了 RequireComponent(typeof(SpriteRenderer))。你面对的是项目里实际存在的对象，可能有历史配置或运行时变化，尚未逐一检查这些对象的依赖。"
+        },
+        "scenario": "先做查找实验：Root 下有 View，SpriteRenderer 只加在 View。再单独做依赖实验：RendererDependency 要求 SpriteRenderer 与自己在同一个对象上。前一个问题是去哪里找，后一个问题是声明同对象依赖，两者不能混用。",
+        "purpose": "能解释查到哪个组件、为什么是它，以及缓存以后由谁保证目标仍可使用。"
       }
     },
     {
@@ -782,7 +838,13 @@ window.COURSE_MODULES.push({
             "反复开关其中一个10次，再发布，比较每个有效对象次数。",
             "在副本暂时移除退订，看次数怎样累积，记录后恢复正确代码。"
           ],
-          "result": "用调用次数证明关系是否成对管理。"
+          "result": "用调用次数证明关系是否成对管理。",
+          "purpose": "通过同一次发布的接收数，检查订阅和退订是否配对。",
+          "setup": [
+            "创建两个空对象 ListenerA、ListenerB，各添加 SignalProbe；Console 关闭 Collapse，以便数清 Received by ListenerA/B。",
+            "Play 后选中任一对象，在 SignalProbe 组件右上角三点菜单点 Publish。这里是测试命令，不是按键，也无需另建事件发布脚本。",
+            "只切换 ListenerB 的组件勾选，ListenerA 保持启用；每次恢复后发布一次。十次是重复操作的测试样本，看到累积趋势就应先检查注册代码。"
+          ]
         },
         {
           "title": "测试对象结束与静态残留",
@@ -792,7 +854,13 @@ window.COURSE_MODULES.push({
             "比较命名方法退订与重新写lambda，记录实际移除的是不是原处理身份。",
             "查看Enter Play Mode设置，保持Scene Reload开启，对比Domain Reload开关。两者都关需要额外重新注册，不属于本例验证范围。"
           ],
-          "result": "区分对象启用、订阅关系和static状态的寿命。"
+          "result": "区分对象启用、订阅关系和static状态的寿命。",
+          "purpose": "检查实例结束与重新进入 Play 时，共享事件是否仍符合当前监听者集合。",
+          "setup": [
+            "沿用 ListenerA/B 场景，Play 中在 Hierarchy 删除 ListenerB，再通过 A 的 Publish 发布。下一轮重新 Play 会恢复编辑场景，不要把删除前后的轮次混记。",
+            "lambda 对照在单独测试脚本中保存一个 Action handler 变量：先用原变量 +=、-=，再比较临时新建表达式；不改正式 SignalProbe 的配对代码。",
+            "域重载对照打开 Edit > Project Settings > Editor，在 Enter Play Mode Settings 的 When entering play mode 下拉中，比较 Reload Domain and Scene（重载域与场景）与 Reload Scene Only（只重载场景）。这样始终保留场景重载，只改变域重载。抄下原选项，实验后恢复。"
+          ]
         }
       ],
       "pitfalls": [
@@ -808,7 +876,7 @@ window.COURSE_MODULES.push({
         }
       ],
       "exercise": {
-        "brief": "建立计数发布者和两个可独立开关的观察者，连续开关20次后，验证一次通知对每个有效观察者仍最多处理一次。",
+        "brief": "建立计数发布者和两个可独立开关的观察者，连续开关20次后，验证一次通知对每个有效观察者仍最多处理一次。 其中20次开关是重复操作的压力样本，不是事件机制规定的次数；每次发布分别统计当前监听者的接收增量。",
         "deliverables": [
           "订阅寿命图",
           "完整源码",
@@ -843,7 +911,8 @@ window.COURSE_MODULES.push({
             "只在发布者收到 Update 时执行"
           ],
           "answer": 2,
-          "explanation": "普通事件只是方法调用列表，不自带异步调度。"
+          "explanation": "普通事件只是方法调用列表，不自带异步调度。",
+          "scenario": "一个普通 C# event Action 有两个命名处理方法。发布者在当前方法里直接执行 Signal?.Invoke()，没有队列、协程或线程切换代码。"
         },
         {
           "question": "长期发布者持有未退订订阅者可能造成什么？",
@@ -854,7 +923,8 @@ window.COURSE_MODULES.push({
             "只影响内存，不会影响行为"
           ],
           "answer": 0,
-          "explanation": "委托列表形成引用关系，也会造成重复调用或过期处理。"
+          "explanation": "委托列表形成引用关系，也会造成重复调用或过期处理。",
+          "scenario": "一个长期存在的发布者保留面板处理函数。面板关闭后不再需要通知，但程序没有从发布者的委托列表移除该函数。"
         },
         {
           "question": "面板只在开启期间监听，最自然的一组边界是？",
@@ -865,7 +935,8 @@ window.COURSE_MODULES.push({
             "每次收到事件后再重复订阅"
           ],
           "answer": 1,
-          "explanation": "监听需求与启用期一致时，这一对边界最直接。"
+          "explanation": "监听需求与启用期一致时，这一对边界最直接。",
+          "scenario": "面板的监听需求恰好等于组件启用期：每次启用开始听，停用立刻停止听。同一实例会被多次启用，没有跨停用继续监听的需求。"
         }
       ],
       "references": [
@@ -901,8 +972,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "写一个外观相同的新 lambda 去 -=，一定能移除原匿名订阅吗？",
-          "answer": "不能这样依赖。退订需要对应的委托身份；需要之后移除时，应保存原委托或使用明确的命名方法。"
-        }
+          "answer": "不能这样依赖。退订需要对应的委托身份；需要之后移除时，应保存原委托或使用明确的命名方法。",
+          "scenario": "代码先用一个 lambda 订阅事件，之后准备重新写一个外观相同的 lambda 并用 -= 退订；没有保存最初的委托变量。想知道第二段表达式能否代表原订阅身份。"
+        },
+        "scenario": "场景中两个对象 ListenerA、ListenerB 都挂 SignalProbe，共同监听这个类型的 static Signal。通过任一组件的 Publish 菜单发布一次；反复开关 ListenerB，再比较每次发布各收到几条日志。十轮开关用于放大重复注册问题，并非 Unity 要求的次数。",
+        "purpose": "把事件订阅当作需要建立和结束的联系，通过调用次数检查开关后是否有残留。"
       }
     },
     {
@@ -990,7 +1064,8 @@ window.COURSE_MODULES.push({
         "filename": "CooldownProbe.cs",
         "source": "using UnityEngine;\npublic sealed class CooldownProbe : MonoBehaviour\n{\n    readonly Cooldown cooldown = new Cooldown(2f);\n    void Update() => cooldown.Tick(Time.deltaTime);\n    [ContextMenu(\"Try use\")]\n    void TryUse() => Debug.Log(cooldown.TryUse() ? \"Used\" : \"Cooling\", this);\n}\npublic sealed class Cooldown\n{\n    readonly float duration;\n    float remaining;\n    public Cooldown(float duration) { this.duration = Mathf.Max(0f, duration); }\n    public void Tick(float dt) { remaining = Mathf.Max(0f, remaining - Mathf.Max(0f, dt)); }\n    public bool TryUse()\n    {\n        if (remaining > 0f) return false;\n        remaining = duration;\n        return true;\n    }\n}",
         "explanation": [
-          "先手动调用 Cooldown 的 TryUse 与 Tick 验证规则，再挂 CooldownProbe 由 Update 提供时间。这里使用了 Mathf，但模型没有直接查找场景或读取设备。"
+          "先手动调用 Cooldown 的 TryUse 与 Tick 验证规则，再挂 CooldownProbe 由 Update 提供时间。这里使用了 Mathf，但模型没有直接查找场景或读取设备。",
+          "Try use 在组件三点菜单中；只有 Play 后才由 Update 持续推进时间。手工序列应另建调用者只传入指定 Tick，不同时让 Update 额外推进，否则输入已经不再受控。原例不暴露 remaining，记录内部余量需要实验观察入口。"
         ]
       },
       "lab": [
@@ -1002,7 +1077,13 @@ window.COURSE_MODULES.push({
             "测试零冷却、负增量与超过剩余的大增量，记录返回值和状态。",
             "最后接入Update的deltaTime，分别说明纯规则和场景接线测试证明什么。"
           ],
-          "result": "能重做输入序列，并解释正常与边界结果。"
+          "result": "能重做输入序列，并解释正常与边界结果。",
+          "purpose": "先不依赖真实等待，检查冷却规则的输入和输出。",
+          "setup": [
+            "把本课 CooldownProbe.cs 完整保存：文件同时包含可挂组件 CooldownProbe 与普通类 Cooldown。只需要一个文件，不要再复制定义一份 Cooldown。",
+            "另建 CooldownSequenceProbe 挂空对象，在 Start 里 new Cooldown(2f)，依次调用 TryUse、Tick(1f)、TryUse、Tick(1f)、TryUse，每次 TryUse 用 Debug.Log 输出返回值。这个对照对象不要同时接 Update.Tick。",
+            "真实时间对照另建空对象挂原 CooldownProbe，Play 时在组件三点菜单选择 Try use；原例没有暴露 remaining 字段，若需记录内部余量，在实验副本增只读观察入口，不把不可见字段当 Inspector 已有控件。"
+          ]
         },
         {
           "title": "分开列表元素与场景对象",
@@ -1012,7 +1093,13 @@ window.COURSE_MODULES.push({
             "连续制造两个失效成员，倒序删除，检查没有跳过相邻元素。",
             "仅Clear列表再看Hierarchy，随后由负责创建的逻辑另行销毁对象。"
           ],
-          "result": "删除成员与销毁对象互不自动代替。"
+          "result": "删除成员与销毁对象互不自动代替。",
+          "purpose": "分别观察列表计数、有效成员数与 Hierarchy 中实际对象。",
+          "setup": [
+            "创建空对象 ListHost 和三个独立空对象 One、Two、Three。另建列表测试组件，提供三个 GameObject 槽，从 Hierarchy 拖入对应对象，再在 Start 建立列表。",
+            "在测试方法中销毁 Two 后等一帧再记录 Count 和用 Unity 空值检查得到的有效数，避免把延迟销毁尚未完成的时刻混入结果。",
+            "相邻失效测试新开一轮，销毁 Two 与 Three 后再清理；Clear 测试也新开一轮，只清列表再看 Hierarchy，最后由明确的创建/管理者销毁对象。"
+          ]
         }
       ],
       "pitfalls": [
@@ -1063,7 +1150,8 @@ window.COURSE_MODULES.push({
             "会同时删除对应 Prefab 资源"
           ],
           "answer": 0,
-          "explanation": "清空集合不是场景对象销毁命令。对象寿命需要另行管理。"
+          "explanation": "清空集合不是场景对象销毁命令。对象寿命需要另行管理。",
+          "scenario": "targets 是 List<GameObject>，保存三个仍在场景中的对象。代码仅执行 targets.Clear()，没有执行 Destroy，也没有其他脚本清理这些对象。"
         },
         {
           "question": "给冷却模型传入时间增量有什么价值？",
@@ -1074,7 +1162,8 @@ window.COURSE_MODULES.push({
             "替代所有场景验证"
           ],
           "answer": 1,
-          "explanation": "可控增量让纯规则容易测试，但实际调用与暂停行为仍需场景检查。"
+          "explanation": "可控增量让纯规则容易测试，但实际调用与暂停行为仍需场景检查。",
+          "scenario": "2秒冷却模型提供 Tick(dt) 接口。你希望验证使用后1秒拒绝、累计2秒后允许，以及零/负/大增量等边界。"
         },
         {
           "question": "捕获异常后直接忽略为什么危险？",
@@ -1085,7 +1174,8 @@ window.COURSE_MODULES.push({
             "异常被忽略后所有代码都会重新执行"
           ],
           "answer": 2,
-          "explanation": "没有决定恢复方式就吞掉异常，会同时失去执行保障和定位证据。"
+          "explanation": "没有决定恢复方式就吞掉异常，会同时失去执行保障和定位证据。",
+          "scenario": "清理方法中发生异常后，catch 什么也不记录、不恢复，也不通知上层，随后程序继续使用可能只完成一半的状态。"
         }
       ],
       "references": [
@@ -1121,8 +1211,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "销毁列表中间的对象，Count 会自动减少吗？",
-          "answer": "通常不会。列表仍保留该成员位置，需要明确清理失效引用；销毁引擎对象和删除列表元素是两件事。"
-        }
+          "answer": "通常不会。列表仍保留该成员位置，需要明确清理失效引用；销毁引擎对象和删除列表元素是两件事。",
+          "scenario": "List<GameObject> targets 依次保存场景对象 One、Two、Three。调用 Destroy(Two)，等销毁生效，但尚未调用 Remove、RemoveAt 或 Clear；准备查看 targets.Count。"
+        },
+        "scenario": "Cooldown 是不挂到 GameObject 的普通规则对象：新建2秒冷却，TryUse 尝试使用，Tick(dt) 明确推进时间。CooldownProbe 才负责把 Unity 的 Time.deltaTime 传入。另用 List<GameObject> 保存三个场景对象，比较列表与对象各自的变化。",
+        "purpose": "用可控输入验证规则，并学会分别管理容器成员与场景对象寿命。"
       }
     }
   ]

@@ -74,7 +74,13 @@ window.COURSE_MODULES.push({
             "在 Timeline 找到自定义标记及其父级。",
             "比较编辑器与目标设备开发构建，记录差异。"
           ],
-          "result": "得到有环境说明的两份捕获。"
+          "result": "得到有环境说明的两份捕获。",
+          "setup": [
+            "新建空场景与空对象 Work，挂 MarkerProbe，Iterations 留1000，打开 Window > Analysis > Profiler。",
+            "在 CPU Usage 模块将下方视图切为 Timeline，开启记录并播放；查找 EngineLab.SensorWork。若找不到，先确认目标为当前编辑器并且组件启用。",
+            "先约定预热时长和随后十秒的捕获区间，记录设备、分辨率、质量、VSync 与帧率限制。构建比较需已安装目标模块，启用 Development Build 并连接对应 Player。"
+          ],
+          "purpose": "十秒提供一段连续帧样本便于看波动，不是固定性能标准；编辑器与 Player 分开留档，避免把环境差异当算法差异。"
         },
         {
           "title": "定位而非猜测",
@@ -85,7 +91,13 @@ window.COURSE_MODULES.push({
             "短暂启用 Deep Profiling，记录干扰后关闭。",
             "列出 CPU 工作、同步等待与 GPU 限制三种可能的区分实验。"
           ],
-          "result": "能用一次下一步实验排除一个假设。"
+          "result": "能用一次下一步实验排除一个假设。",
+          "setup": [
+            "使用上一组同场景和捕获配置，另存基线。先保持画质、相机和帧率限制不动。",
+            "在 Work 的 Inspector 只改变 Iterations，例如1000与10000，分别捕获同样长区间；这些数值只是制造不同工作量。",
+            "恢复循环量后再改变帧率限制；Deep Profiling 只临时用于定位，完成后关闭并重新测量。"
+          ],
+          "purpose": "用两次彼此独立的改变区分计算增长与等待变化，避免一次改很多设置却无法解释收益。"
         }
       ],
       "pitfalls": [
@@ -135,7 +147,8 @@ window.COURSE_MODULES.push({
             "所有帧执行顺序一定相同"
           ],
           "answer": 1,
-          "explanation": "平均 FPS 可能掩盖少量明显长帧。帧时间分布和对应调用更能解释偶发停顿。"
+          "explanation": "平均 FPS 可能掩盖少量明显长帧。帧时间分布和对应调用更能解释偶发停顿。",
+          "scenario": "十秒捕获中大部分帧较短，少数帧明显更长，学习者目前只记录整段平均 FPS。"
         },
         {
           "question": "长等待标记说明应该优化等待函数本身吗？",
@@ -145,7 +158,8 @@ window.COURSE_MODULES.push({
             "不必看别的线程，它已证明主线程计算过多"
           ],
           "answer": 1,
-          "explanation": "等待通常有原因，应沿其他线程、GPU 和限帧条件查找依赖，不能直接把等待当成主线程计算热点。"
+          "explanation": "等待通常有原因，应沿其他线程、GPU 和限帧条件查找依赖，不能直接把等待当成主线程计算热点。",
+          "scenario": "Timeline 最长一段名字含 Wait。你要决定下一步调查方向，目前还不清楚被等待的对象。"
         },
         {
           "question": "Deep Profiling 时间能直接作为发布预算吗？",
@@ -155,7 +169,8 @@ window.COURSE_MODULES.push({
             "只要取最快一帧就能抵消诊断开销"
           ],
           "answer": 1,
-          "explanation": "详细诊断会改变负载。定位后应去掉额外观测，在接近实际发布的条件下重新测量。"
+          "explanation": "详细诊断会改变负载。定位后应去掉额外观测，在接近实际发布的条件下重新测量。",
+          "scenario": "为了定位调用栈，临时启用了 Deep Profiling。现在想拿这次带详细诊断的时间作为发布版本预算。"
         }
       ],
       "references": [
@@ -214,8 +229,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "看到等待标记最长，是否应该重写等待函数？",
-          "answer": "不一定。先查它在等谁，以及是否受限帧、VSync 或 GPU 影响；长等待并不等于该函数计算太多。"
-        }
+          "answer": "不一定。先查它在等谁，以及是否受限帧、VSync 或 GPU 影响；长等待并不等于该函数计算太多。",
+          "scenario": "CPU Timeline 中一个等待标记比自定义 EngineLab.SensorWork 更长。当前还没有检查 VSync、帧率上限、其他线程或 GPU 数据。"
+        },
+        "scenario": "场景里只有一个可调循环 MarkerProbe。平时看着流畅，偶尔一帧很长；你想知道卡顿是循环计算、等待其他线程，还是帧率限制造成。平均 FPS 无法把这些原因分开。",
+        "purpose": "先学会读一帧里的工作与等待，再改一个条件验证原因，为后续优化提供可复测的起点。"
       }
     },
     {
@@ -269,11 +287,19 @@ window.COURSE_MODULES.push({
       "code": {
         "title": "读取分配计数时控制日志频率",
         "language": "csharp",
-        "filename": "AllocationCounterProbe.cs",
-        "source": "using Unity.Profiling;\nusing UnityEngine;\n\npublic sealed class AllocationCounterProbe : MonoBehaviour\n{\n    private ProfilerRecorder allocated;\n    private float nextReport;\n    private void OnEnable()\n    {\n        allocated = ProfilerRecorder.StartNew(ProfilerCategory.Memory, \"GC Allocated In Frame\");\n    }\n    private void Update()\n    {\n        if (!allocated.Valid || Time.unscaledTime < nextReport) return;\n        nextReport = Time.unscaledTime + 1f;\n        Debug.Log($\"Previous sampled frame allocated bytes: {allocated.LastValue}\", this);\n    }\n    private void OnDisable() => allocated.Dispose();\n}",
         "explanation": [
           "挂到实验空对象，先确认计数器 Valid。若当前平台不可用，记录未测到，不把默认值当作真实分配量。",
           "每秒日志也有开销。正式比较时减少输出，结合 Profiler 查看路径；重复启停组件，核对 Recorder 已释放。"
+        ],
+        "files": [
+          {
+            "filename": "AllocationCounterProbe.cs",
+            "source": "using Unity.Profiling;\nusing UnityEngine;\n\npublic sealed class AllocationCounterProbe : MonoBehaviour\n{\n    private ProfilerRecorder allocated;\n    private float nextReport;\n    private void OnEnable()\n    {\n        allocated = ProfilerRecorder.StartNew(ProfilerCategory.Memory, \"GC Allocated In Frame\");\n    }\n    private void Update()\n    {\n        if (!allocated.Valid || Time.unscaledTime < nextReport) return;\n        nextReport = Time.unscaledTime + 1f;\n        Debug.Log($\"Previous sampled frame allocated bytes: {allocated.LastValue}\", this);\n    }\n    private void OnDisable() => allocated.Dispose();\n}"
+          },
+          {
+            "filename": "AllocationWorkProbe.cs",
+            "source": "using UnityEngine;\n\npublic sealed class AllocationWorkProbe : MonoBehaviour\n{\n    [SerializeField] private bool reuseBuffer;\n    private readonly int[] cached = new int[64];\n    private int result;\n    private void Update()\n    {\n        int[] values = reuseBuffer ? cached : new int[64];\n        int sum = 0;\n        for (int i = 0; i < values.Length; i++)\n        {\n            values[i] = i;\n            sum += values[i];\n        }\n        result = sum;\n    }\n}"
+          }
         ]
       },
       "lab": [
@@ -281,12 +307,18 @@ window.COURSE_MODULES.push({
           "title": "制造并追踪短命分配",
           "minutes": 60,
           "steps": [
-            "在独立实验脚本的 Update 创建字符串和小数组，先确认行为，再记录对应 GC.Alloc 路径。",
-            "使用 GC.Alloc 调用栈定位分配源，记录每帧与每秒量。",
+            "运行给出的 AllocationWorkProbe，先保持 Reuse Buffer 关闭，在 Update 的 new int[64] 路径观察短命分配；字符串分配可作为后续独立扩展。",
+            "用 GC.Alloc 调用栈定位临时数组，记录采样帧分配；若要每秒总量，另对这一秒所有帧求和，不能把探针的一条日志当总量。",
             "控制日志后复测，排除日志污染。",
             "把可复用数据移入预分配集合，保持工作结果一致。"
           ],
-          "result": "分配减少有对应代码路径证据。"
+          "result": "分配减少有对应代码路径证据。",
+          "setup": [
+            "新建空对象 AllocationLab，分别保存并挂 AllocationCounterProbe 与 AllocationWorkProbe。后者每帧填64个整数；Reuse Buffer 不勾选时新建数组，勾选时复用。",
+            "打开 Window > Analysis > Profiler，查看 CPU Usage 中 GC.Alloc 的调用路径；需要调用栈时只开启相关分配捕获选项。Console 的每秒探针日志用于辅助，不代表整秒分配总和。",
+            "两版均保留64个元素和同一求和工作。先不勾 Reuse Buffer 捕获，再勾选重测；正式比较时停用日志探针，避免日志自身分配混入。"
+          ],
+          "purpose": "用同样计算量制造和移除临时数组，先确认分配路径，再比较变化；不要把一个采样帧的字节数直接乘成未经验证的整秒数据。"
         },
         {
           "title": "检查缓存代价",
@@ -297,7 +329,13 @@ window.COURSE_MODULES.push({
             "给每个缓存写所有者、失效和释放规则。",
             "比较分配率、尖峰、目标命中数，确认功能没有缩水。"
           ],
-          "result": "优化报告同时覆盖 CPU 与内存代价。"
+          "result": "优化报告同时覆盖 CPU 与内存代价。",
+          "setup": [
+            "保留上一组正确工作的探针，记录预分配数组在组件存活期间会一直占用空间。",
+            "容量与目标漏选属于扩展实验：另准备固定25个候选，比较容量16和足够容量的查询，记录 API 返回数量及截断规则。",
+            "通过组件勾选重复启停 AllocationCounterProbe；先用两轮验证启停路径，再增加轮数看是否累积。每份缓存另写所有者、失效与释放条件。"
+          ],
+          "purpose": "比较少分配的收益与缓存常驻代价，同时检查容量边界，避免用漏结果换来好看的 GC 数字。"
         }
       ],
       "pitfalls": [
@@ -347,7 +385,8 @@ window.COURSE_MODULES.push({
             "这个位置申请了所有 GPU 纹理"
           ],
           "answer": 0,
-          "explanation": "GC.Alloc 指向托管分配位置。分配和垃圾收集相关，但不是同一个事件。"
+          "explanation": "GC.Alloc 指向托管分配位置。分配和垃圾收集相关，但不是同一个事件。",
+          "scenario": "Profiler 在创建数组的调用位置显示 GC.Alloc；这题只解释该样本本身，并没有给出收集事件。"
         },
         {
           "question": "预分配巨大池子是否总更好？",
@@ -357,7 +396,8 @@ window.COURSE_MODULES.push({
             "是，只要 GC.Alloc 为零就能忽略总内存"
           ],
           "answer": 1,
-          "explanation": "预留过多空间会增加常驻内存，缓存还需要管理失效和释放，不能只看分配次数。"
+          "explanation": "预留过多空间会增加常驻内存，缓存还需要管理失效和释放，不能只看分配次数。",
+          "scenario": "为避免扩容，开发者准备把常用几十项的缓存预留成极大数组，希望以后不再分配。"
         },
         {
           "question": "优化查询时最关键的正确性检查是？",
@@ -367,7 +407,8 @@ window.COURSE_MODULES.push({
             "分配减少就可以忽略数组以外的目标"
           ],
           "answer": 1,
-          "explanation": "减少分配不能以悄悄漏结果为代价。必须验证有效数量、容量和原来的过滤选择规则。"
+          "explanation": "减少分配不能以悄悄漏结果为代价。必须验证有效数量、容量和原来的过滤选择规则。",
+          "scenario": "原查询应考虑25个有效目标，新版固定缓冲只能容纳16个；需要判断新版是否仍完成原任务。"
         }
       ],
       "references": [
@@ -426,8 +467,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "出现 GC.Alloc 样本，是否说明此刻发生了一次完整 GC？",
-          "answer": "不是。该样本说明产生托管分配；回收发生的时机和开销要用相应数据另外检查。"
-        }
+          "answer": "不是。该样本说明产生托管分配；回收发生的时机和开销要用相应数据另外检查。",
+          "scenario": "Profiler 在某个函数下面显示 GC.Alloc 样本，当前只看到分配记录，尚未查看垃圾收集阶段或其耗时。"
+        },
+        "scenario": "一段每帧查询会创建临时集合。你改成容量16的复用数组后，分配少了，但某次原本有25个目标，数组可能装不下。现在既要查 GC，也要确认没有漏目标。",
+        "purpose": "看懂托管分配从哪里来、回收发生在哪里，并把减少分配与功能完整、常驻内存一起评价。"
       }
     },
     {
@@ -499,7 +543,13 @@ window.COURSE_MODULES.push({
             "恢复分辨率，只减少对象数，记录阴影和屏幕覆盖变化。",
             "用两组结果形成假设，并列出尚未排除因素。"
           ],
-          "result": "结论包含证据与混杂变量。"
+          "result": "结论包含证据与混杂变量。",
+          "setup": [
+            "在 URP 的独立三维场景创建 Cube，确认所用 Shader 有 _BaseColor，再挂 OwnedMaterialProbe；保留摄像机。",
+            "打开 Window > Analysis > Profiler，固定相机、设备与质量。GPU 计时若不可用，写明未测到，不用 CPU 等待时间冒充 GPU 时间。",
+            "为了研究屏幕覆盖，可加若干使用同一材质的对象或已有透明效果；先截图记录数量、覆盖与阴影。改变分辨率和减少对象必须分别做。"
+          ],
+          "purpose": "降低像素数量与减少对象数改变的工作不同；分别测量才能判断提交、像素或其他成本的线索。"
         },
         {
           "title": "检查批次断开",
@@ -510,7 +560,13 @@ window.COURSE_MODULES.push({
             "在当前 URP/Shader 下查看 SRP Batcher 和实例化的实际路径。",
             "对透明粒子或阴影逐项降级，保存画面对照。"
           ],
-          "result": "机制解释与实际事件一致。"
+          "result": "机制解释与实际事件一致。",
+          "setup": [
+            "沿用固定画面，打开 Window > Analysis > Frame Debugger，启用后选择绘制事件，查看该事件的材质与原因。",
+            "保存不挂材质探针的共享材质版本，再与每对象挂 OwnedMaterialProbe 的版本比较；不要在同一份资产上混改而丢失基线。",
+            "核对当前 URP 与 Shader 的 SRP Batcher、GPU Instancing 条件；结束帧调试后再采集实际运行时间，透明效果或阴影每次只改一项。"
+          ],
+          "purpose": "把材质实例、具体渲染事件和时间变化连起来，检验机制是否真的适用于当前画面。"
         }
       ],
       "pitfalls": [
@@ -560,7 +616,8 @@ window.COURSE_MODULES.push({
             "只要材质数不变就必然"
           ],
           "answer": 1,
-          "explanation": "提交次数降低是否有用，取决于它是否减少当前最慢阶段的工作。GPU 像素或其他瓶颈可能没有变化。"
+          "explanation": "提交次数降低是否有用，取决于它是否减少当前最慢阶段的工作。GPU 像素或其他瓶颈可能没有变化。",
+          "scenario": "优化后 Draw Call 数下降，但透明覆盖、分辨率和阴影工作未必改变。现在评估是否一定提升帧时间。"
         },
         {
           "question": "Renderer.material 使用后应关注？",
@@ -570,7 +627,8 @@ window.COURSE_MODULES.push({
             "它一定自动启用最优合批路径"
           ],
           "answer": 0,
-          "explanation": "使用 material 时要关注实例产生和清理，也要检查它是否改变共享关系及实际渲染路径。"
+          "explanation": "使用 material 时要关注实例产生和清理，也要检查它是否改变共享关系及实际渲染路径。",
+          "scenario": "一个组件通过 Renderer.material 获得材质并在 Awake 改色，这个对象之后会被销毁。"
         },
         {
           "question": "降低分辨率实验主要用于？",
@@ -580,7 +638,8 @@ window.COURSE_MODULES.push({
             "直接比较不同画质的视觉优劣而无需测时间"
           ],
           "answer": 1,
-          "explanation": "降低分辨率减少像素数量，可帮助研究像素和带宽相关负担，但不能直接排除所有其他瓶颈。"
+          "explanation": "降低分辨率减少像素数量，可帮助研究像素和带宽相关负担，但不能直接排除所有其他瓶颈。",
+          "scenario": "摄像机与对象暂时固定，实验只降低渲染分辨率，并分别记录 CPU 与可用 GPU 时间。"
         }
       ],
       "references": [
@@ -647,8 +706,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "Renderer.material 改色成功，能证明它自动选择了最优批处理吗？",
-          "answer": "不能。它可能涉及材质实例，正确改色与最优提交路径是不同问题；应检查实例数量和实际渲染事件。"
-        }
+          "answer": "不能。它可能涉及材质实例，正确改色与最优提交路径是不同问题；应检查实例数量和实际渲染事件。",
+          "scenario": "对象的 Renderer.material 已成功把 URP 材质改成青色。你只验证了画面颜色，尚未检查材质实例数或 Frame Debugger 的实际事件。"
+        },
+        "scenario": "同一台设备上，许多透明效果叠在屏幕中央。你设法减少了绘制提交次数，画面却仍慢。另一方面，给每个物体用 material 改色又可能产生独立材质；这两类成本需要分别检查。",
+        "purpose": "通过分辨率、对象与材质的单项对照，判断当前主要花时间的地方，再理解批处理能改善什么。"
       }
     },
     {
@@ -701,13 +763,30 @@ window.COURSE_MODULES.push({
         }
       ],
       "code": {
-        "title": "受控对象池的容量边界",
+        "title": "池容量、可重复场景进退与静态持有观察",
         "language": "csharp",
-        "filename": "BoundedPoolProbe.cs",
-        "source": "using System.Collections.Generic;\nusing UnityEngine;\n\npublic sealed class BoundedPoolProbe : MonoBehaviour\n{\n    [SerializeField] private GameObject prefab;\n    [SerializeField, Min(0)] private int maxRetained = 16;\n    private readonly Stack<GameObject> idle = new Stack<GameObject>();\n    public GameObject Rent()\n    {\n        GameObject item = idle.Count > 0 ? idle.Pop() : Instantiate(prefab);\n        item.SetActive(true);\n        return item;\n    }\n    public void Return(GameObject item)\n    {\n        if (item == null) return;\n        if (idle.Count >= maxRetained) { Destroy(item); return; }\n        item.SetActive(false);\n        item.transform.SetParent(transform, false);\n        idle.Push(item);\n    }\n}",
         "explanation": [
-          "挂到池根对象并指定 prefab。调用方要记录借出实例，防止同一实例被同时借用或重复归还。",
-          "示例只控制闲置容量。池退出前先结束仍借出的对象；不要假定清空闲置集合已经清理全部实例。"
+          "BoundedPoolProbe保留原闲置容量逻辑；PoolCycleProbe记录本调用方借出的批次。两个组件放在MemoryContent的Pool上，Prefab字段指定自己制作的小Prefab。",
+          "RepeatedMemorySceneProbe放在MemoryMenu的CycleLoader，只在你点击组件菜单时进入或返回。返回协程会显式调用ReturnBeforeSceneExit归还批次，再卸载内容场景、等待一次UnloadUnusedAssets；看到cleanup complete才算该轮结束。",
+          "StaticTextureRetentionProbe放在MemoryMenu的TextureKeeper，通过菜单加载专用Resources纹理到静态字段。返回关卡不会替你清除此字段；释放菜单只清本探针的引用并做清理观察，不承诺编辑器全部引用都已消失。"
+        ],
+        "files": [
+          {
+            "filename": "BoundedPoolProbe.cs",
+            "source": "using System.Collections.Generic;\nusing UnityEngine;\n\npublic sealed class BoundedPoolProbe : MonoBehaviour\n{\n    [SerializeField] private GameObject prefab;\n    [SerializeField, Min(0)] private int maxRetained = 16;\n    private readonly Stack<GameObject> idle = new Stack<GameObject>();\n    public GameObject Rent()\n    {\n        GameObject item = idle.Count > 0 ? idle.Pop() : Instantiate(prefab);\n        item.SetActive(true);\n        return item;\n    }\n    public void Return(GameObject item)\n    {\n        if (item == null) return;\n        if (idle.Count >= maxRetained) { Destroy(item); return; }\n        item.SetActive(false);\n        item.transform.SetParent(transform, false);\n        idle.Push(item);\n    }\n}"
+          },
+          {
+            "filename": "PoolCycleProbe.cs",
+            "source": "using System.Collections.Generic;\nusing UnityEngine;\n\npublic sealed class PoolCycleProbe : MonoBehaviour\n{\n    [SerializeField] private BoundedPoolProbe pool;\n    [SerializeField, Min(1)] private int count = 20;\n    private readonly List<GameObject> borrowed = new List<GameObject>();\n    [ContextMenu(\"Rent Batch\")]\n    private void RentBatch()\n    {\n        if (!Application.isPlaying || pool == null || borrowed.Count != 0) return;\n        for (int i = 0; i < count; i++) borrowed.Add(pool.Rent());\n        Debug.Log($\"Borrowed {borrowed.Count}; return this batch before renting again.\", this);\n    }\n    [ContextMenu(\"Return Batch\")]\n    private void ReturnBatch()\n    {\n        if (!Application.isPlaying || pool == null) return;\n        foreach (GameObject item in borrowed) pool.Return(item);\n        borrowed.Clear();\n        Debug.Log(\"Batch returned; inspect idle children after the destruction stage.\", this);\n    }\n    // 场景夹具在卸载前显式调用；public不表示引擎会自动调用。\n    public void ReturnBeforeSceneExit() => ReturnBatch();\n    private void OnDestroy()\n    {\n        foreach (GameObject item in borrowed)\n            if (item != null) Destroy(item);\n        borrowed.Clear();\n    }\n}"
+          },
+          {
+            "filename": "RepeatedMemorySceneProbe.cs",
+            "source": "using System.Collections;\nusing UnityEngine;\nusing UnityEngine.SceneManagement;\n\n// 挂在MemoryMenu的CycleLoader；MemoryContent必须在有效构建场景列表中。\npublic sealed class RepeatedMemorySceneProbe : MonoBehaviour\n{\n    [SerializeField] private string contentScene = \"MemoryContent\";\n    private bool busy;\n    private int completedRounds;\n\n    [ContextMenu(\"Enter Memory Content\")]\n    private void Enter()\n    {\n        if (!Application.isPlaying || busy) return;\n        Scene content = SceneManager.GetSceneByName(contentScene);\n        if (content.IsValid() && content.isLoaded) return;\n        StartCoroutine(LoadContent());\n    }\n\n    private IEnumerator LoadContent()\n    {\n        busy = true;\n        try\n        {\n            AsyncOperation operation = SceneManager.LoadSceneAsync(contentScene, LoadSceneMode.Additive);\n            if (operation == null) yield break;\n            yield return operation;\n            Scene content = SceneManager.GetSceneByName(contentScene);\n            if (!content.IsValid() || !content.isLoaded) yield break;\n            SceneManager.SetActiveScene(content);\n            Debug.Log($\"MemoryLab loaded: {contentScene}; next round={completedRounds + 1}\", this);\n        }\n        finally { busy = false; }\n    }\n\n    [ContextMenu(\"Return To Memory Menu\")]\n    private void Return()\n    {\n        if (!Application.isPlaying || busy) return;\n        Scene content = SceneManager.GetSceneByName(contentScene);\n        if (!content.IsValid() || !content.isLoaded) return;\n        StartCoroutine(UnloadContent(content));\n    }\n\n    private IEnumerator UnloadContent(Scene content)\n    {\n        busy = true;\n        try\n        {\n            foreach (GameObject root in content.GetRootGameObjects())\n                foreach (PoolCycleProbe batch in root.GetComponentsInChildren<PoolCycleProbe>(true))\n                    batch.ReturnBeforeSceneExit();\n            yield return null;\n            SceneManager.SetActiveScene(gameObject.scene);\n            yield return SceneManager.UnloadSceneAsync(content);\n            yield return Resources.UnloadUnusedAssets();\n            completedRounds++;\n            Debug.Log($\"MemoryLab cleanup complete; completedRounds={completedRounds}\", this);\n        }\n        finally { busy = false; }\n    }\n\n    [ContextMenu(\"Reset Completed Rounds\")]\n    private void ResetCount()\n    {\n        if (!Application.isPlaying || busy) return;\n        Scene content = SceneManager.GetSceneByName(contentScene);\n        if (content.IsValid() && content.isLoaded) return;\n        completedRounds = 0;\n        Debug.Log(\"MemoryLab completedRounds reset to 0 after warm-up.\", this);\n    }\n}"
+          },
+          {
+            "filename": "StaticTextureRetentionProbe.cs",
+            "source": "using System.Collections;\nusing UnityEngine;\n\npublic sealed class StaticTextureRetentionProbe : MonoBehaviour\n{\n    private static Texture2D retained;\n    private bool busy;\n\n    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]\n    private static void ResetStatics() => retained = null;\n\n    [ContextMenu(\"Hold Memory Test Texture\")]\n    private void Hold()\n    {\n        if (!Application.isPlaying || busy) return;\n        retained = Resources.Load<Texture2D>(\"MemoryProbeTexture\");\n        Debug.Log(retained != null ? \"MemoryLab static texture retained\" : \"Missing Assets/Resources/MemoryProbeTexture.png\", this);\n    }\n\n    [ContextMenu(\"Report Static Texture\")]\n    private void Report()\n        => Debug.Log($\"MemoryLab static texture held: {retained != null}\", this);\n\n    [ContextMenu(\"Release Static Texture And Clean\")]\n    private void Release()\n    {\n        if (Application.isPlaying && !busy) StartCoroutine(ReleaseAndClean());\n    }\n\n    private IEnumerator ReleaseAndClean()\n    {\n        busy = true;\n        try\n        {\n            retained = null;\n            yield return Resources.UnloadUnusedAssets();\n            Debug.Log(\"MemoryLab static field cleared; cleanup pass complete. Verify other holders separately.\", this);\n        }\n        finally { busy = false; }\n    }\n}"
+          }
         ]
       },
       "lab": [
@@ -715,23 +794,37 @@ window.COURSE_MODULES.push({
           "title": "比较重复流程快照",
           "minutes": 60,
           "steps": [
-            "固定从菜单进入关卡再返回的步骤，先预热，并为每轮约定相同的卸载后记录时刻。",
-            "在第一次、第五次和第十次返回后取得稳定点数据。",
-            "记录对象种类和数量，区分预热缓存与持续增长。",
-            "可选安装 Memory Profiler，跟踪一个增长资源的引用链。"
+            "按准备建立两个专用场景、加载夹具和池，先完成一次预热进退；看到cleanup complete后在菜单状态重置轮数。",
+            "保持同一次Play，按Enter Memory Content→等待loaded→Rent Batch→Return To Memory Menu→等待cleanup complete执行一整轮；第1、5、10轮在该完成信号后记录。",
+            "比较相同稳定点的对象种类与数量，区分预热缓存和持续增长。Count=20只是跨过闲置容量16，不代表应有20个对象一直保留。",
+            "可选安装兼容Memory Profiler，跟踪一个增长资源的引用链；夹具已清理不等于所有共享资源都必须立刻消失。"
           ],
-          "result": "得到带阶段标注的增长趋势。"
+          "result": "得到带阶段标注的增长趋势。",
+          "setup": [
+            "本组独立建立MemoryMenu.unity、MemoryContent.unity，保存到Assets/EngineLab/Scenes，在File > Build Profiles的有效场景列表加入并启用两者。MemoryMenu保留摄像机，MemoryContent不放重复摄像机。不要挂第66课只自动运行一轮的AdditiveSceneProbe。",
+            "MemoryMenu创建空对象CycleLoader，挂RepeatedMemorySceneProbe，Content Scene填MemoryContent。MemoryContent创建Pool，挂BoundedPoolProbe和PoolCycleProbe；自制一个小Cube Prefab拖入池的Prefab，Max Retained留16；驱动Pool引用指向同对象池，Count留20。保存两场景，只打开MemoryMenu开始Play。",
+            "打开Window > General > Console并清空搜索。选CycleLoader，从组件⋮菜单Enter Memory Content进入，等MemoryLab loaded；再选MemoryContent的Pool，用驱动Rent Batch借20个，可先Return Batch检查闲置最多16个。没有三秒自动退出，观察完再选CycleLoader执行Return To Memory Menu。",
+            "返回会自动归还本夹具在内容场景找到的全部PoolCycleProbe批次，等销毁阶段、卸载和清理；看到MemoryLab cleanup complete才记这一轮。先预热一轮，在菜单状态执行Reset Completed Rounds归零；随后不停止Play，重复进入→借出→返回，在completedRounds=1、5、10时记录Profiler Memory同项指标。"
+          ],
+          "purpose": "第1、5、10轮是趋势采样，帮助区分预热后稳定与持续增长；同一阶段才可比较，十轮无增长也不保证其他路径没有泄漏。"
         },
         {
           "title": "资源账本与峰值",
           "minutes": 60,
           "steps": [
-            "在资源清单中逐项列出纹理、材质实例、对象、事件订阅和加载句柄由谁创建与释放。",
-            "故意让静态引用持有资源，观察退关后的滞留。",
-            "解除自有引用并按加载协议释放，再复测。",
-            "测量场景切换峰值，说明与稳定内存的区别。"
+            "列出专用场景的Prefab实例、材质、纹理、事件与加载操作各由谁创建、持有、归还、释放。",
+            "在命名明确的Retention场景副本中，用TextureKeeper菜单加载自制MemoryProbeTexture并保留静态字段；完成一轮场景进退后报告该字段，观察它仍被持有。",
+            "执行Release Static Texture And Clean，等完成日志再核对字段与资源证据；不要把字段为空直接当成全局内存必降。",
+            "捕获整个加载/卸载过渡的峰值，与cleanup complete后的稳定点分开记录，解释两种数字各回答什么。"
           ],
-          "result": "释放动作与引用链变化相互印证。"
+          "result": "释放动作与引用链变化相互印证。",
+          "setup": [
+            "本组的“副本”专指将MemoryMenu、MemoryContent通过File > Save As保存为MemoryMenuRetention、MemoryContentRetention两个独立场景；原两场景保留不动。把副本加入有效构建列表，在副本CycleLoader将Content Scene改为MemoryContentRetention。不复制.cs文件、不创建同名类。",
+            "自己制作一张小PNG，只作为实验数据，保存为Assets/Resources/MemoryProbeTexture.png。副本菜单场景创建TextureKeeper空对象，挂StaticTextureRetentionProbe；它没有Inspector纹理字段，避免额外场景字段成为另一条持有路径。",
+            "只打开MemoryMenuRetention开始Play，从TextureKeeper菜单Hold Memory Test Texture加载并持有，再做一轮进入/借出/返回。收到cleanup complete后执行Report Static Texture，确认这条静态引用仍在；随后Release Static Texture And Clean，等static field cleared日志，再报告字段并比较资源证据。",
+            "本例加载协议就是Resources.Load与解除自有静态引用后显式UnloadUnusedAssets，不涉及Addressables句柄。编辑器、Inspector或其他使用者可能仍持有纹理，字段为空只证明本路径解除。切换峰值另捕获进入到返回的全过程，不能只看完成日志后的稳定点。"
+          ],
+          "purpose": "用一条可主动建立、报告和解除的静态引用检验持有责任，再单独测过渡峰值。场景副本用于保存正常基线，实验只使用自制专用纹理，不改正式素材。"
         }
       ],
       "pitfalls": [
@@ -781,7 +874,8 @@ window.COURSE_MODULES.push({
             "只看进程工作集是否最终下降"
           ],
           "answer": 1,
-          "explanation": "在相同阶段持续增长值得追查，下一步是定位持有引用和相应资源机制，频繁清理不能替代这一步。"
+          "explanation": "在相同阶段持续增长值得追查，下一步是定位持有引用和相应资源机制，频繁清理不能替代这一步。",
+          "scenario": "同一设备与内容已预热，十次都在返回菜单并完成同样清理后记录，某类纹理仍逐轮增长。"
         },
         {
           "question": "UnloadUnusedAssets 能清理仍被有效根引用的资源吗？",
@@ -791,7 +885,8 @@ window.COURSE_MODULES.push({
             "多调用几次总能强制清除"
           ],
           "answer": 1,
-          "explanation": "只要资源仍被相关规则认可的有效引用持有，就不能把清理操作当作解除错误引用的替代。"
+          "explanation": "只要资源仍被相关规则认可的有效引用持有，就不能把清理操作当作解除错误引用的替代。",
+          "scenario": "一个仍存活的服务字段持有纹理，你只请求 Resources.UnloadUnusedAssets，尚未解除该字段。"
         },
         {
           "question": "对象池应记录哪项？",
@@ -801,7 +896,8 @@ window.COURSE_MODULES.push({
             "只统计取出次数，不跟踪归还"
           ],
           "answer": 1,
-          "explanation": "空闲对象和在外使用的对象都有管理成本，必须分别记录并安排池退出时的处理。"
+          "explanation": "空闲对象和在外使用的对象都有管理成本，必须分别记录并安排池退出时的处理。",
+          "scenario": "对象池有闲置栈，另有调用者正在使用一批借出对象；现在需要规定池退出时的清理。"
         }
       ],
       "references": [
@@ -860,8 +956,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "返回菜单后的内存稳定，是否说明切场景绝不会超内存？",
-          "answer": "不能。新旧资源可能在过渡期重叠，最高点要另外测量；稳定点和峰值回答不同问题。"
-        }
+          "answer": "不能。新旧资源可能在过渡期重叠，最高点要另外测量；稳定点和峰值回答不同问题。",
+          "scenario": "每次返回菜单并完成约定清理后，内存读数稳定；目前没有采集加载新关卡与卸载旧关卡重叠期间的最高值。"
+        },
+        "scenario": "你反复从菜单进入同一关卡再返回，想知道资源是否滞留。关卡有容量16的闲置对象池，实验每批借20个，归还后应区分池保留的对象、超额销毁的对象和仍在外借用的对象。",
+        "purpose": "在同一流程阶段比较数量，沿引用找保留原因，避免把合理缓存当泄漏，也避免只看菜单稳定点而漏掉切换峰值。"
       }
     },
     {
@@ -918,11 +1017,19 @@ window.COURSE_MODULES.push({
       "code": {
         "title": "可复用候选列表，保持完整遍历",
         "language": "csharp",
-        "filename": "NearestTargetProbe.cs",
-        "source": "using System.Collections.Generic;\nusing UnityEngine;\n\npublic sealed class NearestTargetProbe : MonoBehaviour\n{\n    [SerializeField] private List<Transform> candidates = new List<Transform>();\n    public Transform FindNearest()\n    {\n        Transform best = null;\n        float bestDistance = float.PositiveInfinity;\n        Vector3 origin = transform.position;\n        foreach (Transform candidate in candidates)\n        {\n            if (candidate == null) continue;\n            float distance = (candidate.position - origin).sqrMagnitude;\n            if (distance >= bestDistance) continue;\n            bestDistance = distance;\n            best = candidate;\n        }\n        return best;\n    }\n}",
         "explanation": [
           "挂在传感器对象并显式配置候选列表。示例只查询这些候选，不替代场景查找或完整空间索引。",
           "查询避免创建结果集合，但保留遍历全部候选的行为。先验证最终目标一致，再测它是否改善当前热点。"
+        ],
+        "files": [
+          {
+            "filename": "NearestTargetProbe.cs",
+            "source": "using System.Collections.Generic;\nusing UnityEngine;\n\npublic sealed class NearestTargetProbe : MonoBehaviour\n{\n    [SerializeField] private List<Transform> candidates = new List<Transform>();\n    public Transform FindNearest()\n    {\n        Transform best = null;\n        float bestDistance = float.PositiveInfinity;\n        Vector3 origin = transform.position;\n        foreach (Transform candidate in candidates)\n        {\n            if (candidate == null) continue;\n            float distance = (candidate.position - origin).sqrMagnitude;\n            if (distance >= bestDistance) continue;\n            bestDistance = distance;\n            best = candidate;\n        }\n        return best;\n    }\n}"
+          },
+          {
+            "filename": "NearestQueryProbe.cs",
+            "source": "using UnityEngine;\n\npublic sealed class NearestQueryProbe : MonoBehaviour\n{\n    [SerializeField] private NearestTargetProbe sensor;\n    [ContextMenu(\"Report Nearest Target\")]\n    private void Report()\n    {\n        if (sensor == null) { Debug.LogWarning(\"Assign the sensor first.\", this); return; }\n        Transform found = sensor.FindNearest();\n        Debug.Log(found == null ? \"No valid target\" : $\"Nearest={found.name}; position={found.position}\", this);\n    }\n}"
+          }
         ]
       },
       "lab": [
@@ -935,7 +1042,13 @@ window.COURSE_MODULES.push({
             "记录正常及边界行为，保存可回退基线。",
             "以相同工作量采样三个区间。"
           ],
-          "result": "优化开始前已有可证伪计划。"
+          "result": "优化开始前已有可证伪计划。",
+          "setup": [
+            "新建 Sensor 空对象，位置设(0,0,0)，挂 NearestTargetProbe 与 NearestQueryProbe，将驱动 Sensor 字段指向本对象组件。",
+            "再建 TargetNear=(1,0,0)、TargetFar=(3,0,0)，在传感器 Candidates 列表按顺序拖入。组件菜单 Report Nearest Target 输出结果到 Window > General > Console。",
+            "先加入一个空条目、交换等距离候选顺序等验证行为。给出的代码是完整遍历参考，不是已经证实更快的基准；性能研究从第81课捕获中选真实热点，保存原实现。"
+          ],
+          "purpose": "三个相同流程的采样区间用于看结果是否稳定，不能只挑最快一段；先有行为基线，速度对照才有意义。"
         },
         {
           "title": "复测与同行复现",
@@ -946,7 +1059,13 @@ window.COURSE_MODULES.push({
             "在接近发布设置下检查诊断开销。",
             "把步骤交给另一位学习者或按全新环境自行复现，记录无法重现的点。"
           ],
-          "result": "报告包含收益、误差、代价与限制。"
+          "result": "报告包含收益、误差、代价与限制。",
+          "setup": [
+            "保存基线源码、固定候选列表和边界输入；如优化对象不是本课传感器，也要写出对应输入输出。",
+            "先运行菜单驱动核对候选与最终目标，计时阶段关闭逐次日志，保持设备、分辨率、预热与工作量一致。",
+            "把环境、步骤、数据和撤回方法写成新读者能复现的记录；找同伴复现，或自己换一个干净工作副本照步骤运行。"
+          ],
+          "purpose": "用独立复现暴露隐藏前提，再把时间分布、正确性和维护成本一起报告，不用某一次快帧代表整体收益。"
         }
       ],
       "pitfalls": [
@@ -997,7 +1116,8 @@ window.COURSE_MODULES.push({
             "只要正常场景没漏就忽略边界"
           ],
           "answer": 1,
-          "explanation": "漏目标说明行为改变了，先修复或明确接受的降级范围，再评价速度收益。"
+          "explanation": "漏目标说明行为改变了，先修复或明确接受的降级范围，再评价速度收益。",
+          "scenario": "新查询用更短时间返回，但在候选较多时漏掉列表后半段中真正最近的目标。任务要求仍是考虑全部候选。"
         },
         {
           "question": "结果不支持原假设时应该？",
@@ -1007,7 +1127,8 @@ window.COURSE_MODULES.push({
             "继续增加其他改动，直到数据看起来更快"
           ],
           "answer": 0,
-          "explanation": "结果不支持假设时，应据此修订解释并保留反例；挑最佳帧会掩盖真实表现。"
+          "explanation": "结果不支持假设时，应据此修订解释并保留反例；挑最佳帧会掩盖真实表现。",
+          "scenario": "在同样候选、设备与采样流程下，新版没有减少原先预测的耗时。这个反例已复现，最快一帧之外也保留了完整区间数据。"
         },
         {
           "question": "收益很小但代码复杂很多，合理选择是？",
@@ -1017,7 +1138,8 @@ window.COURSE_MODULES.push({
             "先继续增加缓存，不需要再测"
           ],
           "answer": 1,
-          "explanation": "收益需要与预算和维护成本比较；小收益、高复杂度的改动可以合理撤回。"
+          "explanation": "收益需要与预算和维护成本比较；小收益、高复杂度的改动可以合理撤回。",
+          "scenario": "当前预算已满足，增加复杂缓存后的时间差与运行波动接近；团队要决定是否保留这次改动。"
         }
       ],
       "references": [
@@ -1076,8 +1198,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "只快了很少，代码却复杂许多，能选择撤回吗？",
-          "answer": "可以。若当前预算已满足、收益不确定或维护代价更高，保留基线并说明原因是合理决策。"
-        }
+          "answer": "可以。若当前预算已满足、收益不确定或维护代价更高，保留基线并说明原因是合理决策。",
+          "scenario": "基线已满足预算，新版只测出很小且不稳定的收益，却增加较多复杂分支。代码与原始版本都已保存。"
+        },
+        "scenario": "传感器 Sensor 要从候选甲、候选乙中找最近者。你准备把“建立结果集合再排序”改为一次遍历，但必须保留空引用处理、等距离选择和全部候选，而非只挑前几个。",
+        "purpose": "完成一次从预算、行为对照到复测的优化，并能在收益很小时有依据地保留或撤回改动。"
       }
     }
   ]

@@ -1,3 +1,4 @@
+// 语境修订：题目背景、实验准备与学习用途。
 window.COURSE_MODULES.push({
   "id": "m06",
   "number": 6,
@@ -98,7 +99,8 @@ window.COURSE_MODULES.push({
         "filename": "MoveActionProbe.cs",
         "source": "using UnityEngine;\nusing UnityEngine.InputSystem;\npublic sealed class MoveActionProbe : MonoBehaviour\n{\n    [SerializeField] InputActionReference move;\n    public Vector2 Value { get; private set; }\n    void OnEnable()\n    {\n        if (move == null || move.action == null)\n        {\n            Debug.LogError(\"Assign a Value/Vector2 action.\", this);\n            enabled = false;\n            return;\n        }\n        move.action.Enable();\n    }\n    void Update() => Value = Vector2.ClampMagnitude(move.action.ReadValue<Vector2>(), 1f);\n    void OnDisable()\n    {\n        if (move != null && move.action != null) move.action.Disable();\n        Value = Vector2.zero;\n    }\n}",
         "explanation": [
-          "先安装并启用Input System。创建Player/Move（Value、Vector2），配置键盘二维复合和手柄左摇杆，再赋给move。此例由组件管理动作启停，不与PlayerInput同时管理同一动作。"
+          "先安装并启用Input System。创建Player/Move（Value、Vector2），配置键盘二维复合和手柄左摇杆，再赋给move。此例由组件管理动作启停，不与PlayerInput同时管理同一动作。",
+          "InputActionReference 要指向资源中的具体 Player/Move，而不是只选整个资源。组件只更新公开 Value 属性，属性不会自动成为 Inspector 可见字段；需要观察脚本读值，或接上后续消费者后再检查移动。"
         ]
       },
       "lab": [
@@ -110,7 +112,14 @@ window.COURSE_MODULES.push({
             "测试轴向、斜向与小强度，记录二维复合和Processor设置。",
             "没有手柄时标明未实测，先用受控向量验证角色接收范围。"
           ],
-          "result": "角色只使用方向值，设备支持范围有实际证据。"
+          "result": "角色只使用方向值，设备支持范围有实际证据。",
+          "purpose": "先验证统一方向值，再接入角色运动。",
+          "setup": [
+            "Window > Package Management > Package Manager 打开包管理器，在 Unity Registry 找 Input System 安装/确认版本；Edit > Project Settings > Player 的 Other Settings 中确认 Active Input Handling 与新系统匹配，按提示重启编辑器。",
+            "Project 的 Assets/Input 文件夹右键 Create > Input Actions 建 Controls，双击打开；建 Action Map Player，动作 Move，Action Type=Value、Control Type=Vector2。",
+            "给 Move 加 2D Vector composite，Up/Down/Left/Right 分别绑 W/S/A/D；另加方向键复合与 <Gamepad>/leftStick。保存动作资源。",
+            "创建 InputHost 挂 MoveActionProbe，在 Move 引用选择器选 Controls 中 Player/Move。原 Value 属性不在 Inspector 自动显示，可在实验观察组件打印 Value；Game 视图点一下获得焦点。"
+          ]
         },
         {
           "title": "逐层制造并排除故障",
@@ -120,7 +129,13 @@ window.COURSE_MODULES.push({
             "观察设备、动作值和角色结果，恢复后验证禁用组件会清Value。",
             "写明唯一启停负责者，检查没有其他组件随意Disable共享动作。"
           ],
-          "result": "故障定位在对应层，而非全部靠改移动公式。"
+          "result": "故障定位在对应层，而非全部靠改移动公式。",
+          "purpose": "用每次只断开一层的方式定位输入链路。",
+          "setup": [
+            "沿用已能读到 Player/Move 的 InputHost。通过 Window > Analysis > Input Debugger 查看实际设备，先记正常绑定与值。",
+            "本例仅由 MoveActionProbe 管理动作；不要另加 PlayerInput 管同一动作。故障对照中的停用、改绑定、失焦一次只做一项，再恢复到基线。",
+            "若已经接移动消费者，同时记录输入 Value 和消费者缓存；没有手柄时将硬件项记为未测，不用键盘结果替代。"
+          ]
         }
       ],
       "pitfalls": [
@@ -171,7 +186,8 @@ window.COURSE_MODULES.push({
             "将配置资源自动变成已启用状态"
           ],
           "answer": 0,
-          "explanation": "动作提供统一意图，绑定适配具体设备，角色无需知道每个控件名称。"
+          "explanation": "动作提供统一意图，绑定适配具体设备，角色无需知道每个控件名称。",
+          "scenario": "角色要同时支持 WASD、方向键和手柄，并允许以后改键；角色真正需要的是移动方向而不是具体按键名称。"
         },
         {
           "question": "资源中存在一个 Action 是否代表它正在监听？",
@@ -182,7 +198,8 @@ window.COURSE_MODULES.push({
             "赋给字段后无需检查启用状态"
           ],
           "answer": 1,
-          "explanation": "保存配置与运行监听是两层状态。"
+          "explanation": "保存配置与运行监听是两层状态。",
+          "scenario": "Project 已保存一个含 Move 的 .inputactions 文件，但尚未确认运行时是否启用、引用是否指向正确动作、设备与绑定是否匹配。"
         },
         {
           "question": "using InputSystem 后调用 Input.GetAxis 会怎样？",
@@ -193,7 +210,8 @@ window.COURSE_MODULES.push({
             "新旧接口的更新时机自动完全一致"
           ],
           "answer": 2,
-          "explanation": "using没有代码转换功能，旧调用目标不会因此改变。"
+          "explanation": "using没有代码转换功能，旧调用目标不会因此改变。",
+          "scenario": "源码添加 using UnityEngine.InputSystem；原移动行仍调用旧 UnityEngine.Input.GetAxis，没有其他代码转换。"
         }
       ],
       "references": [
@@ -237,8 +255,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "仅在文件开头加using UnityEngine.InputSystem，旧Input.GetAxis会自动变成新系统吗？",
-          "answer": "不会。using只帮助解析类型名称，旧API仍是旧API；需要明确更改调用方式，并匹配项目的输入处理设置。"
-        }
+          "answer": "不会。using只帮助解析类型名称，旧API仍是旧API；需要明确更改调用方式，并匹配项目的输入处理设置。",
+          "scenario": "项目只启用新 Input System 后端。某脚本添加 using UnityEngine.InputSystem，却仍执行 UnityEngine.Input.GetAxis(\"Horizontal\")，未创建或读取任何 Action。"
+        },
+        "scenario": "本课建立名为 Player 的 Action Map，其中 Move 为 Value/Vector2。WASD、方向键复合绑定和手柄左摇杆都接到同一意图上；MoveActionProbe 负责启停并读取方向，但不实际移动角色。",
+        "purpose": "将设备连接与角色规则分开，并能沿设备→绑定→动作→读取→移动逐层定位问题。"
       }
     },
     {
@@ -345,7 +366,13 @@ window.COURSE_MODULES.push({
             "测试保持2秒、快速点按和连续点击，比较每种记录的次数。",
             "另配Hold或Tap，先预测阶段，再观察完成条件怎样改变。"
           ],
-          "result": "不把performed或持续状态都理解为一次刚按下。"
+          "result": "不把performed或持续状态都理解为一次刚按下。",
+          "purpose": "把持续状态、按下边沿与交互阶段放在同一操作序列比较。",
+          "setup": [
+            "确认已装 Input System；创建 FireHost，添加 ButtonCallbackProbe，Console 关闭 Collapse，Play 后点 Game 获得焦点。原例只打印 performed，不打印 IsPressed 或 started/canceled。",
+            "另存对照脚本，在 Update 读取同一个 fire.IsPressed()、WasPressedThisFrame()，按记录设计输出；不要让轮询额外执行开火，只记录。",
+            "Hold 对照在另一个动作配置中指定保持时长，例如0.5秒，明确记录该值并订阅 started/performed/canceled；一次只启用一种对照，不把原例当已配置 Hold。"
+          ]
         },
         {
           "title": "分开通知与行为执行",
@@ -355,7 +382,13 @@ window.COURSE_MODULES.push({
             "让回调只保存一条请求，再由Update接受并清除，记录两边次数。",
             "审查只复制需要值，没有保存CallbackContext供以后读取，也不再用轮询重复执行。"
           ],
-          "result": "请求有明确保存和处理次数，数据不依赖过期上下文。"
+          "result": "请求有明确保存和处理次数，数据不依赖过期上下文。",
+          "purpose": "用请求数与接受数发现重复注册或重复执行。",
+          "setup": [
+            "从完整 ButtonCallbackProbe 基线开始，十轮开关用于检查是否累积；最后按一次空格时记录 count 增量，而不是把已累计 count 当本次次数。",
+            "请求版在实验副本将 OnFire 改为只写 pending=true，并在 Update 读后清除；日志分别标 InputRequest 与 Accepted。一个 pending 只能保存一条，不声称保留全部快速连按。",
+            "在回调内复制所需 ReadValue 与时间；后续用自己的字段。删除任何“轮询也执行一次相同行为”的旧入口。"
+          ]
         }
       ],
       "pitfalls": [
@@ -406,7 +439,8 @@ window.COURSE_MODULES.push({
             "加Hold后仍必须在最初按下时完成"
           ],
           "answer": 0,
-          "explanation": "performed表达满足动作完成条件，Hold等交互会改变这些条件。"
+          "explanation": "performed表达满足动作完成条件，Hold等交互会改变这些条件。",
+          "scenario": "一个动作可能配置为默认 Button，也可能加 Hold 或 Tap；正在判断 performed 是否在所有配置下都等于物理按键最初压下。"
         },
         {
           "question": "CallbackContext 应如何用于跨帧消费？",
@@ -417,7 +451,8 @@ window.COURSE_MODULES.push({
             "等待下一帧后上下文才可读取"
           ],
           "answer": 1,
-          "explanation": "回调上下文不应作为长期数据容器。"
+          "explanation": "回调上下文不应作为长期数据容器。",
+          "scenario": "输入回调与玩法执行不在同一时刻。玩法需要几帧后读取当时的方向或请求，准备决定保存什么数据。"
         },
         {
           "question": "自己创建的 InputAction 最终应怎样？",
@@ -428,7 +463,8 @@ window.COURSE_MODULES.push({
             "销毁键盘设备替代动作释放"
           ],
           "answer": 2,
-          "explanation": "自行创建的动作属于组件，应明确终止其通知关系和资源。"
+          "explanation": "自行创建的动作属于组件，应明确终止其通知关系和资源。",
+          "scenario": "ButtonCallbackProbe 在 Awake 用 new InputAction 创建 Fire，它没有借用外部共享资源；组件实例最终销毁。"
         }
       ],
       "references": [
@@ -464,8 +500,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "在回调中保存CallbackContext，过几帧再用它读值是否合适？",
-          "answer": "不合适。应在回调有效期间复制需要的值和时间等数据，之后使用自己的数据，不长期保存上下文。"
-        }
+          "answer": "不合适。应在回调有效期间复制需要的值和时间等数据，之后使用自己的数据，不长期保存上下文。",
+          "scenario": "Fire 的 performed 回调已收到 InputAction.CallbackContext context。玩法准备几帧后再处理输入，考虑直接把整个 context 存入字段，届时再 ReadValue。"
+        },
+        "scenario": "ButtonCallbackProbe 自己创建 Fire，绑定空格，默认 Button 的 performed 回调打印次数。对照脚本再分别观察当前按住、这一输入帧刚按下，以及 Hold 达到保持时长；三种记录回答不同问题。",
+        "purpose": "为持续状态、按下变化和交互完成选择正确入口，并保持订阅和资源释放成对。"
       }
     },
     {
@@ -550,17 +589,29 @@ window.COURSE_MODULES.push({
           "title": "分别测试模式、焦点和设备变化",
           "paragraphs": [
             "失去窗口焦点、拔掉手柄、切换到菜单是不同事件。它们可能都导致输入不可用，却需要不同恢复策略。没有硬件时不要声称热插拔已验证，可以先测试逻辑切换并保留未测范围。",
-            "按住移动开菜单、菜单里松开、再回游戏，确认不保留旧方向；连续切换十次确认没有重复监听。多人时再分别确认每个玩家的设备与动作实例。把这些过程记录成具体步骤，比一句“支持设备切换”更有检查价值。"
+            "先按住移动开菜单、菜单里松开、再回游戏，检查旧方向与待处理请求。把一次完整往返定义为一轮，再做十轮稳定性观察；十是练习样本，不是引擎规则，也不能证明没有其他故障。失焦另开一组：在外部松键后返回且不按新键，检查消费者是否仍保存旧数据。多人时还需分别确认每个玩家的设备与动作实例。"
           ]
         }
       ],
       "code": {
-        "title": "通过 PlayerInput 明确切换 Map",
+        "title": "切换 Map，并观察响应与消费者缓存",
         "language": "csharp",
-        "filename": "InputModeProbe.cs",
-        "source": "using UnityEngine;\nusing UnityEngine.InputSystem;\n[RequireComponent(typeof(PlayerInput))]\npublic sealed class InputModeProbe : MonoBehaviour\n{\n    PlayerInput input;\n    void Awake() => input = GetComponent<PlayerInput>();\n    [ContextMenu(\"Enter gameplay\")]\n    public void EnterGameplay() => input.SwitchCurrentActionMap(\"Gameplay\");\n    [ContextMenu(\"Enter menu\")]\n    public void EnterMenu() => input.SwitchCurrentActionMap(\"UI\");\n}",
         "explanation": [
-          "PlayerInput指定含Gameplay和UI的动作资源，默认Gameplay，播放时执行组件菜单。示例只切Map，不自动连接UI输入模块、暂停时间或清除其他脚本缓存。"
+          "分别保存两份完整文件并挂到同一 PlayerHost。InputModeProbe 原文件只调用 PlayerInput.SwitchCurrentActionMap；InputModeLabConsumer 从该玩家的 PlayerInput.actions 查找四个动作，不自行 Enable 或 Dispose 借来的动作。",
+          "消费者在 Console 打印 performed/canceled；Inspector 的 Cached Move、Pending Fire Requests、Last Navigate、Submit Count 是本实验的观察值。它不移动角色或真正开火：Fire 每次 performed 只给待处理请求计数加一，清理时把它归零。",
+          "为了让残留可重复看见，消费者故意只在 Move.performed 时更新 Cached Move，canceled 时打印但不归零，Fire 请求也不自动消费。Clear On Focus Loss 默认不勾，以免点击 Inspector 菜单时的焦点变化提前清掉反例；这是教学用的受控错误，不是正式控制器的推荐实现。",
+          "原 InputModeProbe 的 Enter menu 只切 Map，可观察残留；消费者三点菜单的 Enter menu and clear cache 先清方向与待处理 Fire，再切 UI。Report input state 打印当前 Map、四个动作的 enabled、Raw Move 与缓存。Clear cached input 单独归零，便于每轮从相同状态开始。",
+          "动作资源必须严格包含 Gameplay/Move、Gameplay/Fire、UI/Navigate、UI/Submit。Play 后等到 Input lab ready，再点 Game 输入；菜单均从对应组件的三点菜单选择。第二实验才勾 Clear On Focus Loss，测试失焦时消费者自己的清理。时间暂停、光标和完整 uGUI 仍是额外职责。"
+        ],
+        "files": [
+          {
+            "filename": "InputModeProbe.cs",
+            "source": "using UnityEngine;\nusing UnityEngine.InputSystem;\n[RequireComponent(typeof(PlayerInput))]\npublic sealed class InputModeProbe : MonoBehaviour\n{\n    PlayerInput input;\n    void Awake() => input = GetComponent<PlayerInput>();\n    [ContextMenu(\"Enter gameplay\")]\n    public void EnterGameplay() => input.SwitchCurrentActionMap(\"Gameplay\");\n    [ContextMenu(\"Enter menu\")]\n    public void EnterMenu() => input.SwitchCurrentActionMap(\"UI\");\n}"
+          },
+          {
+            "filename": "InputModeLabConsumer.cs",
+            "source": "using System.Collections;\nusing UnityEngine;\nusing UnityEngine.InputSystem;\n\n[RequireComponent(typeof(PlayerInput), typeof(InputModeProbe))]\npublic sealed class InputModeLabConsumer : MonoBehaviour\n{\n    [SerializeField] bool clearOnFocusLoss = false;\n    [Header(\"Runtime observations\")]\n    [SerializeField] Vector2 cachedMove;\n    [SerializeField] int pendingFireRequests;\n    [SerializeField] Vector2 lastNavigate;\n    [SerializeField] int submitCount;\n\n    PlayerInput input;\n    InputModeProbe mode;\n    InputAction move, fire, navigate, submit;\n\n    void Awake()\n    {\n        input = GetComponent<PlayerInput>();\n        mode = GetComponent<InputModeProbe>();\n    }\n\n    void OnEnable() => StartCoroutine(BindAfterPlayerInput());\n\n    IEnumerator BindAfterPlayerInput()\n    {\n        yield return null;\n        if (input.actions == null)\n        {\n            Debug.LogError(\"Assign the input action asset on PlayerInput.\", this);\n            enabled = false;\n            yield break;\n        }\n        move = input.actions.FindAction(\"Gameplay/Move\");\n        fire = input.actions.FindAction(\"Gameplay/Fire\");\n        navigate = input.actions.FindAction(\"UI/Navigate\");\n        submit = input.actions.FindAction(\"UI/Submit\");\n        if (move == null || fire == null || navigate == null || submit == null)\n        {\n            Debug.LogError(\"Required actions: Gameplay/Move, Gameplay/Fire, UI/Navigate, UI/Submit.\", this);\n            enabled = false;\n            yield break;\n        }\n        SetCallbacks(move, true);\n        SetCallbacks(fire, true);\n        SetCallbacks(navigate, true);\n        SetCallbacks(submit, true);\n        Debug.Log(\"Input lab ready. Click Game before pressing test keys.\", this);\n        ReportInputState();\n    }\n\n    void SetCallbacks(InputAction action, bool add)\n    {\n        if (action == null) return;\n        if (add)\n        {\n            action.performed += OnAction;\n            action.canceled += OnAction;\n        }\n        else\n        {\n            action.performed -= OnAction;\n            action.canceled -= OnAction;\n        }\n    }\n\n    void OnAction(InputAction.CallbackContext context)\n    {\n        if (context.action == move && context.performed)\n            cachedMove = context.ReadValue<Vector2>();\n        if (context.action == fire && context.performed) pendingFireRequests++;\n        if (context.action == navigate) lastNavigate = context.ReadValue<Vector2>();\n        if (context.action == submit && context.performed) submitCount++;\n        // Deliberately retain Move and queued Fire on cancellation for this comparison.\n        Debug.Log($\"{context.action.actionMap.name}/{context.action.name} {context.phase}; cachedMove={cachedMove}; pendingFire={pendingFireRequests}; navigate={lastNavigate}; submits={submitCount}\", this);\n    }\n\n    [ContextMenu(\"Report input state\")]\n    public void ReportInputState()\n    {\n        if (move == null)\n        {\n            Debug.LogWarning(\"Enter Play and wait for Input lab ready first.\", this);\n            return;\n        }\n        string map = input.currentActionMap != null ? input.currentActionMap.name : \"<none>\";\n        Debug.Log($\"Map={map}; enabled Move={move.enabled}, Fire={fire.enabled}, Navigate={navigate.enabled}, Submit={submit.enabled}; rawMove={move.ReadValue<Vector2>()}; cachedMove={cachedMove}; pendingFire={pendingFireRequests}; navigate={lastNavigate}; submits={submitCount}\", this);\n    }\n\n    [ContextMenu(\"Clear cached input\")]\n    public void ClearCachedInput() => ClearCache(\"Manual clear\");\n\n    [ContextMenu(\"Enter menu and clear cache\")]\n    public void EnterMenuAndClearCache()\n    {\n        if (move == null || !isActiveAndEnabled)\n        {\n            Debug.LogWarning(\"Enter Play and wait for Input lab ready first.\", this);\n            return;\n        }\n        ClearCache(\"Menu entry\");\n        mode.EnterMenu();\n        ReportInputState();\n    }\n\n    void ClearCache(string reason)\n    {\n        cachedMove = Vector2.zero;\n        pendingFireRequests = 0;\n        lastNavigate = Vector2.zero;\n        Debug.Log($\"{reason}: cachedMove=0; pendingFire=0; navigate=0\", this);\n    }\n\n    void OnApplicationFocus(bool focused)\n    {\n        if (Application.isPlaying && !focused && clearOnFocusLoss)\n            ClearCache(\"Focus lost\");\n    }\n\n    void OnDisable()\n    {\n        StopAllCoroutines();\n        SetCallbacks(move, false);\n        SetCallbacks(fire, false);\n        SetCallbacks(navigate, false);\n        SetCallbacks(submit, false);\n        ClearCache(\"Consumer disabled\");\n        move = fire = navigate = submit = null;\n    }\n}\n"
+          }
         ]
       },
       "lab": [
@@ -568,21 +619,36 @@ window.COURSE_MODULES.push({
           "title": "区分模式与设备方案",
           "minutes": 60,
           "steps": [
-            "建立Gameplay的Move、Fire与UI的Navigate等动作，列出每种模式允许项。",
-            "由PlayerInput切换Map，逐个记录哪些动作仍能响应，检查额外手动启用项。",
-            "配置键鼠与手柄方案，填一张模式×设备表，说明两者不是同一维度。"
+            "先保持 Gameplay。点 Game，分别按一下 D、空格、右箭头、Enter；Console 应有 Gameplay/Move 与 Gameplay/Fire 的 performed/canceled，而 UI 动作此时不应因这些测试产生 performed。用消费者三点菜单 Report input state 记录当前 Map、四个 enabled 与缓存；这些菜单是实验脚本提供的。",
+            "在 InputModeProbe 三点菜单选 Enter menu，再点 Game，按同一组键。记录 UI/Navigate 与 UI/Submit 的响应，并对照 Gameplay 动作的 enabled。切换时出现的 canceled 是旧动作结束通知，不应当成 UI 中又接受了一次玩法请求。最后选 Enter gameplay 回到玩法。",
+            "停止 Play 后再做设备方案对照：动作编辑器工具栏 Control Schemes > Add Control Scheme 建 KeyboardMouse，设备需求把 Keyboard设为必需、Mouse设为可选；另建 Gamepad，需求为 Gamepad。把第一步的键盘绑定勾入 KeyboardMouse，在对应动作另加 Gamepad 的 leftStick、buttonSouth、dpad、buttonSouth 绑定并勾入 Gamepad。保存后 PlayerInput 的 Default Scheme=KeyboardMouse，重新 Play 验证键盘两种 Map；有手柄再按本课 PlayerInput 文档配置设备配对并实测。没有硬件时只记录绑定组与设备需求已检查，手柄运行记未测。"
           ],
-          "result": "动作模式与设备组合能够分别选择。"
+          "result": "有一张 Gameplay/UI × KeyboardMouse/Gamepad 表；键盘两行有 Map、enabled 与 performed 日志证据，缺少硬件的格明确记未测。",
+          "purpose": "用明确的按键和日志分别观察允许动作与设备绑定，避免把 Map 名或控制方案配置当成已经收到输入。",
+          "setup": [
+            "若当前项目未装 Input System，打开 Window > Package Management > Package Manager，选择 Unity Registry，找到 Input System 并安装兼容版本；Edit > Project Settings > Player > Other Settings > Configuration 的 Active Input Handling 选 Input System Package (New) 或 Both，需要时按提示重启编辑器。已完成第26课这些设置则直接复用。",
+            "停止 Play，用 File > New Scene 新建场景，保存为 Assets/Scenes/L028_InputModes.unity。在 Project 的 Assets/Input 中用 Assets > Create > Input Actions 建 LabModes.inputactions，双击打开动作编辑器。左侧 Action Maps 的 + 新建 Gameplay、UI，名称大小写严格一致。",
+            "在 Gameplay 的 Actions 列用 + 建 Move，Action Type=Value、Control Type=Vector2；对 Move 添加 Add Up/Down/Left/Right Composite，四个子绑定的 Path 分别为 <Keyboard>/w、<Keyboard>/s、<Keyboard>/a、<Keyboard>/d。再建 Fire，Action Type=Button，普通 Binding 的 Path=<Keyboard>/space。",
+            "在 UI 建 Navigate，Action Type=Value、Control Type=Vector2；添加同类四方向 Composite，Up/Down/Left/Right 分别绑定键盘上、下、左、右箭头。再建 Submit(Button)，Path=<Keyboard>/enter。先不限制 Control Scheme 组，点 Save Asset；若项目已有方案，本组键盘绑定须属于可用键盘方案。",
+            "把两份代码分别保存为 Assets/Scripts/InputModeProbe.cs、Assets/Scripts/InputModeLabConsumer.cs，等编译。GameObject > Create Empty 建 PlayerHost，Add Component 添加 PlayerInput，将 LabModes 拖到 Actions，Default Map=Gameplay、Default Scheme先留空，Behavior=Invoke C Sharp Events，避免 Send Messages 查找本实验未实现的同名消息方法。",
+            "给同一 PlayerHost 添加 InputModeProbe、InputModeLabConsumer，Clear On Focus Loss先不勾。不要同时挂会独立 Enable 另一份资源的 MoveActionProbe。Window > General > Console 清空搜索框、开启普通日志与错误显示、关闭 Collapse；Play 后等 Input lab ready。输入前点击 Game，观察时选 PlayerHost，在 Inspector 看 Runtime observations 字段。"
+          ]
         },
         {
           "title": "清理旧方向与其他状态",
           "minutes": 60,
           "steps": [
-            "按住移动开菜单，菜单中松开再回游戏，观察方向缓存是否残留。",
-            "连续切换10次，测试失焦恢复；有实际硬件再验证热插拔。",
-            "分别列出Map、UI输入模块、timeScale与光标由谁控制，并检查一步失败如何处理。"
+            "先做残留对照：Enter gameplay后用 Clear cached input重置；点 Game，按一次空格使Pending Fire Requests=1，再按住D。保持按住时从 InputModeProbe选 Enter menu，松开D后选消费者的 Report input state。比较 Raw Move=0、Gameplay动作已停用，与仍可能为(1,0)的Cached Move、仍为1的Pending Fire Requests；这两个字段才是本实验定义的“旧方向与过期请求”。",
+            "再做清理对照的一轮：Enter gameplay→Clear cached input→点Game按一次空格并按住D→消费者 Enter menu and clear cache→在UI松开D→Enter gameplay→Report input state。最终Cached Move和Pending Fire Requests应为0；若已重新按下新输入，先松开再重做本轮。把这整个往返记为一轮，重复10轮记录是否新增残留或重复performed；10只是便于完成的稳定性样本，不是通过十轮就得到保证。",
+            "另测失焦：勾Clear On Focus Loss，回Gameplay、清缓存，点Game按一次空格并按住D；用Alt+Tab切到另一应用，在外部松开D，再切回Unity并点Game，不按新键，Report input state应显示缓存方向与待处理Fire为0，Console有Focus lost清理日志。若返回后仍按着键，新performed可能是新的当前输入，不能算旧缓存。最后列出Map、UI模块、timeScale与光标各由谁负责；热插拔仅在有实物设备时另测并记录。"
           ],
-          "result": "不会把菜单显示当作全部输入与暂停配置完成。"
+          "result": "保留原入口的残留对照、显式清理后的十轮记录和独立失焦记录；方向与待处理请求都有字段及日志可核对。",
+          "purpose": "通过受控错误看见外部缓存，再用同一消费者的清理入口验证归零；把模式切换、失焦和设备变化分开观察。",
+          "setup": [
+            "复用 L028_InputModes 和同一 PlayerHost、动作资源与两份组件，不另写消费者。先停 Play，再重新 Play，等 Input lab ready；Clear On Focus Loss暂不勾。把 Console 搜索框清空，保留普通日志和错误显示；Inspector 中只看观察值，不手动改 Cached Move 等字段。",
+            "本组两个入口有意不同：InputModeProbe > Enter menu只切 Map；InputModeLabConsumer > Enter menu and clear cache先清自己保存的方向和 Fire 计数。Clear cached input为每轮重置，Report input state为记录入口；回玩法均用 InputModeProbe > Enter gameplay。",
+            "本组必做不创建可视菜单或 uGUI；UI表示动作组已经切换，不表示屏幕出现菜单。只有另做真实 uGUI 扩展时，才创建 Canvas、按钮和 EventSystem，给 EventSystem 用 InputSystemUIInputModule，并在 PlayerInput 的 UI Input Module 字段关联它。"
+          ]
         }
       ],
       "pitfalls": [
@@ -633,7 +699,8 @@ window.COURSE_MODULES.push({
             "两者都只由timeScale决定"
           ],
           "answer": 0,
-          "explanation": "同一种设备能使用多个模式，同一模式也能适配不同设备。"
+          "explanation": "同一种设备能使用多个模式，同一模式也能适配不同设备。",
+          "scenario": "动作资源有 Gameplay/UI 两个 Map，也有 KeyboardMouse/Gamepad 控制方案；同一玩家要在两种设备上都能游玩并操作菜单。"
         },
         {
           "question": "停用 Move 动作后缓存向量一定自动归零吗？",
@@ -644,7 +711,8 @@ window.COURSE_MODULES.push({
             "Disable会自动销毁所有保存向量的脚本"
           ],
           "answer": 1,
-          "explanation": "动作无法自动维护每个消费者自己的数据。"
+          "explanation": "动作无法自动维护每个消费者自己的数据。",
+          "scenario": "角色自己的 moveDirection 字段保留上次读到的(1,0)。管理组件停用了 Move，但没有任何代码改这个外部字段。"
         },
         {
           "question": "多人时从哪里读取动作更可靠？",
@@ -655,7 +723,8 @@ window.COURSE_MODULES.push({
             "通过场景对象名字猜测所属动作"
           ],
           "answer": 2,
-          "explanation": "玩家身份、设备和动作必须对应，避免读共享原资源造成混用。"
+          "explanation": "玩家身份、设备和动作必须对应，避免读共享原资源造成混用。",
+          "scenario": "两名玩家使用同一个动作资源配置，运行时各有 PlayerInput 和配对设备。角色要读取属于自己玩家的输入。"
         }
       ],
       "references": [
@@ -686,17 +755,20 @@ window.COURSE_MODULES.push({
           },
           {
             "title": "由玩家组件切换",
-            "text": "给PlayerInput指定动作资源与默认Gameplay，再执行Enter menu，观察它所管理当前Map的变化。"
+            "text": "给PlayerInput指定动作资源与默认Gameplay。两份脚本挂同一PlayerHost，等Input lab ready后按测试键，在Console看动作阶段，再用Report input state核对当前Map与四个动作的enabled。"
           },
           {
             "title": "清理外部缓存",
-            "text": "按住移动进入菜单，检查角色保存的方向是否归零；动作停止监听不代表所有消费者缓存都会自动清除。"
+            "text": "先用InputModeProbe的Enter menu只切Map，比较Raw Move与故意保留的Cached Move；再用消费者的Enter menu and clear cache归零方向和待处理Fire计数，观察两种入口的差别。"
           }
         ],
         "prediction": {
           "question": "切到UI Map，是否已经自动暂停游戏并配置好菜单按钮？",
-          "answer": "没有。示例只切换Map，时间、光标、EventSystem与InputSystemUIInputModule等仍需分别配置。"
-        }
+          "answer": "没有。示例只切换Map，时间、光标、EventSystem与InputSystemUIInputModule等仍需分别配置。",
+          "scenario": "资源有 Gameplay 与 UI；组件调用 SwitchCurrentActionMap(\"UI\") 后，没有执行菜单显示、timeScale、光标或 EventSystem 配置代码。"
+        },
+        "scenario": "PlayerHost上有PlayerInput、InputModeProbe和InputModeLabConsumer。动作资源含Gameplay/Move、Fire与UI/Navigate、Submit；第二个脚本打印响应并保存可见缓存，供本课比较“只切Map”和“切Map并清缓存”。键鼠/手柄是设备方案，时间暂停与完整uGUI仍需另外安排。",
+        "purpose": "让模式、设备与消费者状态各自明确，避免菜单出现后角色仍处理旧输入。"
       }
     },
     {
@@ -804,7 +876,13 @@ window.COURSE_MODULES.push({
             "停止并重播确认Enter仍有效，执行Restore default后再重播确认空格恢复。",
             "记录两次新建动作的绑定ID与路径，解释本例存路径而多绑定JSON需要稳定资源。"
           ],
-          "result": "当前修改、重启恢复与默认还原都有验证。"
+          "result": "当前修改、重启恢复与默认还原都有验证。",
+          "purpose": "按默认→改键→重播→恢复→再重播验证完整往返。",
+          "setup": [
+            "创建 RebindHost 添加 BindingOverrideProbe，确认没有其他组件同时用空格打印 Fire，Play 后点 Game。",
+            "组件三点菜单的 Use Enter 和 Restore default 只在 Play 时执行，菜单调用前确认动作已由 Awake 创建。若已有上次保存，先 Restore default 再停止重播建立基线。",
+            "PlayerPrefs 键仅为 learning.fire.singleBindingPath.v2；恢复本实验用自己的 Restore default，不调用 DeleteAll 清掉其他课程设置。绑定 ID/路径记录需在实验观察代码输出。"
+          ]
         },
         {
           "title": "补上交互改键流程",
@@ -814,7 +892,13 @@ window.COURSE_MODULES.push({
             "分别完成、取消和关闭组件，检查监听释放及输入模式恢复。",
             "为两个动作写冲突策略，再选定Move中一个明确复合子项测试。"
           ],
-          "result": "每条结束路径都不会留下旧监听或停用的动作。"
+          "result": "每条结束路径都不会留下旧监听或停用的动作。",
+          "purpose": "补出监听成功与取消的完整结束路径，并明确改哪条绑定。",
+          "setup": [
+            "另建交互式测试组件和稳定 .inputactions 资源，先只配置一个 Fire 按钮；开始 PerformInteractiveRebinding 前停用该动作，限制 Button 控件并用 Escape 取消。",
+            "保存返回 RebindingOperation，完成与取消路径都 Dispose，并恢复原应启用的 Map；组件关闭也进入同一清理入口。原 Use Enter 没有创建交互监听。",
+            "Move 复合项对照从动作编辑器列出父项与 Up/Down/Left/Right 子项，明确选中哪个子项、控制方案与 ID，不能直接假定索引0就是 Up。"
+          ]
         }
       ],
       "pitfalls": [
@@ -865,7 +949,8 @@ window.COURSE_MODULES.push({
             "只有关闭动作时才会覆盖资源文件"
           ],
           "answer": 0,
-          "explanation": "运行时覆盖与资源默认值分开，移除覆盖可以恢复原配置。"
+          "explanation": "运行时覆盖与资源默认值分开，移除覆盖可以恢复原配置。",
+          "scenario": "运行中的动作默认绑定空格，现在调用 ApplyBindingOverride 改为 Enter；没有执行编辑器资源保存或修改 .inputactions 源文件。"
         },
         {
           "question": "交互式改键取消后最需要检查？",
@@ -876,7 +961,8 @@ window.COURSE_MODULES.push({
             "只要没报错就无需检查监听"
           ],
           "answer": 1,
-          "explanation": "取消也是结束路径，应确保旧监听结束且输入恢复。"
+          "explanation": "取消也是结束路径，应确保旧监听结束且输入恢复。",
+          "scenario": "交互式改键已开始，原玩法动作暂时停用，当前等待玩家按新键。玩家按取消而没有完成新绑定。"
         },
         {
           "question": "每次 new 同名 InputAction 后直接加载上次的覆盖 JSON，为什么可能恢复失败？",
@@ -887,7 +973,8 @@ window.COURSE_MODULES.push({
             "只要Enable在Load之后就一定匹配"
           ],
           "answer": 2,
-          "explanation": "稳定绑定身份不可由同名代替；本例因此只恢复唯一绑定路径。"
+          "explanation": "稳定绑定身份不可由同名代替；本例因此只恢复唯一绑定路径。",
+          "scenario": "每次运行都 new 同名 InputAction 并生成新的绑定，保存与加载的是覆盖 JSON，不是本课最小示例保存的唯一绑定路径。"
         }
       ],
       "references": [
@@ -923,8 +1010,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "每次new同名InputAction，再读上次覆盖JSON，是否保证恢复成功？",
-          "answer": "不保证。新绑定ID可能改变，而覆盖JSON按ID匹配；应使用稳定.inputactions资源，或像本例只恢复唯一绑定路径。"
-        }
+          "answer": "不保证。新绑定ID可能改变，而覆盖JSON按ID匹配；应使用稳定.inputactions资源，或像本例只恢复唯一绑定路径。",
+          "scenario": "程序每次运行都 new 一个叫 Fire 的 InputAction 并新建绑定；上一轮保存的是 SaveBindingOverridesAsJson 的结果。除了动作名字相同，没有保证绑定 ID 稳定。"
+        },
+        "scenario": "BindingOverrideProbe 只有一个 Fire 按钮绑定，默认空格，Use Enter 给索引0加覆盖并把路径存 PlayerPrefs。停止重播检查保存，再用 Restore default 移除覆盖。这是固定目标路径演示，尚非交互式改键界面。",
+        "purpose": "分开默认配置与个人覆盖，用完整重启往返验证保存，并认识绑定身份与取消清理。"
       }
     },
     {
@@ -1019,7 +1109,8 @@ window.COURSE_MODULES.push({
         "filename": "BufferedCommandProbe.cs",
         "source": "using UnityEngine;\nusing UnityEngine.InputSystem;\npublic sealed class BufferedCommandProbe : MonoBehaviour\n{\n    [SerializeField] bool canConsume = true;\n    [SerializeField, Min(0f)] float bufferSeconds = 0.15f;\n    InputAction jump;\n    bool pending;\n    double expires;\n    void Awake() => jump = new InputAction(\"Jump\", InputActionType.Button, \"<Keyboard>/space\");\n    void OnEnable() => jump.Enable();\n    void Update()\n    {\n        if (!jump.WasPressedThisFrame()) return;\n        pending = true;\n        expires = Time.timeAsDouble + bufferSeconds;\n    }\n    void FixedUpdate()\n    {\n        if (!pending) return;\n        if (Time.timeAsDouble > expires) { pending = false; return; }\n        if (!canConsume) return;\n        pending = false;\n        Debug.Log(\"Consumed exactly once.\", this);\n    }\n    void OnDisable() { jump.Disable(); pending = false; }\n    void OnDestroy() => jump.Dispose();\n}",
         "explanation": [
-          "保持Input System默认动态更新。canConsume只是Inspector中的算法测试条件，不代表真实落地。示例保留最近一条请求，用游戏时间计算0.15秒窗口，禁用时清除请求。"
+          "保持Input System默认动态更新。canConsume只是Inspector中的算法测试条件，不代表真实落地。示例保留最近一条请求，用游戏时间计算0.15秒窗口，禁用时清除请求。",
+          "Can Consume 与 Buffer Seconds 是本课组件 Inspector 字段。原例只输出成功处理，没有打印每次按键和过期，按实验需要另加观察日志；0.15秒边界不适合靠手动切勾选精测，先用2秒窗口看清流程。"
         ]
       },
       "lab": [
@@ -1031,7 +1122,13 @@ window.COURSE_MODULES.push({
             "短按一次，记录输入次数、pending变化与处理次数，检查多个固定步不重复。",
             "禁用再启用组件，确认旧pending清除，记录不会补执行旧请求。"
           ],
-          "result": "每条请求最多成功处理一次，拒绝原因可说明。"
+          "result": "每条请求最多成功处理一次，拒绝原因可说明。",
+          "purpose": "记录跨阶段的请求与处理次数，检查不漏记也不重复接受。",
+          "setup": [
+            "确认 Input System 已安装；打开 Edit > Project Settings > Input System Package。若尚未创建设置资源，先点 Create settings asset 并保存到 Assets/Input，再确认 Update Mode 为 Process Events In Dynamic Update。创建 BufferHost，添加 BufferedCommandProbe，Can Consume 勾选，Buffer Seconds=0.15。",
+            "Edit > Project Settings > Time 记下原值，Time Scale=1；对照改变 Fixed Timestep，每轮停止重播。Play 后先点 Game，再短按空格一次。",
+            "原例只输出成功接受；要看输入次数、pending 与处理步，在实验副本补带 frame、固定步时间的观察日志。最后恢复原固定步长，避免影响后续课。"
+          ]
         },
         {
           "title": "比较窗口内外",
@@ -1041,7 +1138,13 @@ window.COURSE_MODULES.push({
             "重新开始并在约3秒后才开放条件，确认请求过期；再用脚本安排窗口内、窗口外和边界处的条件变化，恢复0.15秒，记录采样游戏时间、固定步时间与实际处理步。",
             "测试暂停与菜单切换，写清时钟和清理选择。把输入提前于落地的缓冲与离地后仍可跳的土狼时间分开，不用同一条日志推断两者都正确。"
           ],
-          "result": "缓冲仅提供有限宽容，不永久排队。"
+          "result": "缓冲仅提供有限宽容，不永久排队。",
+          "purpose": "先用可人工操作的大窗口看流程，再用脚本检查短窗口边界。",
+          "setup": [
+            "选 BufferHost，先把 Buffer Seconds=2、Can Consume 取消。Play 时点 Game 按空格，再回 Inspector 在约1秒内打开 Can Consume；单纯点 Inspector 会改变焦点，要记录这一影响。",
+            "期外对照新 Play，约3秒后才打开条件。人工点击只验证大窗口流程；恢复0.15后，用单独受控测试入口按既定时刻产生请求和改变条件，不宣称手点测准毫秒边界。",
+            "暂停通过 Time Scale，模式切换通过明确调用清理入口；原脚本 OnDisable 会清 pending，但没有完整菜单系统。记录 Update 采样时间与 FixedUpdate 当前固定时间的差别。"
+          ]
         }
       ],
       "pitfalls": [
@@ -1092,7 +1195,8 @@ window.COURSE_MODULES.push({
             "只要都在FixedUpdate就不会丢失"
           ],
           "answer": 0,
-          "explanation": "两种数据的有效时长和处理次数不同，必须分别保存。"
+          "explanation": "两种数据的有效时长和处理次数不同，必须分别保存。",
+          "scenario": "方向值表示持续想往哪里走，跳跃表示某次按下产生的一次请求；Update 可能与零个或多个固定步对应。"
         },
         {
           "question": "输入缓冲与土狼时间是否完全相同？",
@@ -1103,7 +1207,8 @@ window.COURSE_MODULES.push({
             "两者都不需要时间窗口"
           ],
           "answer": 1,
-          "explanation": "提前请求与离地后仍允许，是不同边界，可以独立测试和组合。"
+          "explanation": "提前请求与离地后仍允许，是不同边界，可以独立测试和组合。",
+          "scenario": "角色有两种宽容规则：落地前短时间按跳仍可在落地后执行；离地后短时间按跳仍被允许。准备比较这两条规则的含义。"
         },
         {
           "question": "永久保留所有失败输入可能造成什么？",
@@ -1114,7 +1219,8 @@ window.COURSE_MODULES.push({
             "只会增加内存，不影响行为"
           ],
           "answer": 2,
-          "explanation": "缓冲需要有效期、容量与模式切换清理，否则旧请求会变成延迟行为。"
+          "explanation": "缓冲需要有效期、容量与模式切换清理，否则旧请求会变成延迟行为。",
+          "scenario": "输入系统把所有暂不能执行的攻击长期排队，不设容量、有效期，也不在菜单切换时清除。角色稍后恢复可攻击状态。"
         }
       ],
       "references": [
@@ -1154,8 +1260,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "请求在0.15秒后过期，直到0.3秒才允许跳跃，还应执行旧请求吗？",
-          "answer": "不应。本例会丢弃过期请求。缓冲是短时间宽容，不是永久排队等条件出现。"
-        }
+          "answer": "不应。本例会丢弃过期请求。缓冲是短时间宽容，不是永久排队等条件出现。",
+          "scenario": "假设一条请求在采样后0.15个游戏秒过期，期间 Can Consume 一直为 false，直到0.3秒后才变为 true；没有再次按键刷新该请求。"
+        },
+        "scenario": "BufferedCommandProbe 用空格生成最近一条跳跃意图，Update 标记 pending 并设0.15秒截止，FixedUpdate 在 Can Consume 为真且未过期时打印一次。Can Consume 是可手动控制的测试条件，本课没有真实跳跃、刚体或落地检测。",
+        "purpose": "在不同更新阶段之间保存一次请求，说明它何时接受、何时过期，以及模式改变时如何清理。"
       }
     }
   ]

@@ -1,4 +1,4 @@
-// 学者修订：补足具体推导、实验起点及教学边界。
+// 语境修订：题目背景、实验准备与学习用途。
 window.COURSE_MODULES.push({
   "id": "m13",
   "number": 13,
@@ -99,17 +99,29 @@ window.COURSE_MODULES.push({
             "每次只改一项：Source静音、Source音量、组音量、输出路由或监听器启用状态。记录播放标志与实际是否听见。",
             "沿素材、Source、分组、监听与设备的顺序恢复，说明每个故障发生在哪一环，不通过重建素材绕过原因。"
           ],
-          "result": "能区分“播放器开始工作”与“最终可以听见”，并按改变过的环节定位故障。"
+          "result": "能区分“播放器开始工作”与“最终可以听见”，并按改变过的环节定位故障。",
+          "setup": [
+            "新建L061_Audio，主相机只保留一个启用的AudioListener。把一个短WAV复制到Assets/EngineLabs/Audio，选中资源先确认预览可听。",
+            "GameObject > Create Empty建MusicSource，Inspector > Add Component添加AudioSource，AudioClip拖入短WAV；Spatial Blend=0、Volume=1、Mute关闭，先开Play On Awake和Loop方便持续听对照。",
+            "Window > Audio > Audio Mixer打开混音器并新建Mixer；加Music组，将AudioSource的Output指定这个组。先确认默认无衰减时可听，再逐项改设置。"
+          ],
+          "purpose": "建立一条已知可发声的基线，再逐项制造无声，避免用重复导入素材代替定位。"
         },
         {
           "title": "计算音量并测试重复声音",
           "minutes": 60,
           "steps": [
             "调用示例分别输入1、0.5、0，先计算预期分贝，再查看Music组的参数和听感。",
-            "以固定间隔发出10次短音效，比较全部叠加与限制重复的结果，记录同时播放数量。",
+            "用按钮密集触发十次短声，比较不限制与自行设计限制后的听感，记录实际请求节奏和仍在播放的尾音；十次只是便于听出叠加的小样本，手动操作不构成精确固定间隔测试。",
             "画出Music、SFX、UI到Master的输出链，先只给Music衰减约-6dB，再给Master增加约-6dB；计算串联幅度约0.25并观察参数。最后说明用户音量与环境快照各由谁修改，避免两个入口争写同一参数。"
           ],
-          "result": "滑块、分贝和分组控制各有清楚含义；重复播放数量也有明确规则。"
+          "result": "滑块、分贝和分组控制各有清楚含义；重复播放数量也有明确规则。",
+          "setup": [
+            "保存MixerVolumeControl.cs并挂到空VolumeHost。把Mixer资源拖入Mixer字段，Exposed Parameter填MusicVolume。Audio Mixer中右键Music组的Volume暴露给脚本，再在Exposed Parameters重命名为MusicVolume。",
+            "GameObject > UI > Slider创建滑块，Min=0、Max=1；在On Value Changed添加VolumeHost，选动态float的MixerVolumeControl.SetLinearVolume。Play后拖滑块才调用，不在Awake时自动设Mixer。",
+            "重复短声可复用第49课FootstepEventReceiver：给测试AudioSource挂接收器并指定Step，按钮On Click调用Footstep。手动密集点击十次仅比较叠加听感，十次是练习样本，不是固定并发预算，也不声称手动点击有精确间隔。"
+          ],
+          "purpose": "用滑块值和dB实际接线验证换算，再体验密集重复为什么还需要并发规则。"
         }
       ],
       "pitfalls": [
@@ -160,7 +172,8 @@ window.COURSE_MODULES.push({
             "因为Mixer会自动把零变成1"
           ],
           "answer": 1,
-          "explanation": "脚本选择0.0001作为最小幅度，换算为-80dB。它避免无穷值，但是否需要绝对静音仍应另定规则。"
+          "explanation": "脚本选择0.0001作为最小幅度，换算为-80dB。它避免无穷值，但是否需要绝对静音仍应另定规则。",
+          "scenario": "MixerVolumeControl接收线性滑块值0，代码准备计算20×Log10(value)，需要决定怎样处理输入下限。"
         },
         {
           "question": "PlayOneShot可以叠加短声音，是否也自动决定了合理并发数量？",
@@ -171,7 +184,8 @@ window.COURSE_MODULES.push({
             "是，所有短音效都不占运行预算"
           ],
           "answer": 1,
-          "explanation": "叠加是播放能力，并发规则则要结合听感、信息价值和设备成本制定。"
+          "explanation": "叠加是播放能力，并发规则则要结合听感、信息价值和设备成本制定。",
+          "scenario": "同一AudioSource能通过PlayOneShot叠加短音效，当前游戏可能在短时间内反复命中；尚未给重复声设计合并或数量规则。"
         },
         {
           "question": "Source显示播放中但无声，下一步怎样查更有效？",
@@ -182,7 +196,8 @@ window.COURSE_MODULES.push({
             "先增加更多Source覆盖可能的问题"
           ],
           "answer": 0,
-          "explanation": "同一个播放状态后面还有多个输出环节。与正常基线逐项比较，才能定位哪个条件让声音不可听见。"
+          "explanation": "同一个播放状态后面还有多个输出环节。与正常基线逐项比较，才能定位哪个条件让声音不可听见。",
+          "scenario": "同一短Clip的AudioSource显示播放中，但耳机无声；素材已赋值，尚未排查Source音量、Mixer输出、Listener和设备。"
         }
       ],
       "references": [
@@ -218,8 +233,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "把线性值0.5直接当作Mixer的0.5dB，是否相当于把幅度减半？",
-          "answer": "不是。幅度减半对应20×log10(0.5)，约为-6dB。0.5dB表示另一个比值，不能把线性滑块数值和分贝数值直接互换。"
-        }
+          "answer": "不是。幅度减半对应20×log10(0.5)，约为-6dB。0.5dB表示另一个比值，不能把线性滑块数值和分贝数值直接互换。",
+          "scenario": "音量滑块的0.5代表线性幅度比例；Mixer的暴露音量参数单位是dB，原值0dB。本题比较直接设0.5dB与将幅度0.5换算后再设置的含义。"
+        },
+        "scenario": "AudioSource显示正在播放，耳机里却没有声音；音量滑块拖到0.5，直接把Mixer设0.5dB又听不出预期变化。本课从一段短录音、一个播放器和一个听者开始，再接入混音分组。",
+        "purpose": "能沿声音输出链定位无声，并把用户的0到1滑块正确映射到Mixer衰减。"
       }
     },
     {
@@ -315,7 +333,13 @@ window.COURSE_MODULES.push({
             "分别比较spatialBlend为0、0.5和1，再单独移动或旋转Listener，记录声像与音量如何变化。",
             "把角色设在(0,0,0)、音源在(3,0,0)，对比Listener在角色位置与(0,0,10)时的距离3和约10.44。固定衰减曲线后比较音量，说明变化来自三维距离，不把它当作二维画面的异常。"
           ],
-          "result": "声音模式来自听觉需求；距离和声像需要按音源与听者的三维关系解释。"
+          "result": "声音模式来自听觉需求；距离和声像需要按音源与听者的三维关系解释。",
+          "setup": [
+            "新建L062_Spatial，只保留一个有效AudioListener。建空SoundSource并添加AudioSource，指定同一个短Clip，先开Loop；Volume和Output固定，不同时换素材。",
+            "在Inspector的AudioSource把Spatial Blend依次改0、0.5、1；展开3D Sound Settings查看Volume Rolloff、Min Distance与Max Distance，记录曲线模式。",
+            "先把Listener宿主放(0,0,0)，音源放(3,0,0)；再把Listener移到(0,0,10)。可从Window > General > Inspector直接填Transform世界坐标，避免靠拖拽估距离。"
+          ],
+          "purpose": "用已知坐标解释远近与左右，看到屏幕上挨近不等于听者到音源距离近。"
         },
         {
           "title": "比较预约时钟与暂停规则",
@@ -325,7 +349,13 @@ window.COURSE_MODULES.push({
             "分别测试timeScale变化和明确的音频暂停设置。每次从干净运行开始，记录预约、暂停、恢复和实际播放。",
             "为游戏运动、动画、音乐和按钮声列一张表，注明暂停时继续还是停止，并标出尚未在目标设备验证的结果。"
           ],
-          "result": "能区分游戏时钟、音频调度和设备输出，暂停策略也有逐项可检查的含义。"
+          "result": "能区分游戏时钟、音频调度和设备输出，暂停策略也有逐项可检查的含义。",
+          "setup": [
+            "另存L062_Scheduled。保存ScheduledAudioProbe.cs并挂到SoundSource，AudioSource先在Inspector关闭Play On Awake、Loop，指定短Clip且Pitch=1；Lead Seconds=0.5。",
+            "Window > General > Console记录Scheduled DSP time；每次退出再进入Play让Start重新提交预约。现成代码没有音乐拼接器，也没有自动测耳机端延迟。",
+            "timeScale与AudioListener.pause对照需要在独立学习脚本或调试入口中明确设置；先写暂停策略表，再做一项一项的测试，不把“游戏暂停”含混当作所有声音都停止。"
+          ],
+          "purpose": "区分提交的预约时刻、游戏恢复和真实设备输出，不能凭一条日志就宣布采样对齐。"
         }
       ],
       "pitfalls": [
@@ -376,7 +406,8 @@ window.COURSE_MODULES.push({
             "只有音乐才可以使用Listener"
           ],
           "answer": 1,
-          "explanation": "画面维度不决定声音模式。是否需要传达距离与方向，才是空间化选择的起点。"
+          "explanation": "画面维度不决定声音模式。是否需要传达距离与方向，才是空间化选择的起点。",
+          "scenario": "俯视游戏用Sprite显示怪物，但希望玩家听见怪物的远近与方向；本题选择音源空间模式，不假设画面维度决定音频模式。"
         },
         {
           "question": "用WaitForSeconds等待一段音乐的估计长度，能保证采样精确拼接吗？",
@@ -387,7 +418,8 @@ window.COURSE_MODULES.push({
             "能，换成非缩放等待就自动精确"
           ],
           "answer": 1,
-          "explanation": "是否使用缩放时间和是否按采样时钟安排，是不同问题。音乐拼接需要研究音频时钟、片段长度与调度。"
+          "explanation": "是否使用缩放时间和是否按采样时钟安排，是不同问题。音乐拼接需要研究音频时钟、片段长度与调度。",
+          "scenario": "两段音乐需要尽量无缝衔接，现做法是在游戏协程里WaitForSeconds估计第一段长度后调用Play。"
         },
         {
           "question": "PlayScheduled接收的播放时刻，主要依据哪个时间基准？",
@@ -398,7 +430,8 @@ window.COURSE_MODULES.push({
             "动画片段的归一化进度"
           ],
           "answer": 0,
-          "explanation": "它使用音频系统的时间基准。提前预约可以避免要求某个游戏帧恰好在目标时刻发起播放。"
+          "explanation": "它使用音频系统的时间基准。提前预约可以避免要求某个游戏帧恰好在目标时刻发起播放。",
+          "scenario": "当前AudioSettings.dspTime=10秒，希望半秒后开始播放，代码准备把一个绝对时刻传给AudioSource.PlayScheduled。"
         }
       ],
       "references": [
@@ -434,8 +467,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "把WaitForSeconds等待设置得更短，就能保证音乐精确到采样点拼接吗？",
-          "answer": "不能。协程仍按游戏帧的条件恢复，等待更短也不会变成音频采样时钟。精确安排音频应研究dspTime和调度接口，最终设备延迟还需单独测量。"
-        }
+          "answer": "不能。协程仍按游戏帧的条件恢复，等待更短也不会变成音频采样时钟。精确安排音频应研究dspTime和调度接口，最终设备延迟还需单独测量。",
+          "scenario": "你用WaitForSeconds估计音乐结束后播放下一段。现在只把等待值设得更短，仍由游戏帧恢复协程，没有改用音频时钟预约。"
+        },
+        "scenario": "二维画面里火堆明明就在骑士身边，声音却很远；两段音乐用协程接起来又留了缝。先分清音源到听者的三维距离，再把预约时刻交给音频时钟。",
+        "purpose": "能选择声音是否表达远近方向，并知道游戏帧计时为什么不能冒充采样精确调度。"
       }
     },
     {
@@ -530,7 +566,13 @@ window.COURSE_MODULES.push({
             "只改变模拟空间，分别平移发射器观察Local与World；恢复基线后再单独研究旋转和Custom。",
             "固定随机种子，保持相同相机与素材，记录数量峰值和屏幕覆盖，说明估算没有包含哪些因素。"
           ],
-          "result": "能用生成、寿命和参考空间解释效果，而不把粒子变化一概当作随机结果。"
+          "result": "能用生成、寿命和参考空间解释效果，而不把粒子变化一概当作随机结果。",
+          "setup": [
+            "新建L063_Particles。GameObject > Effects > Particle System建Dust，选中后Inspector展开主模块Main与Emission。先清空Bursts、Rate over Time=12、Start Lifetime=0.6、Max Particles=100。",
+            "保存ParticleModuleProbe.cs并通过Dust的Add Component添加。它在Start会设置World和速率12；比较Local时应等Start之后改Main > Simulation Space，或先停用这个脚本再手动设置，避免一进Play就被覆盖。",
+            "在Scene移动Dust，保持Camera和材质不变；需要重复随机样本时取消Auto Random Seed并给相同Random Seed。用Inspector的粒子计数/效果统计与屏幕覆盖分别记录。"
+          ],
+          "purpose": "用可算参数把随机特效变成可对照实验，分清数量变化和发射器整体移动。"
         },
         {
           "title": "区分停止发射与清空",
@@ -540,7 +582,13 @@ window.COURSE_MODULES.push({
             "增加一个持续更久的子效果，比较只观察主系统与包含子系统的IsAlive结果。",
             "关闭一次性效果的所有循环，写出自然结束和强制回收时各采用哪一种停止方式。"
           ],
-          "result": "自然尾迹与立即重置是不同需求；回收前应检查所有相关子效果。"
+          "result": "自然尾迹与立即重置是不同需求；回收前应检查所有相关子效果。",
+          "setup": [
+            "另存L063_Stop，先让Dust稳定发射。用uGUI按钮的On Click绑定Dust的ParticleSystem.Stop()可触发停止发射；另一个按钮按顺序绑定Stop()与Clear()，得到停止并清空的对照。",
+            "按钮与事件接线按第58课：选Button，在Inspector的On Click点+，拖入Dust，选择ParticleSystem对应无参数方法。现成模块脚本只在Start设参数，不自动执行这两个停止入口。",
+            "子系统对照先建一份寿命更长的子ParticleSystem，所有一次性系统关闭Looping；本组先用已明确的父子效果，复杂Sub Emitters随机触发另作扩展，别只看主系统就归还整组效果。"
+          ],
+          "purpose": "比较停止生成与立即清空，给自然尾迹和强制回收选不同策略。"
         }
       ],
       "pitfalls": [
@@ -591,7 +639,8 @@ window.COURSE_MODULES.push({
             "每秒发射数除以相机帧率"
           ],
           "answer": 0,
-          "explanation": "稳定状态下，这段寿命内生成且尚未消失的粒子形成存活数量。估算还需结合爆发、随机值和上限。"
+          "explanation": "稳定状态下，这段寿命内生成且尚未消失的粒子形成存活数量。估算还需结合爆发、随机值和上限。",
+          "scenario": "粒子以每秒12个的恒定速率持续发射，每个寿命固定0.6秒；忽略Burst、上限、预热和启动瞬态，只估算稳定阶段数量。"
         },
         {
           "question": "扬尘使用World空间，通常想实现什么？",
@@ -602,7 +651,8 @@ window.COURSE_MODULES.push({
             "发射器不能再改变位置"
           ],
           "answer": 0,
-          "explanation": "World改变的是参考空间，粒子的速度和其他运动模块仍可以工作。"
+          "explanation": "World改变的是参考空间，粒子的速度和其他运动模块仍可以工作。",
+          "scenario": "Dust发射器跟随角色向右移动，粒子有0.6秒寿命；你要比较Main中的Local与World两种Simulation Space设置。"
         },
         {
           "question": "只执行StopEmitting，是否意味着所有粒子立即消失？",
@@ -613,7 +663,8 @@ window.COURSE_MODULES.push({
             "意味着所有子系统已自动回收"
           ],
           "answer": 1,
-          "explanation": "停止新生成与清空已生成粒子是两种行为。回收时选择哪种，要根据尾迹与重置需求判断。"
+          "explanation": "停止新生成与清空已生成粒子是两种行为。回收时选择哪种，要根据尾迹与重置需求判断。",
+          "scenario": "一个系统已经有存活粒子，调用StopEmitting停止继续生成；没有同时Clear，也没有销毁系统对象。"
         }
       ],
       "references": [
@@ -649,8 +700,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "把粒子模拟空间设为World，是否表示生成后粒子完全不再移动？",
-          "answer": "不是。改变的是计算运动所参考的空间。粒子仍可以按速度、重力等模块运动，只是不再因为发射器自身平移，就整体跟着它走。"
-        }
+          "answer": "不是。改变的是计算运动所参考的空间。粒子仍可以按速度、重力等模块运动，只是不再因为发射器自身平移，就整体跟着它走。",
+          "scenario": "粒子系统的Simulation Space改为World；粒子仍有非零速度，发射器在世界中平移，其他模块不变。"
+        },
+        "scenario": "角色跑走了，身后的尘土却整团跟着走；停止发射后仍有烟，你又不确定是不是没有停成功。先固定每秒12粒、寿命0.6秒，看生成、存活和参考空间分别改变什么。",
+        "purpose": "能把一个粒子效果的数量与尾迹解释清楚，为后面安全回收效果建立可验证的结束条件。"
       }
     },
     {
@@ -729,11 +783,20 @@ window.COURSE_MODULES.push({
       "code": {
         "title": "记录一次粒子效果的取得、播放与归还",
         "language": "csharp",
-        "filename": "OneShotParticlePool.cs",
-        "source": "using System.Collections.Generic;\nusing UnityEngine;\nusing UnityEngine.Pool;\npublic class OneShotParticlePool : MonoBehaviour\n{\n    [SerializeField] ParticleSystem prefab;\n    [SerializeField, Min(1)] int maxActive = 12;\n    ObjectPool<ParticleSystem> pool;\n    readonly List<ParticleSystem> active = new List<ParticleSystem>();\n    void Awake()\n    {\n        if (!prefab) { enabled = false; return; }\n        pool = new ObjectPool<ParticleSystem>(\n            () => Instantiate(prefab, transform),\n            p => p.gameObject.SetActive(true),\n            p => { p.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); p.gameObject.SetActive(false); },\n            p => Destroy(p.gameObject), true, 4, 16);\n    }\n    public void Emit(Vector3 position)\n    {\n        if (!isActiveAndEnabled || pool == null || active.Count >= maxActive) return;\n        var p = pool.Get();\n        p.transform.position = position;\n        p.Play(true);\n        active.Add(p);\n    }\n    void Update()\n    {\n        for (int i = active.Count - 1; i >= 0; i--)\n            if (!active[i].IsAlive(true)) { pool.Release(active[i]); active.RemoveAt(i); }\n    }\n    void OnDisable()\n    {\n        if (pool == null) return;\n        foreach (var p in active) pool.Release(p);\n        active.Clear();\n    }\n    void OnDestroy() { pool?.Clear(); }\n}",
         "explanation": [
           "挂在独立管理对象。粒子Prefab及相关子系统需非循环、关闭Play On Awake，Stop Action使用不会自行Destroy的设置；不要由外部销毁这些实例。",
-          "active记录正在借用的对象；maxActive=12是显式并发限制，ObjectPool的16是空闲保留限制，4则不是预热数量。Emit与回调合起来才构成一次完整使用过程。"
+          "active记录正在借用的对象；maxActive=12是显式并发限制，ObjectPool的16是空闲保留限制，4则不是预热数量。Emit与回调合起来才构成一次完整使用过程。",
+          "第二文件ParticlePoolLabDriver挂在PoolHost并指定Pool引用；进入Play后等待一帧，按Request Count和Interval Seconds实际调用Emit。它的active children计数只适用于PoolHost下没有其他手工子对象的本实验；停用驱动会取消其后续协程请求，不代替池归还对象。"
+        ],
+        "files": [
+          {
+            "filename": "OneShotParticlePool.cs",
+            "source": "using System.Collections.Generic;\nusing UnityEngine;\nusing UnityEngine.Pool;\npublic class OneShotParticlePool : MonoBehaviour\n{\n    [SerializeField] ParticleSystem prefab;\n    [SerializeField, Min(1)] int maxActive = 12;\n    ObjectPool<ParticleSystem> pool;\n    readonly List<ParticleSystem> active = new List<ParticleSystem>();\n    void Awake()\n    {\n        if (!prefab) { enabled = false; return; }\n        pool = new ObjectPool<ParticleSystem>(\n            () => Instantiate(prefab, transform),\n            p => p.gameObject.SetActive(true),\n            p => { p.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); p.gameObject.SetActive(false); },\n            p => Destroy(p.gameObject), true, 4, 16);\n    }\n    public void Emit(Vector3 position)\n    {\n        if (!isActiveAndEnabled || pool == null || active.Count >= maxActive) return;\n        var p = pool.Get();\n        p.transform.position = position;\n        p.Play(true);\n        active.Add(p);\n    }\n    void Update()\n    {\n        for (int i = active.Count - 1; i >= 0; i--)\n            if (!active[i].IsAlive(true)) { pool.Release(active[i]); active.RemoveAt(i); }\n    }\n    void OnDisable()\n    {\n        if (pool == null) return;\n        foreach (var p in active) pool.Release(p);\n        active.Clear();\n    }\n    void OnDestroy() { pool?.Clear(); }\n}"
+          },
+          {
+            "filename": "ParticlePoolLabDriver.cs",
+            "source": "using System.Collections;\nusing UnityEngine;\n\npublic sealed class ParticlePoolLabDriver : MonoBehaviour\n{\n    [SerializeField] OneShotParticlePool pool;\n    [SerializeField, Min(1)] int requestCount = 6;\n    [SerializeField, Min(0f)] float intervalSeconds = 1f;\n\n    void OnEnable() => StartCoroutine(RunSamples());\n\n    IEnumerator RunSamples()\n    {\n        // Wait for active scene components to finish their initial Awake calls.\n        yield return null;\n        if (pool == null)\n        {\n            Debug.LogError(\"Assign Pool on ParticlePoolLabDriver.\", this);\n            yield break;\n        }\n        for (int i = 0; i < requestCount; i++)\n        {\n            if (!pool.isActiveAndEnabled) yield break;\n            pool.Emit(new Vector3((i % 5) * 0.5f, 0f, 0f));\n            int activeChildren = 0;\n            string activeIds = \"\";\n            for (int child = 0; child < pool.transform.childCount; child++)\n            {\n                GameObject instance = pool.transform.GetChild(child).gameObject;\n                if (!instance.activeSelf) continue;\n                activeChildren++;\n                activeIds += instance.GetInstanceID() + \" \";\n            }\n            Debug.Log($\"Request {i + 1}; active children={activeChildren}; IDs={activeIds}; time={Time.unscaledTime:F3}\", this);\n            if (intervalSeconds > 0f)\n                yield return new WaitForSecondsRealtime(intervalSeconds);\n        }\n    }\n\n    void OnDisable() => StopAllCoroutines();\n}"
+          }
         ]
       },
       "lab": [
@@ -741,21 +804,34 @@ window.COURSE_MODULES.push({
           "title": "检查同一实例的第二次使用",
           "minutes": 60,
           "steps": [
-            "先比较两种预热：Get后立即Release循环4次；先Get并暂存4个不同实例，再统一Release。记录实际创建数和实例ID，再用固定间隔请求100次效果，检查并发峰值与稳定复用。",
+            "先用驱动发送6次、间隔1秒的效果，比较Console中的实例ID是否在归还后再次出现；6次是让第二轮以后可观察的小样本。预热另作推导：比较“Get后立刻Release四次”与“先暂存四个再统一归还”，不要把原池未公开的Get当成驱动已经提供的功能。",
             "在实验副本中改变一轮的位置、颜色或粒子状态，观察下一轮是否残留；一次只改一个条件。",
             "补充明确的重置步骤，检查子系统和旧计时任务。恢复原始配置后重新运行完整序列，保存对照。"
           ],
-          "result": "复用的不只是外观相似的对象；每一轮开始时，所需状态都符合本轮要求。"
+          "result": "复用的不只是外观相似的对象；每一轮开始时，所需状态都符合本轮要求。",
+          "setup": [
+            "新建L064_Pool。GameObject > Effects > Particle System建Spark，Main关闭Looping和Play On Awake，Duration=0.1、Start Lifetime=0.4、Stop Action=None；Emission用一次Burst或短时发射，确保会自然结束。",
+            "把Spark拖进Project的Assets/EngineLabs/Prefabs生成Prefab，然后删除场景里原Spark。GameObject > Create Empty建PoolHost，保存两段完整文件为OneShotParticlePool.cs与ParticlePoolLabDriver.cs，并给PoolHost添加两个组件。",
+            "把Spark Prefab拖到池的Prefab字段、Max Active=12；把PoolHost上的OneShotParticlePool拖到驱动的Pool字段，Request Count=6、Interval Seconds=1。进入Play，Window > General > Console看请求、活动子对象数与实例ID，Hierarchy展开PoolHost看实例启停。",
+            "驱动负责实际调用Emit；现成池不会仅因挂上组件自动发射。PoolHost下不要手工放其他子对象，便于把驱动输出的活动子对象数与池实例对应。"
+          ],
+          "purpose": "先触发几次可观察的复用，再检查旧位置与粒子状态；循环次数不是预热数量或质量保证。"
         },
         {
           "title": "分别验证数量限制与中途退出",
           "minutes": 60,
           "steps": [
             "在效果还活跃时连续请求超过12份，核对接受和拒绝数量。再改变空闲maxSize，解释并发限制为何仍来自maxActive。",
-            "效果尚未结束时禁用管理器，检查active清空与对象归还；重新启用后再次发出请求。",
+            "效果尚未结束时禁用池组件，检查active清空与对象归还；重新启用池后，关闭再开启驱动组件以重发完整序列。只重启池不会让已经结束的驱动自动再发送。",
             "退出场景并比较实例与资源记录，将预热、稳定播放和结束清理分开评估。"
           ],
-          "result": "活跃上限、空闲保留和退出清理各有独立、可观察的结果。"
+          "result": "活跃上限、空闲保留和退出清理各有独立、可观察的结果。",
+          "setup": [
+            "另存L064_Limits，保留已配置的PoolHost与Spark Prefab。把驱动Request Count设14、Interval Seconds设0，让同一帧请求超过Max Active=12。",
+            "每轮重新进入Play，驱动在等待一帧后提交；Console记录发送数与PoolHost下活动子对象数。14是故意超过12的边界样本，不是推荐并发量。",
+            "停用测试同时记录是关池组件、驱动组件还是整个PoolHost。驱动OnDisable只取消后续请求；池OnDisable负责归还活跃对象，二者职责不同。"
+          ],
+          "purpose": "密集请求用来核对显式并发上限，中途停用用来检查借出实例是否归还；都不同于空闲容量。"
         }
       ],
       "pitfalls": [
@@ -806,7 +882,8 @@ window.COURSE_MODULES.push({
             "不是，因为maxSize只表示每秒请求数"
           ],
           "answer": 1,
-          "explanation": "maxSize约束归还后保留的空闲数量。示例另用active.Count与maxActive决定是否接受新请求。"
+          "explanation": "maxSize约束归还后保留的空闲数量。示例另用active.Count与maxActive决定是否接受新请求。",
+          "scenario": "ObjectPool构造时maxSize=16，使用者还没有写任何active.Count检查；现在准备连续Get对象。"
         },
         {
           "question": "归还实例后，旧调用者仍持有引用，能否继续改变它的位置？",
@@ -817,7 +894,8 @@ window.COURSE_MODULES.push({
             "可以，池会自动复制对象隔离修改"
           ],
           "answer": 1,
-          "explanation": "池复用同一实例。归还结束了这一轮使用，旧引用不会自动赋予新一轮的修改权。"
+          "explanation": "池复用同一实例。归还结束了这一轮使用，旧引用不会自动赋予新一轮的修改权。",
+          "scenario": "效果完成一次播放后已被Release归还，旧调用者的GameObject字段却仍非空；池将继续处理后续请求。"
         },
         {
           "question": "验证效果池，除了创建数不增长，还需检查什么？",
@@ -828,7 +906,8 @@ window.COURSE_MODULES.push({
             "只检查第一次播放是否正常"
           ],
           "answer": 1,
-          "explanation": "残留状态、旧任务和退出泄漏通常出现在重复使用或中途结束时，单看创建次数不能发现。"
+          "explanation": "残留状态、旧任务和退出泄漏通常出现在重复使用或中途结束时，单看创建次数不能发现。",
+          "scenario": "一个火花池已能重复使用且创建总数稳定，现在要检查功能和退出路径是否也正确。"
         }
       ],
       "references": [
@@ -864,8 +943,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "构造池时defaultCapacity=4，是否表示已经创建好4份粒子效果？",
-          "answer": "不是。它设置池内部存储的初始容量，不等于调用了4次创建函数。真正的预热需要明确创建并归还相应实例，而且要确认预热成本与保留内存都值得。"
-        }
+          "answer": "不是。它设置池内部存储的初始容量，不等于调用了4次创建函数。真正的预热需要明确创建并归还相应实例，而且要确认预热成本与保留内存都值得。",
+          "scenario": "代码构造ObjectPool时传入defaultCapacity=4，但还没有执行任何Get或明确的预热流程；题目问构造参数本身是否等于已生成四个粒子实例。"
+        },
+        "scenario": "第一朵火花正常，第二次复用却出现在旧位置；或者maxSize设16，现场仍能同时出现更多效果。本课只用一份非循环粒子Prefab和一个管理器，逐次观察借出、结束和归还。",
+        "purpose": "做出能实际触发的火花池，并分清活跃数量、空闲保留与旧状态重置。"
       }
     },
     {
@@ -943,11 +1025,20 @@ window.COURSE_MODULES.push({
       "code": {
         "title": "最小反馈入口",
         "language": "csharp",
-        "filename": "ImpactFeedback.cs",
-        "source": "using UnityEngine;\npublic class ImpactFeedback : MonoBehaviour\n{\n    [SerializeField] ParticleSystem particles;\n    [SerializeField] AudioSource source;\n    [SerializeField] AudioClip impact;\n    [SerializeField, Min(0)] float minimumInterval = 0.05f;\n    float nextAllowed;\n    public void Present(Vector3 position)\n    {\n        if (Time.unscaledTime < nextAllowed) return;\n        nextAllowed = Time.unscaledTime + minimumInterval;\n        if (particles) { particles.transform.position = position; particles.Play(true); }\n        if (source && impact) source.PlayOneShot(impact);\n    }\n}",
         "explanation": [
           "将脚本放在独立反馈对象上，指定非循环粒子、AudioSource和命中Clip，由已经确认结果的逻辑调用Present。音源与反馈对象应在需要播放期间保持有效。",
-          "这是单入口、单发射器的限频示例，minimumInterval不是每个敌人的独立计时，也不是多点并发池。连续调用Play不应被当成每次都创建一份新效果的保证。"
+          "这是单入口、单发射器的限频示例，minimumInterval不是每个敌人的独立计时，也不是多点并发池。连续调用Play不应被当成每次都创建一份新效果的保证。",
+          "第二文件ImpactFeedbackLabDriver用固定偏移序列演示“先确认样本生命值，再调用表现”，不是正式伤害系统；每次驱动启用会重置实验生命值100。它记录实际发送时刻，不承诺渲染帧精确落在0.02等理论时点，也没有读取反馈内部的接受计数。停用驱动会取消尚未发送的协程请求。"
+        ],
+        "files": [
+          {
+            "filename": "ImpactFeedback.cs",
+            "source": "using UnityEngine;\npublic class ImpactFeedback : MonoBehaviour\n{\n    [SerializeField] ParticleSystem particles;\n    [SerializeField] AudioSource source;\n    [SerializeField] AudioClip impact;\n    [SerializeField, Min(0)] float minimumInterval = 0.05f;\n    float nextAllowed;\n    public void Present(Vector3 position)\n    {\n        if (Time.unscaledTime < nextAllowed) return;\n        nextAllowed = Time.unscaledTime + minimumInterval;\n        if (particles) { particles.transform.position = position; particles.Play(true); }\n        if (source && impact) source.PlayOneShot(impact);\n    }\n}"
+          },
+          {
+            "filename": "ImpactFeedbackLabDriver.cs",
+            "source": "using System.Collections;\nusing UnityEngine;\n\npublic sealed class ImpactFeedbackLabDriver : MonoBehaviour\n{\n    [SerializeField] ImpactFeedback feedback;\n    [SerializeField] float[] requestOffsets = { 0f, 0.02f, 0.05f, 0.06f };\n\n    void OnEnable() => StartCoroutine(RunSamples());\n\n    IEnumerator RunSamples()\n    {\n        yield return null;\n        if (requestOffsets == null) yield break;\n        int sampleHealth = 100;\n        float started = Time.unscaledTime;\n        for (int i = 0; i < requestOffsets.Length; i++)\n        {\n            float offset = Mathf.Max(0f, requestOffsets[i]);\n            while (Time.unscaledTime - started < offset) yield return null;\n            sampleHealth -= 10;\n            Debug.Log($\"Confirmed sample hit {i + 1}; health={sampleHealth}; elapsed={Time.unscaledTime - started:F3}\", this);\n            if (feedback != null && feedback.isActiveAndEnabled)\n                feedback.Present(transform.position);\n        }\n    }\n\n    void OnDisable() => StopAllCoroutines();\n}"
+          }
         ]
       },
       "lab": [
@@ -959,7 +1050,14 @@ window.COURSE_MODULES.push({
             "分别移除粒子、Clip等引用，逐次运行同一序列，核对伤害结果与仍可用的表现。",
             "先在纸上推导0、0.02、0.05、0.06秒四次请求应接受哪几次；再记录运行中的实际unscaledTime、接受数和nextAllowed。拒绝请求不改下一次允许时间，粒子仍在播放也不等于这次请求已接受。"
           ],
-          "result": "核心结果独立成立，资源缺失和限频只影响本例提供的表现。"
+          "result": "核心结果独立成立，资源缺失和限频只影响本例提供的表现。",
+          "setup": [
+            "新建L065_Feedback。GameObject > Create Empty建FeedbackHost，保存ImpactFeedback.cs与ImpactFeedbackLabDriver.cs并添加两个组件。驱动是实验用的确认结果计数，不是正式战斗系统。",
+            "给FeedbackHost添加AudioSource，关闭Play On Awake并指定一个短命中Clip；场景只留一个有效AudioListener。另建非循环ParticleSystem并关闭Play On Awake，把ParticleSystem、AudioSource、Clip分别拖给ImpactFeedback字段，Minimum Interval=0.05。",
+            "把FeedbackHost上的ImpactFeedback拖到驱动Feedback字段。Request Offsets保留0、0.02、0.05、0.06，Play后驱动等待一帧，再按实际帧提交；Window > General > Console查看时间和实验生命值。",
+            "日志中的发送不等于接受。若要精确计数，可在学习项目副本ImpactFeedback接受分支、nextAllowed更新后加一条Accepted日志；教材原入口不自带接受计数器，也不要用粒子对象数代替。"
+          ],
+          "purpose": "让同一份确认结果在有无素材两种状态下保持一致，再分别观察发送请求与实际接受。"
         },
         {
           "title": "规定密集事件、暂停与结束规则",
@@ -969,7 +1067,13 @@ window.COURSE_MODULES.push({
             "列出timeScale=0时哪些系统继续，说明恢复时间由谁维护，并避免用已停止的游戏时间等待恢复。",
             "测试关闭反馈设置、切场景和中途销毁目标，检查镜头偏移、显示状态和仍需播放的尾音各如何结束。"
           ],
-          "result": "每种反馈都能说明自己的数量、时钟和清理，不靠互相覆盖全局状态维持效果。"
+          "result": "每种反馈都能说明自己的数量、时钟和清理，不靠互相覆盖全局状态维持效果。",
+          "setup": [
+            "另存L065_Policies，先保留相同驱动序列和已工作的音效/粒子。要测密集请求可把几个Offset设相同，但记录这是新的序列，不和原样本混算。",
+            "先写声音合并、火花并发和震动上限规则。现成ImpactFeedback只有单入口限频、一个发射器和音效播放，不会自动生成震屏、命中停顿或并发池。",
+            "暂停恢复属于独立扩展：先确定统一的timeScale管理者与非缩放恢复时钟，再实现。停用驱动会取消尚未发送的实验请求；已经确认的结果不因关闭表现组件自动撤销。"
+          ],
+          "purpose": "固定事件序列便于比较表现策略；暂停和清理测试分别核对时钟与结束责任。"
         }
       ],
       "pitfalls": [
@@ -1020,7 +1124,8 @@ window.COURSE_MODULES.push({
             "强制创建任意粒子才允许更新生命"
           ],
           "answer": 1,
-          "explanation": "事实与表现分开后，声音或粒子缺失不会破坏已经成立的核心结果。"
+          "explanation": "事实与表现分开后，声音或粒子缺失不会破坏已经成立的核心结果。",
+          "scenario": "伤害逻辑已经确认敌人生命减少10；随后反馈组件发现粒子引用为空，音源或其他表现仍可能可用。"
         },
         {
           "question": "timeScale=0后，用WaitForSeconds等待恢复存在什么风险？",
@@ -1031,7 +1136,8 @@ window.COURSE_MODULES.push({
             "物理会自动以两倍频率弥补暂停"
           ],
           "answer": 0,
-          "explanation": "恢复逻辑不能只依赖自己刚刚停止的时钟。要选择适合的非缩放时间，并协调全局暂停状态。"
+          "explanation": "恢复逻辑不能只依赖自己刚刚停止的时钟。要选择适合的非缩放时间，并协调全局暂停状态。",
+          "scenario": "唯一恢复协程在把timeScale设0之后执行WaitForSeconds(0.1f)，恢复条件依赖这次等待结束。"
         },
         {
           "question": "同时命中10个目标，怎样决定镜头震动强度？",
@@ -1042,7 +1148,8 @@ window.COURSE_MODULES.push({
             "由粒子素材文件数量自动决定"
           ],
           "answer": 1,
-          "explanation": "镜头震动要帮助辨认结果。并发事件可能需要合并和限幅，单纯叠加强度会降低可读性。"
+          "explanation": "镜头震动要帮助辨认结果。并发事件可能需要合并和限幅，单纯叠加强度会降低可读性。",
+          "scenario": "同一时刻确认命中10个目标，希望玩家识别结果且避免过强震动；当前还没有定义合并、优先级或强度上限。"
         }
       ],
       "references": [
@@ -1078,8 +1185,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "命中停顿把timeScale设为0，再用WaitForSeconds等0.1秒恢复，会有什么问题？",
-          "answer": "WaitForSeconds依赖缩放后的游戏时间，而这个时间已被自己停止，恢复逻辑可能一直等不到。应使用合适的非缩放时间，并让统一的时间管理者协调暂停、慢动作与命中停顿。"
-        }
+          "answer": "WaitForSeconds依赖缩放后的游戏时间，而这个时间已被自己停止，恢复逻辑可能一直等不到。应使用合适的非缩放时间，并让统一的时间管理者协调暂停、慢动作与命中停顿。",
+          "scenario": "命中停顿把Time.timeScale设0，代码准备用WaitForSeconds(0.1f)等待后恢复；没有其他独立流程会修改timeScale。"
+        },
+        "scenario": "一击已经扣血，火花资源一丢，程序却把伤害也搅乱；密集命中再叠十倍震屏，又让信息变得更难看清。这里用自动时间序列先记录确认结果，再调用独立的反馈入口。",
+        "purpose": "能让音效或粒子缺失只影响表现，并能解释限频、并发、强度和暂停时钟各由谁控制。"
       }
     }
   ]

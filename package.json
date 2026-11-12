@@ -9,6 +9,7 @@
     "audit:sources": "node scripts/audit-sources.mjs",
     "audit:editorial": "node scripts/audit-editorial.mjs",
     "test:browser": "node scripts/test-browser.mjs",
+    "test:context-browser": "node scripts/test-context-browser.mjs",
     "test:learners": "node --test scripts/test-learners.mjs",
     "test:learner-browser": "node scripts/test-learner-browser.mjs"
   }

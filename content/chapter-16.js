@@ -58,11 +58,23 @@ window.COURSE_MODULES.push({
       "code": {
         "title": "只有 Motor 写刚体速度",
         "language": "csharp",
-        "filename": "IntentMotor2D.cs",
-        "source": "using UnityEngine;\n\n[RequireComponent(typeof(Rigidbody2D))]\npublic sealed class IntentMotor2D : MonoBehaviour\n{\n    [SerializeField, Min(0f)] private float speed = 5f;\n    private Rigidbody2D body;\n    private Vector2 intent;\n    private void Awake() => body = GetComponent<Rigidbody2D>();\n    public void SetIntent(Vector2 value) => intent = Vector2.ClampMagnitude(value, 1f);\n    private void FixedUpdate() => body.linearVelocity = intent * speed;\n    private void OnDisable()\n    {\n        intent = Vector2.zero;\n        if (body != null) body.linearVelocity = Vector2.zero;\n    }\n}",
         "explanation": [
-          "挂在带 Rigidbody2D 的实验对象上。俯视实验把重力设为 0，并核对示例需要的刚体类型；本例没有输入读取代码。",
+          "分别保存三个文件。Motor 与菜单驱动挂在同一个动态 Rigidbody2D 对象上，Gravity Scale 设0；ConflictingVelocityProbe 仅用于副本中的故意抢写实验。",
           "通过 SetIntent 提交方向和强度，由 Motor 最终写入速度。先移除其他直接写同一刚体速度的脚本，再观察结果。"
+        ],
+        "files": [
+          {
+            "filename": "IntentMotor2D.cs",
+            "source": "using UnityEngine;\n\n[RequireComponent(typeof(Rigidbody2D))]\npublic sealed class IntentMotor2D : MonoBehaviour\n{\n    [SerializeField, Min(0f)] private float speed = 5f;\n    private Rigidbody2D body;\n    private Vector2 intent;\n    private void Awake() => body = GetComponent<Rigidbody2D>();\n    public void SetIntent(Vector2 value) => intent = Vector2.ClampMagnitude(value, 1f);\n    private void FixedUpdate() => body.linearVelocity = intent * speed;\n    private void OnDisable()\n    {\n        intent = Vector2.zero;\n        if (body != null) body.linearVelocity = Vector2.zero;\n    }\n}"
+          },
+          {
+            "filename": "MotorIntentProbe.cs",
+            "source": "using UnityEngine;\n\n[RequireComponent(typeof(IntentMotor2D))]\npublic sealed class MotorIntentProbe : MonoBehaviour\n{\n    private IntentMotor2D motor;\n    private void Awake() => motor = GetComponent<IntentMotor2D>();\n    [ContextMenu(\"Submit Right Intent\")]\n    private void Right() => Submit(Vector2.right);\n    [ContextMenu(\"Submit Zero Intent\")]\n    private void Stop() => Submit(Vector2.zero);\n    private void Submit(Vector2 value)\n    {\n        if (Application.isPlaying && motor != null && motor.isActiveAndEnabled)\n            motor.SetIntent(value);\n    }\n}"
+          },
+          {
+            "filename": "ConflictingVelocityProbe.cs",
+            "source": "using UnityEngine;\n\n// 故意制造第二个速度写入者，只用于本课副本实验。\n[RequireComponent(typeof(Rigidbody2D))]\npublic sealed class ConflictingVelocityProbe : MonoBehaviour\n{\n    private Rigidbody2D body;\n    private void Awake() => body = GetComponent<Rigidbody2D>();\n    private void FixedUpdate() => body.linearVelocity = new Vector2(-3f, 0f);\n}"
+          }
         ]
       },
       "lab": [
@@ -70,12 +82,18 @@ window.COURSE_MODULES.push({
           "title": "识别并消除抢写",
           "minutes": 60,
           "steps": [
-            "在实验副本给同一 Rigidbody2D 再挂一个脚本，每个固定步写不同速度，对照 Motor 的最终结果。",
+            "在实验副本给 Player 挂 ConflictingVelocityProbe，启用它并提交向右意图，观察两个固定更新写入位置；不要假定 Unity 保证两类脚本的默认先后。",
             "停用临时写入者，恢复唯一控制权。",
-            "用组件菜单或简单测试驱动提交移动意图。",
+            "在 MotorIntentProbe 组件菜单依次提交 Submit Right Intent、Submit Zero Intent，观察移动与停止。",
             "写出 Motor 的输入、输出和配置前提。"
           ],
-          "result": "能指出最终刚体写入者且无隐式抢写。"
+          "result": "能指出最终刚体写入者且无隐式抢写。",
+          "setup": [
+            "新建并保存俯视实验场景，用 GameObject > Create Empty 建 Player，挂 IntentMotor2D、MotorIntentProbe；刚体 Body Type 选 Dynamic，Gravity Scale 设0。给 Player 加一个 SpriteRenderer 或用 Scene 视图位置观察。",
+            "打开 Window > General > Inspector 与 Console。播放后从 MotorIntentProbe 组件 ⋮ 菜单执行 Submit Right Intent；原地不动时先核对是否真的提交、组件是否启用。",
+            "在副本给同一个 Player 再挂 ConflictingVelocityProbe。它会每个固定步写(-3,0)，专门用来与 Motor 抢写；正常基线先取消它的组件勾选。"
+          ],
+          "purpose": "先用固定向量排除键位配置，再增加唯一一个冲突来源，确认问题来自两个最终写入者。"
         },
         {
           "title": "变化需求演练",
@@ -86,7 +104,13 @@ window.COURSE_MODULES.push({
             "为缺失依赖建立启动诊断。",
             "比较改动文件数量，删除没有实际用途的抽象。"
           ],
-          "result": "三种变化具有清晰影响范围。"
+          "result": "三种变化具有清晰影响范围。",
+          "setup": [
+            "复制已经能用菜单移动的场景，保留 Motor、测试驱动与零重力设置，删除故意冲突的组件。",
+            "本组是接口扩展练习：先写键盘和手柄各自怎样生成 Vector2，再实现适配器；未连接手柄时，用菜单驱动提交同一个向量验证 Motor。",
+            "在纸上列输入、击退、眩晕三种来源；标出眩晕是否允许击退，再决定谁合成，避免三个组件各自改速度。"
+          ],
+          "purpose": "比较需求变化实际影响哪些位置，检验拆分有没有减少修改范围；不是为了增加脚本数量。"
         }
       ],
       "pitfalls": [
@@ -136,7 +160,8 @@ window.COURSE_MODULES.push({
             "只要把两个脚本放同一目录就能解决"
           ],
           "answer": 1,
-          "explanation": "两个组件同时修改同一状态，职责名称也无法决定谁优先，结果容易依赖执行顺序。"
+          "explanation": "两个组件同时修改同一状态，职责名称也无法决定谁优先，结果容易依赖执行顺序。",
+          "scenario": "Player 的移动与击退组件都在同一物理步给 Rigidbody2D.linearVelocity 赋值；没有统一合成或优先级规则。"
         },
         {
           "question": "RequireComponent 是否替代全部运行时验证？",
@@ -146,7 +171,8 @@ window.COURSE_MODULES.push({
             "是，只要 Awake 中 GetComponent 成功即可"
           ],
           "answer": 1,
-          "explanation": "类型存在与配置正确是两件事，刚体类型、重力和外部引用仍需要检查。"
+          "explanation": "类型存在与配置正确是两件事，刚体类型、重力和外部引用仍需要检查。",
+          "scenario": "一个组件声明需要 Rigidbody2D，Unity 已为对象补上该类型。你还未检查 Body Type、Gravity Scale 和外部引用。"
         },
         {
           "question": "输入设备变化理想情况下先影响哪里？",
@@ -156,7 +182,8 @@ window.COURSE_MODULES.push({
             "必须改动所有读取角色状态的界面"
           ],
           "answer": 0,
-          "explanation": "输入适配部分把设备信号变成稳定的意图，Motor 因此不必跟着每种设备重写。"
+          "explanation": "输入适配部分把设备信号变成稳定的意图，Motor 因此不必跟着每种设备重写。",
+          "scenario": "Motor 只接收 SetIntent(Vector2)，负责最终速度；键盘、手柄各有一个把设备状态变成同类向量的输入组件。现在要换设备。"
         }
       ],
       "references": [
@@ -215,8 +242,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "只有 RequireComponent(Rigidbody2D)，能保证俯视角色不会受重力下落吗？",
-          "answer": "不能。它帮助保证组件类型存在，不会替你把 gravityScale 设为 0，也不会验证所有运动配置。"
-        }
+          "answer": "不能。它帮助保证组件类型存在，不会替你把 gravityScale 设为 0，也不会验证所有运动配置。",
+          "scenario": "Player 挂了带 RequireComponent(Rigidbody2D) 的 IntentMotor2D，但尚未手动检查刚体 Inspector。你要把它用于不应下落的俯视场景。"
+        },
+        "scenario": "俯视角色 Player 有一个 Rigidbody2D。移动脚本想让它向右走，击退脚本想让它向左退，两者都在 FixedUpdate 直接改同一速度。你分别测试都正常，合起来却难以说明谁决定最终方向。",
+        "purpose": "从可见的速度冲突理解组件职责，学会把输入来源与最终修改刚体的地方分开，换设备或加眩晕时能找到修改位置。"
       }
     },
     {
@@ -279,6 +309,10 @@ window.COURSE_MODULES.push({
           {
             "filename": "HealthObserver.cs",
             "source": "using UnityEngine;\npublic sealed class HealthObserver : MonoBehaviour\n{\n    [SerializeField] private HealthSignal source;\n    private void OnEnable()\n    {\n        if (source == null) return;\n        source.Changed += Show;\n        Show(source.Current);\n    }\n    private void OnDisable()\n    {\n        if (source != null) source.Changed -= Show;\n    }\n    private void Show(int value) => Debug.Log($\"HP: {value}\", this);\n}"
+          },
+          {
+            "filename": "HealthDamageProbe.cs",
+            "source": "using UnityEngine;\n\npublic sealed class HealthDamageProbe : MonoBehaviour\n{\n    [SerializeField] private HealthSignal source;\n    [SerializeField, Min(0)] private int amount = 10;\n    [ContextMenu(\"Apply Damage Once\")]\n    private void Apply()\n    {\n        if (!Application.isPlaying || source == null) return;\n        source.Damage(amount);\n        Debug.Log($\"Damage completed; current HP={source.Current}\", this);\n    }\n}"
           }
         ],
         "explanation": [
@@ -291,12 +325,18 @@ window.COURSE_MODULES.push({
           "title": "重复启停审计",
           "minutes": 60,
           "steps": [
-            "给 Observer 赋一个明确 source，在播放中调用一次 Damage，记录生命和通知次数。",
+            "指定两个 Source 后，播放并从伤害驱动执行 Apply Damage Once，记录当前生命和 HP: 通知数。",
             "停用 Observer 后再次伤害，确认它不响应。",
-            "重复启停十次，每次伤害只应产生一次通知。",
+            "启用、停用共做十轮，每轮重新启用后先区分快照日志，再调用一次伤害；该次伤害只应产生一条来自此观察者的 HP: 日志。",
             "故意删去解绑，观察重复响应，再修复。"
           ],
-          "result": "订阅寿命与组件启停一致。"
+          "result": "订阅寿命与组件启停一致。",
+          "setup": [
+            "新建场景空对象 PlayerHealth，挂 HealthSignal 与 HealthDamageProbe，把伤害驱动 Source 拖为自己的 HealthSignal，Amount 留10。",
+            "另建 HealthView 挂 HealthObserver，把 Source 指向 PlayerHealth。打开 Window > General > Console，并关闭 Collapse（折叠相同日志）方便计数。",
+            "播放中从 HealthDamageProbe 的 ⋮ 菜单执行 Apply Damage Once；HP: 日志来自观察者，Damage completed 来自驱动，不要混成两次事件回调。启停只改 HealthObserver 的组件勾选。"
+          ],
+          "purpose": "十次启停用来放大漏解绑造成的累积调用。每次启用本身还有一次当前快照日志，应只数伤害触发后的通知；十次正常不是全部条件正确的证明。"
         },
         {
           "title": "迟到的界面",
@@ -307,7 +347,13 @@ window.COURSE_MODULES.push({
             "移除快照读取，解释为何没有新事件时界面空白。",
             "记录静态事件在当前重载配置中的行为，不把一次实验扩展为所有设置。"
           ],
-          "result": "明确区分当前状态和变化事件。"
+          "result": "明确区分当前状态和变化事件。",
+          "setup": [
+            "沿用 PlayerHealth 与伤害菜单，再建 LateView 挂 HealthObserver、指定同一 Source，开始播放前取消该组件勾选。",
+            "先在播放中伤害一次，确认角色为90，再勾选 LateView 的观察组件。它只输出日志，所谓“显示”指 Console 中的 HP 值。",
+            "只在副本删除 Show(source.Current) 作对照。静态事件是后续扩展：本例 Changed 是实例事件；若研究静态事件，另建样例并记录 Edit > Project Settings > Editor 的 Domain Reload 设置。"
+          ],
+          "purpose": "让观察者错过一次变化，检验只等未来通知是否足以初始化；将实例事件结论与静态状态实验分开。"
         }
       ],
       "pitfalls": [
@@ -357,7 +403,8 @@ window.COURSE_MODULES.push({
             "自动下一帧"
           ],
           "answer": 1,
-          "explanation": "普通 event 在当前调用过程中同步执行订阅方法；线程和延迟行为需要另外实现。"
+          "explanation": "普通 event 在当前调用过程中同步执行订阅方法；线程和延迟行为需要另外实现。",
+          "scenario": "HealthSignal.Damage 在当前主线程调用 Changed?.Invoke；没有任务队列、协程或线程切换代码。问题讨论这种普通 C# 事件调用。"
         },
         {
           "question": "晚加入的 UI 只订阅 Changed 足够吗？",
@@ -367,7 +414,8 @@ window.COURSE_MODULES.push({
             "必须每帧广播所有历史"
           ],
           "answer": 1,
-          "explanation": "若当前没有新变化，只有事件订阅无法告诉晚加入者现有值，还需要读取当前状态。"
+          "explanation": "若当前没有新变化，只有事件订阅无法告诉晚加入者现有值，还需要读取当前状态。",
+          "scenario": "角色已经从100生命降至90，新的观察者此后才启用，接下来暂时没有新伤害。界面需要显示现在的生命。"
         },
         {
           "question": "长寿命发布者忘记解绑可能造成？",
@@ -377,7 +425,8 @@ window.COURSE_MODULES.push({
             "自动被 GC 安全清理"
           ],
           "answer": 0,
-          "explanation": "发布者的委托关系可能继续引用订阅者，也可能因重复订阅造成多次响应；它不会因为场景意图上退出就自动消失。"
+          "explanation": "发布者的委托关系可能继续引用订阅者，也可能因重复订阅造成多次响应；它不会因为场景意图上退出就自动消失。",
+          "scenario": "服务对象持续存活，界面观察者多次进入退出；每次进入都给同一个事件加监听，但退出时没有减去。"
         }
       ],
       "references": [
@@ -436,8 +485,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "source 从甲改成乙，是否自动取消甲的事件订阅？",
-          "answer": "不会。需要先对旧源取消订阅，再绑定新源并读取新状态；只改字段不会修改旧事件列表。"
-        }
+          "answer": "不会。需要先对旧源取消订阅，再绑定新源并读取新状态；只改字段不会修改旧事件列表。",
+          "scenario": "观察者先订阅角色甲的 HealthSignal.Changed。现在想让它观察另一个角色乙，只把 source 字段改成乙，尚未执行任何取消或重新订阅代码。"
+        },
+        "scenario": "角色对象 PlayerHealth 保存100点生命；观察对象 HealthView 只在 Console 输出它收到的生命值，暂不制作真正的 UI 血条。角色先受10点伤害，另一个观察者后来才启用，这时它该显示当前90还是等待下一次伤害？",
+        "purpose": "沿一次伤害看清状态、通知和首次显示的顺序，再用启停找出重复订阅，让界面退出后不再接收旧角色的消息。"
       }
     },
     {
@@ -490,13 +542,44 @@ window.COURSE_MODULES.push({
         }
       ],
       "code": {
-        "title": "不依赖 UnityEngine 的规则程序集",
+        "title": "规则、运行适配与编辑工具三个程序集",
         "language": "json",
-        "filename": "Assets/EngineLab/Rules/EngineLab.Rules.asmdef",
-        "source": "{\n  \"name\": \"EngineLab.Rules\",\n  \"rootNamespace\": \"EngineLab.Rules\",\n  \"references\": [],\n  \"includePlatforms\": [],\n  \"excludePlatforms\": [],\n  \"allowUnsafeCode\": false,\n  \"autoReferenced\": true,\n  \"noEngineReferences\": true\n}",
         "explanation": [
-          "只在独立实验目录使用该配置，让 Rules 不引用 UnityEngine。先用一个普通数值函数验证，再逐步迁移。",
-          "分别配置 Runtime、Editor、Tests 的实际程序集引用。测试程序集先由 Test Runner 创建模板，Editor 程序集明确限制为编辑器。"
+          "按每个文件显示的完整Assets路径保存。三份.asmdef是JSON配置，不是C#脚本；DamageRule是普通纯数据函数，RuleBoundaryProbe是可挂组件，RuleBoundaryMenu只在Editor程序集编译。",
+          "RuleBoundaryProbe挂到场景空对象后，Start会由引擎在对应时机调用，再由它调用DamageRule.Apply。顶部Engine Lab > Report Rule Boundary由编辑工具提供，只有点击才运行，不是引擎自动逐帧执行。",
+          "示例的引用方向是Adapters→Rules、EditorTools→Adapters。EditorTools配置includePlatforms=[Editor]，Rules原有noEngineReferences=true；先成功编译，再在Rules临时引用MonoBehaviour验证限制。"
+        ],
+        "files": [
+          {
+            "filename": "Assets/EngineLab/Rules/EngineLab.Rules.asmdef",
+            "source": "{\n  \"name\": \"EngineLab.Rules\",\n  \"rootNamespace\": \"EngineLab.Rules\",\n  \"references\": [],\n  \"includePlatforms\": [],\n  \"excludePlatforms\": [],\n  \"allowUnsafeCode\": false,\n  \"autoReferenced\": true,\n  \"noEngineReferences\": true\n}",
+            "language": "json"
+          },
+          {
+            "filename": "Assets/EngineLab/Rules/DamageRule.cs",
+            "language": "csharp",
+            "source": "namespace EngineLab.Rules\n{\n    public static class DamageRule\n    {\n        public static int Apply(int hp, int amount)\n        {\n            if (hp < 0 || amount < 0) throw new System.ArgumentOutOfRangeException();\n            return amount >= hp ? 0 : hp - amount;\n        }\n    }\n}"
+          },
+          {
+            "filename": "Assets/EngineLab/Adapters/EngineLab.Adapters.asmdef",
+            "language": "json",
+            "source": "{\n  \"name\": \"EngineLab.Adapters\",\n  \"references\": [\n    \"EngineLab.Rules\"\n  ],\n  \"includePlatforms\": [],\n  \"autoReferenced\": true\n}"
+          },
+          {
+            "filename": "Assets/EngineLab/Adapters/RuleBoundaryProbe.cs",
+            "language": "csharp",
+            "source": "using EngineLab.Rules;\nusing UnityEngine;\n\npublic sealed class RuleBoundaryProbe : MonoBehaviour\n{\n    private void Start() => Debug.Log($\"DamageRule.Apply(5, 8)={DamageRule.Apply(5, 8)}\", this);\n}"
+          },
+          {
+            "filename": "Assets/EngineLab/EditorTools/EngineLab.EditorTools.asmdef",
+            "language": "json",
+            "source": "{\n  \"name\": \"EngineLab.EditorTools\",\n  \"references\": [\n    \"EngineLab.Adapters\"\n  ],\n  \"includePlatforms\": [\n    \"Editor\"\n  ],\n  \"autoReferenced\": true\n}"
+          },
+          {
+            "filename": "Assets/EngineLab/EditorTools/RuleBoundaryMenu.cs",
+            "language": "csharp",
+            "source": "using UnityEditor;\nusing UnityEngine;\n\npublic static class RuleBoundaryMenu\n{\n    [MenuItem(\"Engine Lab/Report Rule Boundary\")]\n    private static void Report() => Debug.Log($\"Runtime type: {typeof(RuleBoundaryProbe).FullName}\");\n}"
+          }
         ]
       },
       "lab": [
@@ -504,23 +587,35 @@ window.COURSE_MODULES.push({
           "title": "把边界交给编译器",
           "minutes": 60,
           "steps": [
-            "在独立目录创建 Rules asmdef，按示例配置为不引用引擎，再放入普通伤害函数。",
-            "在适配层创建独立 asmdef 并引用 Rules。",
+            "按完整文件路径保存Rules配置与DamageRule纯函数，确认noEngineReferences=true；不要只给普通文件夹起名Rules。",
+            "保存Adapters配置与RuleBoundaryProbe，挂到空对象并播放，确认Start通过显式引用调用Rules。",
             "故意在 Rules 引用 MonoBehaviour，确认编译器拒绝。",
             "撤销非法依赖，保存最终依赖图。"
           ],
-          "result": "底层无法直接访问引擎场景 API。"
+          "result": "底层无法直接访问引擎场景 API。",
+          "setup": [
+            "在Project的Assets下按各文件路径建立EngineLab/Rules、Adapters、EditorTools三个独立目录。用文本编辑器按显示的文件名保存，不把JSON存成.cs；先放Rules的asmdef与DamageRule，再放Adapters的asmdef与驱动。",
+            "通过File > New Scene建立空场景，File > Save As保存为Assets/EngineLab/Scenes/BoundaryLab.unity。创建空对象RuleProbe并挂RuleBoundaryProbe；播放后到Window > General > Console，Start会自动输出DamageRule.Apply(5,8)=0，纯函数不会因public自行执行。",
+            "选中两个asmdef查看Inspector：Adapters的Assembly Definition References包含EngineLab.Rules。先确认合法调用无编译错误，再在Rules的DamageRule类中临时声明UnityEngine.MonoBehaviour字段；记录被拒绝的错误，随后撤销这行。"
+          ],
+          "purpose": "先让正确方向可工作，再故意越界，确认限制确实由编译器执行，文件夹名不再只是约定。"
         },
         {
           "title": "验证 Editor 隔离",
           "minutes": 60,
           "steps": [
-            "为工具建立 Editor-only 程序集，显式引用 Runtime，检查对应脚本实际编译到哪里。",
+            "保存给出的EditorTools配置与菜单类，核对Editor-only及Adapters引用，并点击菜单验证可访问Runtime类型。",
             "确认工具能访问 Runtime，而 Runtime 不引用 Editor。",
-            "检查包类型使用所需的程序集引用。",
+            "本例未使用Input System等额外包类型，这项包引用检查记“不适用”。若你另加包类型，先记实际类型及其所在程序集，再检查使用它的asmdef引用，不凭空增删包引用。",
             "运行一次目标平台构建并记录结果。"
           ],
-          "result": "边界同时在编辑器和 Player 编译中成立。"
+          "result": "边界同时在编辑器和 Player 编译中成立。",
+          "setup": [
+            "按完整路径保存EditorTools的asmdef与RuleBoundaryMenu.cs。选asmdef，在Inspector核对平台只含Editor、引用EngineLab.Adapters；本例运行部分指Rules与Adapters，逐一确认二者都不引用EditorTools。",
+            "编译成功后点击顶部Engine Lab > Report Rule Boundary，Console应报告运行适配类型名。这个菜单类不挂对象；能读取Runtime类型用来检查引用方向。",
+            "打开File > Build Profiles，选已安装模块的目标，把前组保存的Assets/EngineLab/Scenes/BoundaryLab.unity加入有效场景列表并构建。启动Player检查RuleProbe输出；Editor菜单只存在于编辑器，同时核对没有UnityEditor依赖编译错误。"
+          ],
+          "purpose": "编辑器能运行工具只是第一层证据，Player 构建还要验证工具依赖没有进入运行代码。"
         }
       ],
       "pitfalls": [
@@ -570,7 +665,8 @@ window.COURSE_MODULES.push({
             "把命名空间改成 UnityEditor 就自动隔离"
           ],
           "answer": 1,
-          "explanation": "存在父 asmdef 时，不能仅凭 Editor 目录名断定编译归属。独立程序集和平台约束要配置并实际验证。"
+          "explanation": "存在父 asmdef 时，不能仅凭 Editor 目录名断定编译归属。独立程序集和平台约束要配置并实际验证。",
+          "scenario": "Runtime 目录有自己的 asmdef，其 Editor 子目录里放了使用 UnityEditor 的工具代码，当前还没有独立的子程序集配置。"
         },
         {
           "question": "循环引用通常应怎样解决？",
@@ -580,7 +676,8 @@ window.COURSE_MODULES.push({
             "只把其中一个命名空间改名"
           ],
           "answer": 1,
-          "explanation": "循环通常说明双方职责或共享内容放错位置，应重划方向或提取共同依赖，而不是增加更多交叉引用。"
+          "explanation": "循环通常说明双方职责或共享内容放错位置，应重划方向或提取共同依赖，而不是增加更多交叉引用。",
+          "scenario": "规则程序集和运行适配程序集现在想相互调用，添加一个方向的引用后，另一方也要求引用回来。"
         },
         {
           "question": "Player 构建验证了什么？",
@@ -590,7 +687,8 @@ window.COURSE_MODULES.push({
             "所有平台都不再需要构建验证"
           ],
           "answer": 1,
-          "explanation": "目标 Player 构建能暴露编辑器环境中看不出的运行代码依赖，但不能替代行为测试或其他平台验证。"
+          "explanation": "目标 Player 构建能暴露编辑器环境中看不出的运行代码依赖，但不能替代行为测试或其他平台验证。",
+          "scenario": "代码在编辑器中可编译，计划交付 Windows Player；项目内同时有运行脚本和 UnityEditor 工具。"
         }
       ],
       "references": [
@@ -649,8 +747,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "Runtime asmdef 下建一个 Editor 文件夹就一定隔离了吗？",
-          "answer": "不能这样推断。父 asmdef 会影响脚本归属，应建立并配置独立的 Editor-only 程序集，再用构建验证。"
-        }
+          "answer": "不能这样推断。父 asmdef 会影响脚本归属，应建立并配置独立的 Editor-only 程序集，再用构建验证。",
+          "scenario": "Assets/EngineLab/Runtime 已由一个 Runtime.asmdef 覆盖。你在它下面新增 Editor 子文件夹，准备放使用 UnityEditor 的工具，尚未建立子级 asmdef。"
+        },
+        "scenario": "你把普通伤害函数放到 Rules 文件夹，以为它已经与场景代码隔离，后来却有人在其中访问 MonoBehaviour。文件仍能编译，说明目录名字并没有替你限制这种引用。",
+        "purpose": "让编译器帮你验证依赖方向，并能区分“没安装包”“没引用程序集”和“没有写 using”三种报错来源。"
       }
     },
     {
@@ -730,7 +831,13 @@ window.COURSE_MODULES.push({
             "运行测试记录失败，再修复零下限。",
             "保留测试作为回归，修改内部实现后再次执行。"
           ],
-          "result": "测试确实能区分错误与正确行为。"
+          "result": "测试确实能区分错误与正确行为。",
+          "setup": [
+            "先通过 Window > Package Management 打开 Package Manager，确认已安装兼容 Test Framework；再打开 Window > General > Test Runner。",
+            "在 Test Runner 的 EditMode 页创建测试程序集目录，保留生成的测试程序集配置，将给出的 HealthMathTests.cs 放进去。Rules 中只放 HealthMath.cs，测试 asmdef 通过 Inspector 引用 Rules。",
+            "保存并等 Console 无编译错误，选中测试运行；不要把 NUnit 文件放进普通 Player 运行目录，也不需要把测试类挂到 GameObject。"
+          ],
+          "purpose": "先用过量伤害暴露错误，再修复并重跑，证明测试确实能区分缺陷，而非始终显示通过。"
         },
         {
           "title": "补充边界而非复制公式",
@@ -741,7 +848,13 @@ window.COURSE_MODULES.push({
             "检查用例是否依赖执行顺序或静态残留。",
             "为浮点移动函数设计容差，并说明尺度依据。"
           ],
-          "result": "测试集有边界和失败诊断价值。"
+          "result": "测试集有边界和失败诊断价值。",
+          "setup": [
+            "沿用可运行的 EditMode 测试程序集，另开一张输入/要求/手算期望表，暂不读函数内部表达式。",
+            "至少覆盖零伤害、恰好归零、过量伤害、已为零、负伤害拒绝这五类；五个样本分别对应不同规则边界，不是用例越多越好。",
+            "浮点移动是独立扩展：先定义单位、步长与可接受误差，再写函数和断言；不要把整数生命用例直接当作物理移动测试。"
+          ],
+          "purpose": "每个样本都对应一种可能的错误；用独立推导而非复制公式，才能发现实现与测试同时写错的情况。"
         }
       ],
       "pitfalls": [
@@ -791,7 +904,8 @@ window.COURSE_MODULES.push({
             "只有浮点公式才存在这个风险"
           ],
           "answer": 1,
-          "explanation": "相同实现方式可能带来相同错误。期望要从已知要求、手算或独立参考得到。"
+          "explanation": "相同实现方式可能带来相同错误。期望要从已知要求、手算或独立参考得到。",
+          "scenario": "需求写明生命不得低于0。实现暂时直接做 current-amount，测试作者也用同一减法临时计算期望。"
         },
         {
           "question": "纯函数测试全绿说明物理动画正确吗？",
@@ -801,7 +915,8 @@ window.COURSE_MODULES.push({
             "只要用例数量足够多就说明"
           ],
           "answer": 1,
-          "explanation": "测试只支持它实际覆盖的条件和行为。数值规则绿灯不能推导引擎协作正确。"
+          "explanation": "测试只支持它实际覆盖的条件和行为。数值规则绿灯不能推导引擎协作正确。",
+          "scenario": "目前通过的都是普通 C# 伤害函数测试；没有创建场景角色、推动物理或等待动画状态。"
         },
         {
           "question": "最有价值的缺陷回归测试通常是？",
@@ -811,7 +926,8 @@ window.COURSE_MODULES.push({
             "检查每个局部变量必须使用原来的名字"
           ],
           "answer": 0,
-          "explanation": "真实缺陷的最小重现用例能明确防止该行为退化；检查实现细节未必具有同样价值。"
+          "explanation": "真实缺陷的最小重现用例能明确防止该行为退化；检查实现细节未必具有同样价值。",
+          "scenario": "项目曾出现生命5受到8伤害后得到-3的缺陷。现在要保留一个能在将来重构时发现同类退化的测试。"
         }
       ],
       "references": [
@@ -870,8 +986,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "纯规则测试全部通过，能证明角色碰撞与动画都正确吗？",
-          "answer": "不能。它们验证数值规则，碰撞配置和动画时序需要在适合的 Unity 环境中另做验证。"
-        }
+          "answer": "不能。它们验证数值规则，碰撞配置和动画时序需要在适合的 Unity 环境中另做验证。",
+          "scenario": "你已用 Edit Mode 测试验证 HealthMath 的输入输出，但尚未在场景中运行 Rigidbody2D、碰撞器或 Animator。"
+        },
+        "scenario": "现在只研究生命数值，不创建角色：HealthMath.AfterDamage 接收当前生命与伤害，要求过量伤害后最低为0。当前5、伤害8，是一个不靠画面就能判断的错误样本。",
+        "purpose": "学会从规则独立得出期望结果，并亲眼看到错误实现失败、修复后通过，让测试能保护重构。"
       }
     },
     {
@@ -944,7 +1063,13 @@ window.COURSE_MODULES.push({
             "把断言移到 Destroy 后立即执行并记录不同语义。",
             "连续执行十次，确认无残留测试对象。"
           ],
-          "result": "时序与对象身份的断言能被解释。"
+          "result": "时序与对象身份的断言能被解释。",
+          "setup": [
+            "安装兼容 Test Framework，打开 Window > General > Test Runner，在 PlayMode 页建立测试程序集目录，保留其配置。",
+            "将 ObjectLifetimeTests.cs 放入该目录，保存并等编译完成；它是测试类，不挂场景对象。由 Test Runner 运行测试，观察通过/失败与 Console 输出。",
+            "实验对象由测试内部创建。运行前后在 Hierarchy 查 OwnedByLifetimeTest，不借用你自己的 Player；改断言时先保留能通过的版本。"
+          ],
+          "purpose": "连续十次是检查上次执行是否留下对象或共享状态，从而影响下次。等待前后的对照用于理解时序，重复次数本身不证明所有生命周期正确。"
         },
         {
           "title": "移动集成测试设计",
@@ -955,7 +1080,13 @@ window.COURSE_MODULES.push({
             "用位置范围和超时验证移动，再验证停用后停止。",
             "在失败后检查时间设置、事件和对象都被恢复。"
           ],
-          "result": "集成测试有条件、容差、上限和清理。"
+          "result": "集成测试有条件、容差、上限和清理。",
+          "setup": [
+            "在 PlayMode 测试程序集另建移动测试，引用第76课 Motor 所在程序集；这是你设计的集成测试，不是销毁样例自带功能。",
+            "测试自己创建 GameObject、Dynamic Rigidbody2D 和 Motor，设 Gravity Scale=0，保存自己要改变的时间设置；不要在正式关卡角色上测试。",
+            "先写清提交意图、等待的物理条件、位置容差、最长等待与 finally/TearDown 清理，再运行；失败路径也恢复设置并销毁自有对象。"
+          ],
+          "purpose": "把纯数值正确推进到组件协作正确，同时检验失败后是否污染下一项测试。"
         }
       ],
       "pitfalls": [
@@ -1005,7 +1136,8 @@ window.COURSE_MODULES.push({
             "仅低帧率时保证"
           ],
           "answer": 1,
-          "explanation": "渲染帧和物理固定步并非一一对应；等待必须匹配真正要验证的模拟阶段。"
+          "explanation": "渲染帧和物理固定步并非一一对应；等待必须匹配真正要验证的模拟阶段。",
+          "scenario": "测试调用 Destroy 后，用 yield return null 等到后续帧；现在讨论这次等待能否等价于一个固定物理步。"
         },
         {
           "question": "异步测试等待条件应有什么？",
@@ -1015,7 +1147,8 @@ window.COURSE_MODULES.push({
             "每次固定等一分钟"
           ],
           "answer": 1,
-          "explanation": "明确条件让测试知道何时完成，最大超时则让失败可诊断，避免无限等待。"
+          "explanation": "明确条件让测试知道何时完成，最大超时则让失败可诊断，避免无限等待。",
+          "scenario": "测试等待异步加载或角色到达目标。如果完成条件一直不成立，仍需要让测试结束并给出失败信息。"
         },
         {
           "question": "测试清理应该删除哪些对象？",
@@ -1025,7 +1158,8 @@ window.COURSE_MODULES.push({
             "整个场景"
           ],
           "answer": 1,
-          "explanation": "测试保存并清理自己创建的内容，才能避免按名字删除其他对象或污染后续用例。"
+          "explanation": "测试保存并清理自己创建的内容，才能避免按名字删除其他对象或污染后续用例。",
+          "scenario": "场景中已有正式对象，测试另创建两个实验对象并持有引用。测试结束或失败时需要清理。"
         }
       ],
       "references": [
@@ -1084,8 +1218,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "yield return null 能保证刚体正好前进一步吗？",
-          "answer": "不能。它与渲染帧调度有关，物理固定步可能零次或多次；需要按实际验证阶段安排等待。"
-        }
+          "answer": "不能。它与渲染帧调度有关，物理固定步可能零次或多次；需要按实际验证阶段安排等待。",
+          "scenario": "一个协程测试要验证刚体运动，当前只执行 yield return null。它没有指定固定物理阶段，也没有控制这一渲染帧前后实际推进几次物理模拟。"
+        },
+        "scenario": "测试创建一个名为 OwnedByLifetimeTest 的 GameObject，保存引用后调用 Destroy。下一帧比较时，Unity 的 == null 和普通托管引用的 ReferenceEquals 可能给出不同结果；这不等于测试互相矛盾。",
+        "purpose": "把引擎阶段也写进断言前提，学会等待合适时机，并让测试只清理自己创建的对象。"
       }
     }
   ]

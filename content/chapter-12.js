@@ -1,4 +1,4 @@
-// 学者修订：补足具体推导、实验起点及教学边界。
+// 语境修订：题目背景、实验准备与学习用途。
 window.COURSE_MODULES.push({
   "id": "m12",
   "number": 12,
@@ -94,7 +94,13 @@ window.COURSE_MODULES.push({
             "移动相机与世界对象，观察哪些界面固定屏幕、哪些随世界变化。",
             "加透明阻挡层，分别测试alpha、交互与射线阻挡。"
           ],
-          "result": "空间关系和输入资格分开记录的对照表。"
+          "result": "空间关系和输入资格分开记录的对照表。",
+          "setup": [
+            "新建L056_Canvas。从GameObject > UI创建Canvas，选中后在Inspector > Canvas查看Render Mode；复制成三个，分别设Screen Space - Overlay、Screen Space - Camera、World Space，每轮只开一个比较。",
+            "Camera模式把实际Camera拖到Render Camera；World Space的Canvas先缩到合理世界尺寸并放进相机视野。模式名在Canvas组件，不在CanvasScaler。",
+            "为点击对照创建一个uGUI Button，并确认正常能响应；在它上层加Panel或Image，通过Inspector > Add Component添加CanvasGroup。Alpha、Interactable、Blocks Raycasts在该组件中分别控制。"
+          ],
+          "purpose": "把看不见、不能交互和不再阻挡分成三个可验证条件，不用透明度替代完整关闭逻辑。"
         },
         {
           "title": "验证比例与世界标记",
@@ -104,7 +110,13 @@ window.COURSE_MODULES.push({
             "给世界角色添加屏幕标记，明确世界投影相机和Canvas转换相机。",
             "测试相机背后、屏幕边缘、多相机和长文本，确认标记与内容可用。"
           ],
-          "result": "具有明确空间转换与内容适配规则的界面样本。"
+          "result": "具有明确空间转换与内容适配规则的界面样本。",
+          "setup": [
+            "另存L056_Resize，先使用Overlay Canvas。选Canvas的CanvasScaler，将UI Scale Mode设Scale With Screen Size、Reference Resolution=(1920,1080)。",
+            "Window > General > Game打开Game，顶部尺寸下拉添加960×540、960×1080等固定输出；CanvasScaler的Match依次设0和1，不同时改锚点。",
+            "世界标记属于独立编写部分：先指定看角色的Camera和目标Canvas，再按本节转换链实现；本课没有一挂就出现血条的脚本。先在纸上标每步坐标空间，再逐点显示验证。"
+          ],
+          "purpose": "在明确参照与实际尺寸的条件下验证适配，避免把屏幕像素直接当界面局部坐标。"
         }
       ],
       "pitfalls": [
@@ -155,7 +167,8 @@ window.COURSE_MODULES.push({
             "一定，只要图片没有可见像素"
           ],
           "answer": 1,
-          "explanation": "可见性和命中资格分开配置，需实际测试后层控件。"
+          "explanation": "可见性和命中资格分开配置，需实际测试后层控件。",
+          "scenario": "一个全屏CanvasGroup的Alpha设为0，但Blocks Raycasts和Interactable仍保持开启，后面有一个可点击按钮。"
         },
         {
           "question": "参考分辨率会强制游戏输出相同分辨率吗？",
@@ -166,7 +179,8 @@ window.COURSE_MODULES.push({
             "会，只要Match设为0.5"
           ],
           "answer": 1,
-          "explanation": "输出尺寸与CanvasScaler的参照值是不同设置。"
+          "explanation": "输出尺寸与CanvasScaler的参照值是不同设置。",
+          "scenario": "CanvasScaler设Scale With Screen Size，Reference Resolution=(1920,1080)，实际Game窗口为960×540。"
         },
         {
           "question": "世界标记转换前应先明确什么？",
@@ -177,7 +191,8 @@ window.COURSE_MODULES.push({
             "只要将所有坐标乘屏幕宽度"
           ],
           "answer": 0,
-          "explanation": "要沿世界、屏幕和界面局部空间逐步转换，不能直接混用数值。"
+          "explanation": "要沿世界、屏幕和界面局部空间逐步转换，不能直接混用数值。",
+          "scenario": "世界角色上方需要显示屏幕血条；场景有主世界相机和小地图相机，目标Canvas可能使用Overlay或Camera模式。"
         }
       ],
       "references": [
@@ -213,8 +228,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "Reference Resolution设为1920 × 1080，会让所有设备强制输出这个分辨率吗？",
-          "answer": "不会。它参与界面缩放计算，实际输出尺寸与宽高比仍需在目标窗口和设备上验证。"
-        }
+          "answer": "不会。它参与界面缩放计算，实际输出尺寸与宽高比仍需在目标窗口和设备上验证。",
+          "scenario": "CanvasScaler使用Scale With Screen Size，Reference Resolution设1920×1080；运行窗口可以变化，题目只问这个参照值是否强制实际输出。"
+        },
+        "scenario": "弹窗已经透明，后面的按钮还是点不到；血条在宽屏正常，换成窄窗口又飘开。先让同一按钮出现在三种Canvas空间，再分别测显示、缩放和射线阻挡。",
+        "purpose": "能说明HUD和头顶标记各处在哪个空间，隐藏面板时也能正确处理后方输入。"
       }
     },
     {
@@ -314,7 +332,13 @@ window.COURSE_MODULES.push({
             "设置sizeDelta.x为100，先算实际宽度，再打印rect.width核对。",
             "改变父宽和Pivot，画出保持不动的参考点或边。"
           ],
-          "result": "每组设置都有公式、预测和实测结果。"
+          "result": "每组设置都有公式、预测和实测结果。",
+          "setup": [
+            "新建L057_Rect，GameObject > UI > Canvas建Overlay Canvas；在其下建Panel命名Parent，将RectTransform锚点设为不拉伸并把Width设1000、Height设400，Scale=(1,1,1)。",
+            "在Parent下建子UI对象Child。Inspector中找到RectTransform的Anchor Min/Max：先都设(0.5,0.5)，再在横向分别设0.25、0.75，纵向仍重合。",
+            "保存RectGeometryProbe.cs并挂到Child；通过组件标题菜单Report Rect Geometry输出rect、sizeDelta和driver。Window > General > Console查看，不把Inspector显示的Left/Right误当成普通Width字段。"
+          ],
+          "purpose": "在没有自动布局干扰时亲自算最终宽度，建立后续排错可用的几何基线。"
         },
         {
           "title": "找到布局属性的写入者",
@@ -324,7 +348,13 @@ window.COURSE_MODULES.push({
             "故意让脚本写同一尺寸，定位弹回原因，再改成清楚的单一控制方式。",
             "用长文本触发布局，比较修改后立即读取与布局完成后的矩形，避免每帧强制刷新。"
           ],
-          "result": "能解释尺寸来源与读取时点的布局样本。"
+          "result": "能解释尺寸来源与读取时点的布局样本。",
+          "setup": [
+            "先完成无布局基线，另存L057_Layout。选Parent，Inspector > Add Component添加Horizontal Layout Group，勾Control Child Size的Width。",
+            "在Child挂载的探针菜单重新Report Rect Geometry，查看driver变化；把同一尺寸交给脚本写入的反例仅在副本中实现，避免正式面板出现两个写入者。",
+            "添加长文本时使用与当前UI系统匹配的Text或TextMeshPro组件，并检查父布局与Content Size Fitter是否同时约束同一轴；先记录组件链，不靠每帧ForceUpdateCanvases掩盖约束冲突。"
+          ],
+          "purpose": "让数值弹回成为可解释的驱动结果，再设计外层布局与内层显示各自负责什么。"
         }
       ],
       "pitfalls": [
@@ -375,7 +405,8 @@ window.COURSE_MODULES.push({
             "是，只要Pivot为中心"
           ],
           "answer": 1,
-          "explanation": "拉伸锚点提供父尺寸的一部分，sizeDelta表示相对这部分的尺寸差值。"
+          "explanation": "拉伸锚点提供父尺寸的一部分，sizeDelta表示相对这部分的尺寸差值。",
+          "scenario": "父RectTransform宽1000，子元素横向锚点从0.25到0.75，sizeDelta.x=100；无父缩放或布局组件驱动。"
         },
         {
           "question": "布局组与脚本同时修改同一宽度意味着什么？",
@@ -386,7 +417,8 @@ window.COURSE_MODULES.push({
             "只要都在Update里就没有问题"
           ],
           "answer": 1,
-          "explanation": "应明确最终控制者，不能靠执行顺序偶然得到正确外观。"
+          "explanation": "应明确最终控制者，不能靠执行顺序偶然得到正确外观。",
+          "scenario": "父布局组自动计算子按钮宽度，一个脚本又每帧向同一子按钮宽度写固定200，双方都启用。"
         },
         {
           "question": "频繁ForceUpdateCanvases是通用布局修复吗？",
@@ -397,7 +429,8 @@ window.COURSE_MODULES.push({
             "是，它能消除所有尺寸控制冲突"
           ],
           "answer": 1,
-          "explanation": "强制更新不替代正确几何关系与写入范围，也需要考虑成本。"
+          "explanation": "强制更新不替代正确几何关系与写入范围，也需要考虑成本。",
+          "scenario": "文本改长后立即读取到旧矩形；尚未核对布局约束与更新阶段，开发者准备在每个Update强制刷新整个Canvas。"
         }
       ],
       "references": [
@@ -433,8 +466,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "布局组正在驱动宽度，脚本每帧改宽度就能从根本上解决弹回吗？",
-          "answer": "不能。应先确定最终由谁控制尺寸，再调整布局规则或层级，避免持续相互覆盖。"
-        }
+          "answer": "不能。应先确定最终由谁控制尺寸，再调整布局规则或层级，避免持续相互覆盖。",
+          "scenario": "父面板有Horizontal Layout Group，并在控制子尺寸时启用Width。子按钮宽度由布局驱动，脚本同时在每帧强行写同一个宽度。"
+        },
+        "scenario": "按钮宽度明明写100，换父面板后却变成600；脚本每帧写回200又被立刻改掉。用一个1000宽的父矩形和一个子按钮，把锚点跨度、轴心和自动布局依次拆开。",
+        "purpose": "读懂Inspector里的矩形数值，知道应该修改约束还是手写尺寸，做出能容纳长标题的界面。"
       }
     },
     {
@@ -533,17 +569,30 @@ window.COURSE_MODULES.push({
             "加入透明Image，观察是否拦截，再分别测试Raycast Target与CanvasGroup设置。",
             "记录实际命中对象和按钮回调次数，不仅观察按钮颜色。"
           ],
-          "result": "从输入到命中再到回调的完整检查记录。"
+          "result": "从输入到命中再到回调的完整检查记录。",
+          "setup": [
+            "新建L058_Button。用GameObject > UI创建带Button组件的按钮，若菜单把普通按钮列在Legacy中，从UI > Legacy > Button进入；保留自动生成的Canvas与EventSystem。",
+            "窗口入口为Window > General > Hierarchy、Inspector和Console。选EventSystem，确认使用InputSystemUIInputModule；若旧StandaloneInputModule出现，在Input System项目按Inspector提示替换并配置Actions，不同时启用两套输入模块。",
+            "保存ButtonSubscriptionProbe.cs。GameObject > Create Empty建ListenerHost，Add Component添加该脚本，把Hierarchy中按钮的Button组件拖进Button字段；点击后Console应输出Request计数。",
+            "在Canvas下加Image并让它盖住按钮。选Image，在Inspector比较Color的Alpha与Raycast Target，这两个开关分开测试。"
+          ],
+          "purpose": "把点击链逐段接通，再用透明覆盖层制造一个能解释的失败。"
         },
         {
           "title": "重复启停与无鼠标导航",
           "minutes": 60,
           "steps": [
-            "先运行正确示例：开关面板十次，一次点击应只增加一次请求，面板停用时不再处理这个按钮。另在独立副本中每轮新建局部变量保存打开编号并注册捕获它的匿名函数，故意不解绑，观察旧编号是否仍被处理。修复后再次检查，不依赖重复相同委托的处理规则。",
+            "先运行正确示例，连续打开关闭十次，每次点击一次并记录请求增量；这样检查监听关系是否随启停积累，十次只是练习样本。停用ListenerHost后再点仍活动的按钮，应不再由该宿主处理。新闭包反例另建副本，每轮捕获不同局部编号，观察旧轮次是否仍被调用。",
             "只用键盘或手柄测试初始焦点、方向、确认、取消和焦点恢复。",
             "测试弹窗是否按规则阻止世界输入，并检查UI状态查询所在阶段。"
           ],
-          "result": "同时覆盖重复打开、焦点和输入分配的验收表。"
+          "result": "同时覆盖重复打开、焦点和输入分配的验收表。",
+          "setup": [
+            "从单按钮基线另存L058_Navigation。让ListenerHost与按钮分开，这样关闭监听宿主后仍能点按钮检验是否继续响应。",
+            "先选EventSystem，在Inspector把First Selected指定为该按钮；确认InputSystemUIInputModule的Move、Submit、Cancel动作可用。Play后不用鼠标，只用方向键、确认键完成操作。",
+            "一次开关只改ListenerHost的对象总勾选或脚本勾选，记录哪一种。若测试新闭包，另存代码副本并保留旧版本；不要用RemoveAllListeners把其他系统监听一起清掉。"
+          ],
+          "purpose": "重复打开用于发现残留关系，无鼠标操作用于检查另一套选择与导航链，十次不是引擎要求。"
         }
       ],
       "pitfalls": [
@@ -594,7 +643,8 @@ window.COURSE_MODULES.push({
             "只隐藏Image即可自动移除全部监听"
           ],
           "answer": 0,
-          "explanation": "注册和解绑应对应，并只管理自己拥有的回调。"
+          "explanation": "注册和解绑应对应，并只管理自己拥有的回调。",
+          "scenario": "面板在OnEnable对一个指定Button.onClick注册自己的Request命名方法，期望面板停用时不再处理按钮。"
         },
         {
           "question": "完全透明的全屏Image可能挡住按钮点击吗？",
@@ -605,7 +655,8 @@ window.COURSE_MODULES.push({
             "不可能，只要使用新输入系统"
           ],
           "answer": 0,
-          "explanation": "需要检查Raycast Target、CanvasGroup等命中设置，不能只看透明度。"
+          "explanation": "需要检查Raycast Target、CanvasGroup等命中设置，不能只看透明度。",
+          "scenario": "按钮上方有全屏Image，颜色Alpha=0，Raycast Target仍勾选，所在Canvas有GraphicRaycaster。"
         },
         {
           "question": "鼠标可点能证明手柄导航正常吗？",
@@ -616,7 +667,8 @@ window.COURSE_MODULES.push({
             "能，只要没有透明遮挡"
           ],
           "answer": 1,
-          "explanation": "指针命中和导航选中是不同工作，需要分别验收。"
+          "explanation": "指针命中和导航选中是不同工作，需要分别验收。",
+          "scenario": "鼠标能点击一个uGUI按钮；还没检查EventSystem的当前选中对象，也没测试导航、确认和取消动作。"
         }
       ],
       "references": [
@@ -656,8 +708,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "鼠标能点击按钮，就能宣布手柄操作也通过吗？",
-          "answer": "不能。还需测试选中焦点、方向导航、Submit和Cancel，以及弹窗关闭后的焦点恢复。"
-        }
+          "answer": "不能。还需测试选中焦点、方向导航、Submit和Cancel，以及弹窗关闭后的焦点恢复。",
+          "scenario": "同一个按钮用鼠标点击已通过测试，但还没用键盘或手柄测试方向选择、Submit、Cancel与关闭后的焦点恢复。"
+        },
+        "scenario": "按钮画出来了，点击没反应；菜单多开几次后，一次操作又处理了旧一轮的数据。本课从一个按钮、一套EventSystem与一个配对监听脚本，沿输入到回调的路径找断点。",
+        "purpose": "能排除透明覆盖层、输入模块和监听身份问题，鼠标之外也能验收键盘导航。"
       }
     },
     {
@@ -756,7 +811,13 @@ window.COURSE_MODULES.push({
             "先运行现成脚本，点击后确认Console出现Toolkit request；再自行为状态Label设置稳定name，在同一root下查询它并修改text。区分“现成示例只打印”与“这一步需要自己扩展”。",
             "改变文案和类名，分别观察哪些变化影响查询、哪些只影响样式。"
           ],
-          "result": "结构、样式与交互引用清楚分开的最小界面。"
+          "result": "结构、样式与交互引用清楚分开的最小界面。",
+          "setup": [
+            "Project中在Assets/EngineLabs/UI下用Create > UI Toolkit > UI Document建Learn.uxml；从Window > UI Toolkit > UI Builder打开它，在Library拖入Button，给Name填learn-button、Text填“确定”。保存UXML。",
+            "在Project用Create > UI Toolkit > Panel Settings Asset建LearnPanel。GameObject > Create Empty建LearnUI，Inspector > Add Component添加UIDocument，Source Asset拖Learn.uxml，Panel Settings拖LearnPanel。",
+            "保存ToolkitButtonProbe.cs并挂到同一LearnUI。Window > General > Console看Toolkit request；它只打印，不会自动创建UXML或修改状态Label。若要显示状态，另在UXML建有稳定name的Label并扩展查询。"
+          ],
+          "purpose": "让一个真实Button先能被查到和点击，再改变文案与样式，验证稳定标识的作用。"
         },
         {
           "title": "验证内容变化和文档寿命",
@@ -766,7 +827,13 @@ window.COURSE_MODULES.push({
             "反复启停文档，统计一次点击的响应数。",
             "在测试副本替换文档，明确解绑旧元素、重新查询与绑定，再验证当前树收到更新。"
           ],
-          "result": "不会依赖旧元素或固定文案的界面样本。"
+          "result": "不会依赖旧元素或固定文案的界面样本。",
+          "setup": [
+            "先完成固定文档点击，File > Save As另存L059_Tree。用UI Builder给按钮放长文案并调整容器布局，先测同一文档下的换行和伸缩。",
+            "从Window > UI Toolkit > Debugger查看运行时实际元素树与解析样式；选择对应Panel，核对name、类与当前控件，不把Project里打开的另一份UXML当成运行树。",
+            "文档动态替换是这组的扩展：明确旧元素解绑、替换、取新根、重新查询绑定四步。现成ToolkitButtonProbe只覆盖固定文档启停，不会自动监听任意UXML重建。"
+          ],
+          "purpose": "验证当前屏幕展示哪棵树，防止文档重建后还向旧引用写数据。"
         }
       ],
       "pitfalls": [
@@ -817,7 +884,8 @@ window.COURSE_MODULES.push({
             "结构只能由USS创建，脚本只负责颜色"
           ],
           "answer": 0,
-          "explanation": "职责可有具体实现选择，但基本分工帮助组织视觉树、样式与响应。"
+          "explanation": "职责可有具体实现选择，但基本分工帮助组织视觉树、样式与响应。",
+          "scenario": "你准备一个UI Toolkit设置页，既有元素层级、颜色布局，也需要点击响应，文件分别使用UXML、USS和C#。"
         },
         {
           "question": "把显示文案当作唯一控件身份合适吗？",
@@ -828,7 +896,8 @@ window.COURSE_MODULES.push({
             "合适，所有同文案按钮本来就是同一个对象"
           ],
           "answer": 1,
-          "explanation": "稳定标识与用户文字分开，能减少文案和本地化变化带来的接线故障。"
+          "explanation": "稳定标识与用户文字分开，能减少文案和本地化变化带来的接线故障。",
+          "scenario": "按钮显示文字可能从“确定”变为“确认购买”或其他语言；脚本还要持续找到同一个用途的控件。"
         },
         {
           "question": "替换文档后旧按钮引用一定仍对应当前界面吗？",
@@ -839,7 +908,8 @@ window.COURSE_MODULES.push({
             "一定，只要旧对象还没被垃圾回收"
           ],
           "answer": 1,
-          "explanation": "同名不代表同对象，旧引用存在也不证明它仍属于当前展示的视觉树。"
+          "explanation": "同名不代表同对象，旧引用存在也不证明它仍属于当前展示的视觉树。",
+          "scenario": "UIDocument从旧UXML换成新UXML并重建视觉树；旧脚本字段还持有先前查到的Button引用，新旧按钮name相同。"
         }
       ],
       "references": [
@@ -875,8 +945,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "运行中重建UIDocument后，旧按钮字段会自动引用新按钮吗？",
-          "answer": "不能这样假定。新视觉树中的元素可能是新对象，需要按文档重建流程重新查询和绑定。"
-        }
+          "answer": "不能这样假定。新视觉树中的元素可能是新对象，需要按文档重建流程重新查询和绑定。",
+          "scenario": "脚本保存了旧UIDocument根下一个Button对象。运行中重建文档，新树里也有同名Button；旧字段没有执行重新查询或绑定。"
+        },
+        "scenario": "UI文字从“确定”改成“确认购买”，点击就失效；另一次换了UXML，脚本仍在改屏幕上不存在的旧按钮。这个最小页面用稳定name找到控件，再看文档替换后引用为什么要重新建立。",
+        "purpose": "做出结构、样式与响应各有位置的UI Toolkit页面，改文案时不会误改代码身份。"
       }
     },
     {
@@ -976,7 +1049,13 @@ window.COURSE_MODULES.push({
             "使用1.01、1.08、1.11秒作为固定输入，以FloorToInt(t×10)得到10、10、11；先预测显示和写入次数，再比较每帧写入与刻度变化时写入。另测首次打开，确保初始快照不会被缓存跳过。",
             "测试首次值为int.MinValue、关闭再打开和切换数据源，确认首次显示正确。"
           ],
-          "result": "刷新减少且首次呈现、数据切换都正确的证据。"
+          "result": "刷新减少且首次呈现、数据切换都正确的证据。",
+          "setup": [
+            "新建L060_Counter。在Canvas下创建旧版uGUI Text（GameObject > UI > Legacy > Text），不是TextMeshPro；本课CounterView字段类型是UnityEngine.UI.Text。",
+            "保存CounterView.cs，建空ViewHost并Add Component添加，将旧版Text拖到Label字段。创建几个Button，在Inspector的On Click添加ViewHost，选择CounterView.Present(int)，给静态参数分别设10、10、11。",
+            "Play后依次点击可观察显示值；要验证重复值是否跳过写入，在学习项目副本Present中临时加一次写入计数或断点。现成脚本没有自动计时驱动，也不会自行调用Present。"
+          ],
+          "purpose": "用明确输入序列检查首次呈现与重复值，避免缓存把合法值当成未初始化标记。"
         },
         {
           "title": "比较列表规模和复用正确性",
@@ -986,7 +1065,13 @@ window.COURSE_MODULES.push({
             "给1000项各分配固定ID，并让每行点击打印“当前绑定ID”。滚动、筛选、删除和重排后，对照当前显示文字与打印ID；重点检查复用前的旧回调是否仍指向上一条数据。",
             "尝试按高低频区域拆分Canvas，测总成本并复测排序与交互。"
           ],
-          "result": "同时覆盖性能、数据身份与交互的规模测试。"
+          "result": "同时覆盖性能、数据身份与交互的规模测试。",
+          "setup": [
+            "先保留十几个可见行作最小复用实验，再扩到1000条固定数据；1000是压力样本，不是接口限制或通用容量建议。给每项ID，例如Item0001。",
+            "现成CounterView不是列表系统。列表是独立迁移实现：用Scroll View组织可见行，明确何时绑定文字、图标、选中状态和点击ID；尚未实现虚拟化时先完成少量行的正确绑定。",
+            "Window > Analysis > Profiler记录同一路径的更新与布局；Canvas拆分前后保持相同数据、滚动步骤和显示内容，不把少显示物品当成等价优化。"
+          ],
+          "purpose": "规模是为了暴露复用身份问题；对象数少并不能替代点击是否操作正确数据的检查。"
         }
       ],
       "pitfalls": [
@@ -1037,7 +1122,8 @@ window.COURSE_MODULES.push({
             "不必，因为UI永远没有任何更新成本"
           ],
           "answer": 0,
-          "explanation": "显示精度低于底层数据变化时，可以减少重复写入，但仍要验证响应与首次呈现。"
+          "explanation": "显示精度低于底层数据变化时，可以减少重复写入，但仍要验证响应与首次呈现。",
+          "scenario": "计时器底层每帧变化，但界面按向下取整只显示0.1秒刻度，两帧可能得到相同的最终文字。"
         },
         {
           "question": "每个控件单独一个Canvas是通用最优方案吗？",
@@ -1048,7 +1134,8 @@ window.COURSE_MODULES.push({
             "是，只要所有控件都用相同字体"
           ],
           "answer": 1,
-          "explanation": "拆分改变的是成本分布，必须以实际场景总时间和功能正确性判断。"
+          "explanation": "拆分改变的是成本分布，必须以实际场景总时间和功能正确性判断。",
+          "scenario": "一个HUD混有静态背景和高频计时器，开发者准备给每个控件各加一个Canvas，尚未测总重建或绘制成本。"
         },
         {
           "question": "虚拟列表复用控件时，必须关注什么？",
@@ -1059,7 +1146,8 @@ window.COURSE_MODULES.push({
             "只要行号相同，就永远代表同一数据"
           ],
           "answer": 0,
-          "explanation": "可见行会代表不同数据，旧状态和回调不清理会导致显示或操作串到其他条目。"
+          "explanation": "可见行会代表不同数据，旧状态和回调不清理会导致显示或操作串到其他条目。",
+          "scenario": "列表只有少量可见行，滚动时同一行GameObject会绑定不同物品；每个物品有稳定ID、图标、选中状态与点击动作。"
         }
       ],
       "references": [
@@ -1095,8 +1183,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "为了避免重建，给每一个控件都加独立Canvas一定最优吗？",
-          "answer": "不一定。拆分也有绘制和管理开销，应按变化范围、批处理和实测总时间决定。"
-        }
+          "answer": "不一定。拆分也有绘制和管理开销，应按变化范围、批处理和实测总时间决定。",
+          "scenario": "把每个UI控件拆成独立Canvas，某项重建范围可能缩小；尚未比较新增绘制提交、布局与管理成本。"
+        },
+        "scenario": "金币没有变化，界面仍每帧重新拼文字；列表滚动后，点一行却操作了上一件物品。先用一个只在数值变化时刷新的文本，再把同样的“显示对象和数据身份分开”带到列表。",
+        "purpose": "减少无可见变化的刷新，同时保住首次显示、重新打开与列表复用的正确性。"
       }
     }
   ]

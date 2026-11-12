@@ -81,11 +81,19 @@ window.COURSE_MODULES.push({
       "code": {
         "title": "观察叠加场景与新对象的归属",
         "language": "csharp",
-        "filename": "AdditiveSceneProbe.cs",
-        "source": "using System.Collections;\nusing UnityEngine;\nusing UnityEngine.SceneManagement;\n\n// 挂在 Bootstrap 根对象。创建 Content 场景并加入当前 Build Profile 场景列表。\npublic sealed class AdditiveSceneProbe : MonoBehaviour\n{\n    [SerializeField] private string contentScene = \"Content\";\n    private IEnumerator Start()\n    {\n        Scene original = gameObject.scene;\n        yield return SceneManager.LoadSceneAsync(contentScene, LoadSceneMode.Additive);\n        Scene content = SceneManager.GetSceneByName(contentScene);\n        if (!content.IsValid() || !content.isLoaded) yield break;\n        SceneManager.SetActiveScene(content);\n        GameObject marker = new GameObject(\"OwnedByContent\");\n        Debug.Log($\"active={SceneManager.GetActiveScene().name}; owner={marker.scene.name}\");\n        yield return new WaitForSecondsRealtime(3f);\n        SceneManager.SetActiveScene(original);\n        yield return SceneManager.UnloadSceneAsync(content);\n        Debug.Log($\"Content unloaded; marker == null: {marker == null}\");\n    }\n}",
         "explanation": [
           "两个场景必须都已保存并加入当前 Build Profile。Content 使用唯一场景名，且没有重复摄像机或监听器。脚本所属 Bootstrap 会保留，因而可以继续等待卸载操作。",
           "此例通过三秒实时等待便于观察；正式流程应由明确的内容退出条件驱动。销毁 marker 不表示它曾引用的所有资源也已立即释放。"
+        ],
+        "files": [
+          {
+            "filename": "AdditiveSceneProbe.cs",
+            "source": "using System.Collections;\nusing UnityEngine;\nusing UnityEngine.SceneManagement;\n\n// 挂在 Bootstrap 根对象。创建 Content 场景并加入当前 Build Profile 场景列表。\npublic sealed class AdditiveSceneProbe : MonoBehaviour\n{\n    [SerializeField] private string contentScene = \"Content\";\n    private IEnumerator Start()\n    {\n        Scene original = gameObject.scene;\n        yield return SceneManager.LoadSceneAsync(contentScene, LoadSceneMode.Additive);\n        Scene content = SceneManager.GetSceneByName(contentScene);\n        if (!content.IsValid() || !content.isLoaded) yield break;\n        SceneManager.SetActiveScene(content);\n        GameObject marker = new GameObject(\"OwnedByContent\");\n        Debug.Log($\"active={SceneManager.GetActiveScene().name}; owner={marker.scene.name}\");\n        yield return new WaitForSecondsRealtime(3f);\n        SceneManager.SetActiveScene(original);\n        yield return SceneManager.UnloadSceneAsync(content);\n        Debug.Log($\"Content unloaded; marker == null: {marker == null}\");\n    }\n}"
+          },
+          {
+            "filename": "ReferenceHolder.cs",
+            "source": "using UnityEngine;\n\npublic sealed class ReferenceHolder : MonoBehaviour\n{\n    public GameObject target;\n    [ContextMenu(\"Report Target State\")]\n    private void Report()\n        => Debug.Log($\"Target is Unity null: {target == null}; managed null: {ReferenceEquals(target, null)}\", this);\n}"
+          }
         ]
       },
       "lab": [
@@ -98,7 +106,13 @@ window.COURSE_MODULES.push({
             "运行，暂停在三秒等待期间；对照 Hierarchy 的场景分组与日志，记录 marker 所属 Content。",
             "注释 SetActiveScene(content) 一行重测；解释 marker 为什么改变归属，以及卸载后是否保留。"
           ],
-          "result": "叠加加载不会自动切换 active scene；默认新建对象的归属随活动场景改变。"
+          "result": "叠加加载不会自动切换 active scene；默认新建对象的归属随活动场景改变。",
+          "setup": [
+            "在顶部 File > New Scene（文件 > 新建场景）建立空场景，按 Ctrl+S 分别保存为 Bootstrap.unity、Content.unity；文件名保持唯一。",
+            "打开 Window > General > Hierarchy / Inspector / Console（层级 / 检查器 / 控制台）。在 Bootstrap 用 GameObject > Create Empty 创建 Loader，将 AdditiveSceneProbe.cs 保存到 Assets 后拖到 Loader 的 Inspector。",
+            "打开 File > Build Profiles（文件 > 构建配置），在 Scene List 加入并启用这两个场景；先从 Bootstrap 启动。Content 只放两个命名的空对象，不额外放摄像机或 Audio Listener。"
+          ],
+          "purpose": "把“加载成功”和“新物体属于谁”分开观察；去掉一行设置作对照，查明残留来自归属还是卸载失败。"
         },
         {
           "title": "证明实例卸载与引用清理的差别",
@@ -109,7 +123,13 @@ window.COURSE_MODULES.push({
             "把 Content 设为未加入构建列表或故意写错唯一名字，保存错误日志，再修复。",
             "制作一次小型独立构建，复测加载流程并归档场景列表、日志和解释。"
           ],
-          "result": "场景对象失效和资源回收是不同观察量；构建配置也是运行时加载的前提。"
+          "result": "场景对象失效和资源回收是不同观察量；构建配置也是运行时加载的前提。",
+          "setup": [
+            "先完成上一组，停止播放后保存副本场景；Bootstrap 中只保留一个 Loader。",
+            "将本课第二个文件 ReferenceHolder.cs 保存到 Assets，在 Bootstrap 创建空对象 Holder 并挂载它；Target 字段留空，等待运行中赋值。",
+            "播放后在三秒等待期间暂停，将 Content 对象从 Hierarchy 拖到 Holder 的 Target；继续运行并等待卸载日志。再从 Holder 组件 ⋮ 菜单执行 Report Target State，比较两种空值判断；不要读取已销毁对象的其他属性。"
+          ],
+          "purpose": "同时看对象是否退出、引用显示什么，以及构建能否重做这条流程；避免把画面消失误认作全部资源已释放。"
         }
       ],
       "pitfalls": [
@@ -128,7 +148,7 @@ window.COURSE_MODULES.push({
         "brief": "搭建 Bootstrap 加两个可交替加载的内容场景；每个场景退出后，归它所有的运行实例必须清空，常驻 UI 必须撤销对角色的引用。",
         "deliverables": [
           "加载/活动/所属场景的状态表",
-          "连续切换十次的根对象数量和引用日志",
+          "连续切换十次的根对象数量和引用日志；说明这些轮次用来查看逐轮遗留趋势，而不是证明所有情况都正确",
           "一次编辑器与构建行为对照"
         ],
         "rubric": [
@@ -160,7 +180,8 @@ window.COURSE_MODULES.push({
             "不能，新对象要等保存场景后才有归属"
           ],
           "answer": 1,
-          "explanation": "Additive 改变已加载场景集合，却不自动保证 Content 成为活动场景。先查活动场景，才能判断普通新建对象的默认归属。"
+          "explanation": "Additive 改变已加载场景集合，却不自动保证 Content 成为活动场景。先查活动场景，才能判断普通新建对象的默认归属。",
+          "scenario": "入口场景叫 Bootstrap，临时关卡叫 Content。这里的 Additive 指保留已有场景并加载另一个场景；新对象由普通 new GameObject 创建，没有传入父对象。"
         },
         {
           "question": "UnloadSceneAsync 完成能直接证明什么？",
@@ -171,7 +192,8 @@ window.COURSE_MODULES.push({
             "其他已加载场景也停止运行"
           ],
           "answer": 2,
-          "explanation": "完成的是目标场景的卸载。纹理可能仍由别的对象共享，托管垃圾回收也有自己的时机。"
+          "explanation": "完成的是目标场景的卸载。纹理可能仍由别的对象共享，托管垃圾回收也有自己的时机。",
+          "scenario": "Bootstrap 仍保留，程序正在等待 Content 的 UnloadSceneAsync 操作。Content 中有角色实例，角色曾使用一张也可能被其他对象引用的纹理。"
         },
         {
           "question": "常驻服务仍持有已卸载角色引用，最完整的改进是什么？",
@@ -182,7 +204,8 @@ window.COURSE_MODULES.push({
             "在关卡进入时登记角色，退出时撤销登记"
           ],
           "answer": 3,
-          "explanation": "让角色在进入时登记、退出时撤销，服务就不会一直把旧关卡角色当成当前角色。使用前检查状态仍然必要。"
+          "explanation": "让角色在进入时登记、退出时撤销，服务就不会一直把旧关卡角色当成当前角色。使用前检查状态仍然必要。",
+          "scenario": "服务组件放在不会随关卡退出的入口场景中；角色放在 Content。服务保存了角色引用，之后 Content 已完成卸载，新关卡还可能创建另一个角色。"
         }
       ],
       "references": [
@@ -222,8 +245,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "如果不调用 SetActiveScene，marker 会怎样？",
-          "answer": "在本实验没有其他代码切换活动场景的前提下，活动场景仍是 Bootstrap，marker 也归它，因此卸载 Content 不会销毁 marker。"
-        }
+          "answer": "在本实验没有其他代码切换活动场景的前提下，活动场景仍是 Bootstrap，marker 也归它，因此卸载 Content 不会销毁 marker。",
+          "scenario": "Bootstrap 是入口场景，也是当前活动场景。脚本叠加加载 Content 后创建 marker；没有其他脚本切换活动场景。现在只去掉 SetActiveScene(content) 这一行。"
+        },
+        "scenario": "做一个只有入口和关卡的小工程。入口场景取名 Bootstrap，保存摄像机与加载脚本；临时关卡取名 Content。脚本运行时再创建一个叫 marker 的空对象。你想退出 Content 后只留下入口，却发现 marker 有时还在。",
+        "purpose": "学会从 Hierarchy 的场景归属判断“退出时谁该消失”，解决切关卡后物体残留的问题。"
       }
     },
     {
@@ -318,7 +344,13 @@ window.COURSE_MODULES.push({
             "在脚本组件上下文菜单执行 Allow Activation，记录操作完成及新对象回调发生时刻。",
             "把等待条件故意写成 while (!pending.isDone) 并禁止激活，观察无法前进的逻辑；停止后恢复正确代码。"
           ],
-          "result": "关闭激活门时零点九并不表示完成；等 isDone 才开放门会互相等待。"
+          "result": "关闭激活门时零点九并不表示完成；等 isDone 才开放门会互相等待。",
+          "setup": [
+            "创建并保存 Bootstrap、Content 两个空场景，在 File > Build Profiles > Scene List 中加入并启用。仅让 Bootstrap 保留摄像机。",
+            "在 Bootstrap 用 GameObject > Create Empty 创建 Loader，挂 ActivationGateProbe.cs；Content Scene 字段填 Content。不要同时挂上一课会自动加载同一场景的脚本。",
+            "打开 Window > General > Console；播放后选 Loader，在 Inspector 中点击脚本组件标题右侧 ⋮ 菜单，找到由本课脚本添加的 Allow Activation。它不是 Unity 顶部菜单。"
+          ],
+          "purpose": "亲手让加载停在等待激活阶段，再只改变确认条件，解释 0.9 和 isDone 各自表示什么。"
         },
         {
           "title": "检查观察者失效和队列依赖",
@@ -329,7 +361,13 @@ window.COURSE_MODULES.push({
             "创建 Single 模式对照版本，说明旧场景协程观察者的寿命；不要误把没有最终日志当成加载失败。",
             "记录五个加载时刻，并在笔记中区分原始进度、显示进度和内容可交互状态。"
           ],
-          "result": "协程寿命、操作寿命与业务流程寿命需要分别管理；激活门会影响后续异步队列。"
+          "result": "协程寿命、操作寿命与业务流程寿命需要分别管理；激活门会影响后续异步队列。",
+          "setup": [
+            "复制本组 Loader 的实验场景，保持场景名与 Build Profile 列表不变。先保存能正常手动激活的版本。",
+            "在 Inspector 保持选中 Loader，以便单独取消 ActivationGateProbe 组件勾选；不要先关闭整个对象，二者会影响不同生命周期。",
+            "准备一张纸或笔记，分别记“请求加载、Ready、允许激活、操作完成、内容可交互”五个时刻；后两者不是同义词。"
+          ],
+          "purpose": "检验等待代码退出后引擎操作还会怎样，并画出谁在等谁，定位激活门与后续队列可能组成的循环等待。"
         }
       ],
       "pitfalls": [
@@ -380,7 +418,8 @@ window.COURSE_MODULES.push({
             "把显示进度改成 100% 就算完成"
           ],
           "answer": 1,
-          "explanation": "isDone 变真依赖激活完成。确认条件要来自外部，例如玩家允许进入，然后才开放激活。"
+          "explanation": "isDone 变真依赖激活完成。确认条件要来自外部，例如玩家允许进入，然后才开放激活。",
+          "scenario": "一次场景加载的 allowSceneActivation 被设为 false，原始进度已达 0.9。另有一个供玩家确认进入的按钮，但尚未处理确认。"
         },
         {
           "question": "停止等待加载的协程，一般能推断什么？",
@@ -391,7 +430,8 @@ window.COURSE_MODULES.push({
             "加载会自动重新开始"
           ],
           "answer": 2,
-          "explanation": "协程和引擎操作的寿命不同；没有后续日志只能证明观察代码没有走到那里。"
+          "explanation": "协程和引擎操作的寿命不同；没有后续日志只能证明观察代码没有走到那里。",
+          "scenario": "脚本通过协程等待一个引擎场景加载操作；现在调用 StopCoroutine 停掉这段等待。问题只依据这一项操作推理，未额外执行取消或卸载。"
         },
         {
           "question": "异步文件加载后仍出现主线程尖峰，最有价值的证据是？",
@@ -402,7 +442,8 @@ window.COURSE_MODULES.push({
             "把所有初始化方法改名为 Async"
           ],
           "answer": 1,
-          "explanation": "查看激活与初始化附近的主线程调用，才有机会区分引擎工作和自定义 Awake 等开销。"
+          "explanation": "查看激活与初始化附近的主线程调用，才有机会区分引擎工作和自定义 Awake 等开销。",
+          "scenario": "一次场景加载用了异步 API，但激活新场景附近仍出现长帧。你想判断耗时来自引擎激活，还是新场景脚本的初始化。"
         }
       ],
       "references": [
@@ -442,8 +483,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "把观察协程停止，是否能证明加载已取消？",
-          "answer": "不能。停止的是你的等待代码。引擎操作可能继续，必须根据所用 API 的能力与实际操作状态另行判断。"
-        }
+          "answer": "不能。停止的是你的等待代码。引擎操作可能继续，必须根据所用 API 的能力与实际操作状态另行判断。",
+          "scenario": "Bootstrap 中有一个协程正在观察 LoadSceneAsync 返回的操作。现在只停止这个等待协程，没有调用具有取消能力的其他 API。"
+        },
+        "scenario": "沿用入口 Bootstrap 与临时关卡 Content，加载脚本先请求 Content，但暂不允许它激活。Console 打出 Ready 后，progress 停在 0.9，isDone 仍为 false；你本来以为再等一会就能结束。",
+        "purpose": "分清系统正在做工作，还是你的代码在等一个尚未允许的条件；据此设计不会卡死的加载按钮。"
       }
     },
     {
@@ -521,11 +565,23 @@ window.COURSE_MODULES.push({
       "code": {
         "title": "可观察的最小常驻服务",
         "language": "csharp",
-        "filename": "PersistentVisitCounter.cs",
-        "source": "using UnityEngine;\nusing UnityEngine.SceneManagement;\n\n// 挂在根 GameObject；两个实验场景各放一份以验证去重。\npublic sealed class PersistentVisitCounter : MonoBehaviour\n{\n    public static PersistentVisitCounter Instance { get; private set; }\n    public int Visits { get; private set; }\n    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]\n    private static void ResetStatics() => Instance = null;\n    private void Awake()\n    {\n        if (Instance != null && Instance != this)\n        {\n            Destroy(gameObject);\n            return;\n        }\n        Instance = this;\n        DontDestroyOnLoad(gameObject);\n    }\n    private void OnEnable()\n    {\n        if (Instance == this) SceneManager.sceneLoaded += CountVisit;\n    }\n    private void OnDisable() => SceneManager.sceneLoaded -= CountVisit;\n    private void CountVisit(Scene scene, LoadSceneMode mode)\n    {\n        Visits++;\n        Debug.Log($\"Service {GetInstanceID()}: visits={Visits}, scene={scene.name}\");\n    }\n    private void OnDestroy()\n    {\n        if (Instance == this) Instance = null;\n    }\n}",
         "explanation": [
           "两个场景中的服务对象必须是根对象。计数统计 sceneLoaded 事件，而不是“玩家进入关卡”的业务事件，二者含义不同。",
           "示例展示最小去重和订阅清理，没有解决所有服务依赖或无场景重载时的编辑器组合。本章后练习需记录 Enter Play Mode 设置；关闭 Scene Reload 的组合要另外定义实例重注册流程。"
+        ],
+        "files": [
+          {
+            "filename": "PersistentVisitCounter.cs",
+            "source": "using UnityEngine;\nusing UnityEngine.SceneManagement;\n\n// 挂在根 GameObject；两个实验场景各放一份以验证去重。\npublic sealed class PersistentVisitCounter : MonoBehaviour\n{\n    public static PersistentVisitCounter Instance { get; private set; }\n    public int Visits { get; private set; }\n    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]\n    private static void ResetStatics() => Instance = null;\n    private void Awake()\n    {\n        if (Instance != null && Instance != this)\n        {\n            Destroy(gameObject);\n            return;\n        }\n        Instance = this;\n        DontDestroyOnLoad(gameObject);\n    }\n    private void OnEnable()\n    {\n        if (Instance == this) SceneManager.sceneLoaded += CountVisit;\n    }\n    private void OnDisable() => SceneManager.sceneLoaded -= CountVisit;\n    private void CountVisit(Scene scene, LoadSceneMode mode)\n    {\n        Visits++;\n        Debug.Log($\"Service {GetInstanceID()}: visits={Visits}, scene={scene.name}\");\n    }\n    private void OnDestroy()\n    {\n        if (Instance == this) Instance = null;\n    }\n}"
+          },
+          {
+            "filename": "SceneSwitchProbe.cs",
+            "source": "using UnityEngine;\nusing UnityEngine.SceneManagement;\n\npublic sealed class SceneSwitchProbe : MonoBehaviour\n{\n    [ContextMenu(\"Go To Level A\")]\n    private void GoA() => Load(\"LevelA\");\n    [ContextMenu(\"Go To Level B\")]\n    private void GoB() => Load(\"LevelB\");\n    private void Load(string sceneName)\n    {\n        if (!Application.isPlaying) return;\n        SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);\n    }\n}"
+          },
+          {
+            "filename": "SceneVisitObserver.cs",
+            "source": "using UnityEngine;\nusing UnityEngine.SceneManagement;\n\npublic sealed class SceneVisitObserver : MonoBehaviour\n{\n    private int notifications;\n    private void OnEnable() => SceneManager.sceneLoaded += Report;\n    private void OnDisable() => SceneManager.sceneLoaded -= Report;\n    private void Report(Scene scene, LoadSceneMode mode)\n        => Debug.Log($\"Observer {GetInstanceID()}: notifications={++notifications}, scene={scene.name}\", this);\n}"
+          }
         ]
       },
       "lab": [
@@ -538,7 +594,13 @@ window.COURSE_MODULES.push({
             "把一个可视子对象放到服务根对象下，观察它随常驻服务一起保留；记录常驻子树的风险。",
             "故意移除重复者 Awake 中 return，观察可能继续执行的初始化路径，再恢复并解释 Destroy 延迟处理。"
           ],
-          "result": "保留的服务实例ID稳定；重复者不能继续参与订阅与初始化。"
+          "result": "保留的服务实例ID稳定；重复者不能继续参与订阅与初始化。",
+          "setup": [
+            "新建并保存 LevelA、LevelB，在 File > Build Profiles > Scene List 中加入两者。打开 Window > General > Console。",
+            "在 LevelA 用 GameObject > Create Empty 创建根对象 Service，挂 PersistentVisitCounter.cs；把它从 Hierarchy 拖到 Project 的 Assets 区域制成 Prefab，再在 LevelB 放一份该 Prefab。",
+            "将 SceneSwitchProbe.cs 保存到 Assets，在 LevelA、LevelB 各建空对象 Switcher 并挂载。在播放中从该组件 ⋮ 菜单选择 Go To Level B 或 Go To Level A；每次等新场景在 Hierarchy 出现并打印服务日志后再切下一次。这个驱动使用 Single，会销毁旧场景中的 Switcher，新场景已有自己的 Switcher。"
+          ],
+          "purpose": "交替十次是为了看同一个服务 ID 是否保留、每轮回调是否额外增加；次数只是观察累积问题的样本，不是证明所有运行都正确。"
         },
         {
           "title": "验证事件清理与静态重置边界",
@@ -549,7 +611,13 @@ window.COURSE_MODULES.push({
             "记录默认 Domain/Scene Reload 设置；仅关闭 Domain Reload、保持 Scene Reload 开启，复测静态重置和服务重建。",
             "写出若进一步关闭 Scene Reload，还需要重新定义哪些实例初始化步骤；不把该组合的偶然结果当普遍保证。"
           ],
-          "result": "事件次数能验证订阅是否成对；编辑器播放模式设置属于实验前提。"
+          "result": "事件次数能验证订阅是否成对；编辑器播放模式设置属于实验前提。",
+          "setup": [
+            "沿用这两个关卡与切换入口，先在默认播放模式设置下成功切换一次。",
+            "将 SceneVisitObserver.cs 挂在每个关卡的临时空对象 Observer 上，不放到常驻 Service 下。先观察每个新 Observer 自己的实例 ID，再对照服务 ID。默认 OnDisable 会取消订阅；故意删除这一行的版本只用于副本测试，结束后恢复。",
+            "从 Edit > Project Settings > Editor（编辑 > 项目设置 > 编辑器）查看 Enter Play Mode Settings，先记录当前状态；做对照时只改变 Domain Reload，不同时改变 Scene Reload。"
+          ],
+          "purpose": "把重复实例与重复订阅分开定位，并确认下一次播放是否从相同静态状态开始；不同重载组合不能混成一组结果。"
         }
       ],
       "pitfalls": [
@@ -568,7 +636,7 @@ window.COURSE_MODULES.push({
         "brief": "把服务拆成常驻的统计记录和可替换的关卡角色引用。每次进入注册角色，退出撤销角色；禁止常驻根对象意外带走整个关卡。",
         "deliverables": [
           "服务和角色的寿命关系图",
-          "十次切换的实例ID/回调次数/引用表",
+          "十次切换的实例ID、回调次数和引用表，用于比较首轮与后续轮是否持续增加",
           "编辑器重载设置及明确支持范围"
         ],
         "rubric": [
@@ -600,7 +668,8 @@ window.COURSE_MODULES.push({
             "子对象仍依赖原场景卸载"
           ],
           "answer": 1,
-          "explanation": "保留范围包含根对象的 Transform 子树。层级安排会影响哪些对象意外跨场景留下。"
+          "explanation": "保留范围包含根对象的 Transform 子树。层级安排会影响哪些对象意外跨场景留下。",
+          "scenario": "服务是 Hierarchy 中没有父对象的根 GameObject，已对它调用 DontDestroyOnLoad；服务下面还挂着一个普通 Transform 子对象。"
         },
         {
           "question": "重复实例 Awake 内 Destroy(gameObject) 之后为什么通常还要 return？",
@@ -611,7 +680,8 @@ window.COURSE_MODULES.push({
             "return 用来重置所有静态字段"
           ],
           "answer": 1,
-          "explanation": "Destroy 不会替你跳出当前方法。return 防止重复实例在真正退出前继续订阅或启动工作。"
+          "explanation": "Destroy 不会替你跳出当前方法。return 防止重复实例在真正退出前继续订阅或启动工作。",
+          "scenario": "后创建的重复服务在 Awake 中发现另一个有效实例，执行 Destroy(gameObject)。同一个 Awake 方法后面还有登记当前实例等初始化语句。"
         },
         {
           "question": "常驻服务访问已卸载角色引用的最好策略是？",
@@ -622,7 +692,8 @@ window.COURSE_MODULES.push({
             "只关闭 Domain Reload 就能自动清除引用"
           ],
           "answer": 2,
-          "explanation": "让角色进入时登记、退出时撤销，再在使用时检查有效状态，才能使长寿命服务跟上短寿命角色的更换。"
+          "explanation": "让角色进入时登记、退出时撤销，再在使用时检查有效状态，才能使长寿命服务跟上短寿命角色的更换。",
+          "scenario": "音乐服务跨关卡保留，当前角色随关卡卸载而销毁。下一关会生成另一个角色，服务也需要跟随更换观察对象。"
         }
       ],
       "references": [
@@ -648,22 +719,25 @@ window.COURSE_MODULES.push({
         "keyIdea": "常驻对象不会随旧场景退出，新场景中的 Prefab 却仍会创建实例。必须明确谁保留、谁退出，并让退出者立即停止后续初始化。",
         "walkthrough": [
           {
-            "title": "进入场景 A",
-            "text": "先从场景 A 启动：服务甲登记为当前实例，将自己的根对象设为常驻，之后切场景时它继续存在。"
+            "title": "先进入LevelA",
+            "text": "从LevelA启动，服务甲登记为当前实例，将自己的根对象设为常驻，之后切场景时它继续存在。"
           },
           {
-            "title": "加载场景 B",
-            "text": "加载场景 B 后又创建服务乙；乙检查到甲仍有效，请求销毁自己，然后立即返回，不再重复参与工作。"
+            "title": "再加载LevelB",
+            "text": "加载LevelB后创建服务乙；乙发现甲仍有效，请求销毁自己并立即返回。"
           },
           {
             "title": "停止重复工作",
-            "text": "乙立即 return，不再订阅；甲继续接收一次场景加载通知。"
+            "text": "乙的Awake不再继续初始化；OnEnable另有身份检查，只有保留的甲继续订阅一次场景加载通知。"
           }
         ],
         "prediction": {
           "question": "把角色设为音乐服务的子对象，切场景时角色会自动退出吗？",
-          "answer": "不能这样假定。常驻根对象的 Transform 子树会一起保留，因此应把短期角色放在由关卡管理的层级中。"
-        }
+          "answer": "不能这样假定。常驻根对象的 Transform 子树会一起保留，因此应把短期角色放在由关卡管理的层级中。",
+          "scenario": "场景 LevelA 中的音乐服务是根对象，已调用 DontDestroyOnLoad。临时角色原本属于关卡，现在被改成这个常驻服务的 Transform 子对象，随后切到 LevelB。"
+        },
+        "scenario": "你有两个关卡场景，分别叫 LevelA、LevelB；为了都能单独测试，每个场景各放一份服务 Prefab。服务被设为常驻后，从 LevelA 切到 LevelB 时，旧实例还在，新场景又创建了一份。下面用服务甲、乙分别称呼这两个实例。",
+        "purpose": "弄清常驻对象为什么重复、谁应保留以及谁该取消订阅；先用计数日志验证，再把做法用于音乐或设置服务。"
       }
     },
     {
@@ -741,11 +815,19 @@ window.COURSE_MODULES.push({
       "code": {
         "title": "明确持有并在实验中解除 Resources 引用",
         "language": "csharp",
-        "filename": "ResourceOwnershipProbe.cs",
-        "source": "using System.Collections;\nusing UnityEngine;\n\n// 放一张测试纹理到 Assets/Resources/ProbeTexture.png，再挂到空对象。\npublic sealed class ResourceOwnershipProbe : MonoBehaviour\n{\n    private Texture2D held;\n    private bool releasing;\n    private void Start()\n    {\n        held = Resources.Load<Texture2D>(\"ProbeTexture\");\n        Debug.Log(held != null ? $\"Holding {held.name}\" : \"Missing ProbeTexture\");\n    }\n    [ContextMenu(\"Release Test Reference\")]\n    private void ReleaseTestReference()\n    {\n        if (Application.isPlaying && !releasing) StartCoroutine(ReleaseAndObserve());\n    }\n    private IEnumerator ReleaseAndObserve()\n    {\n        releasing = true;\n        held = null;\n        yield return Resources.UnloadUnusedAssets();\n        Debug.Log(\"Unload pass completed; inspect resource counts and other references.\");\n        releasing = false;\n    }\n}",
         "explanation": [
           "此例不承诺纹理一定释放：编辑器、其他场景字段和其他使用者可能仍持有该资源。必须用引用证据核对，构建行为也可能与编辑器观察不同。",
           "UnloadUnusedAssets 是一次明确的实验操作，不建议把它放进 Update；示例没有强制 GC，也不直接卸载仍可能在使用的资源。"
+        ],
+        "files": [
+          {
+            "filename": "ResourceOwnershipProbe.cs",
+            "source": "using System.Collections;\nusing UnityEngine;\n\n// 放一张测试纹理到 Assets/Resources/ProbeTexture.png，再挂到空对象。\npublic sealed class ResourceOwnershipProbe : MonoBehaviour\n{\n    private Texture2D held;\n    private bool releasing;\n    private void Start()\n    {\n        held = Resources.Load<Texture2D>(\"ProbeTexture\");\n        Debug.Log(held != null ? $\"Holding {held.name}\" : \"Missing ProbeTexture\");\n    }\n    [ContextMenu(\"Release Test Reference\")]\n    private void ReleaseTestReference()\n    {\n        if (Application.isPlaying && !releasing) StartCoroutine(ReleaseAndObserve());\n    }\n    private IEnumerator ReleaseAndObserve()\n    {\n        releasing = true;\n        held = null;\n        yield return Resources.UnloadUnusedAssets();\n        Debug.Log(\"Unload pass completed; inspect resource counts and other references.\");\n        releasing = false;\n    }\n}"
+          },
+          {
+            "filename": "TextureHolder.cs",
+            "source": "using UnityEngine;\n\npublic sealed class TextureHolder : MonoBehaviour\n{\n    public Texture2D texture;\n    [ContextMenu(\"Clear Held Texture\")]\n    private void ClearHeldTexture() => texture = null;\n}"
+          }
         ]
       },
       "lab": [
@@ -758,7 +840,14 @@ window.COURSE_MODULES.push({
             "使用上下文菜单执行释放，等待操作完成；记录第二条引用仍存在的事实。",
             "解除所有已知持有者，复测资源计数并说明编辑器额外引用与缓存对结论的影响。"
           ],
-          "result": "销毁显示者或清空单一路径不足以证明资源无引用；必须解释所有持有者。"
+          "result": "销毁显示者或清空单一路径不足以证明资源无引用；必须解释所有持有者。",
+          "setup": [
+            "在 Project 的 Assets 下创建 Resources 文件夹，放入自己制作的小 PNG，准确命名为 ProbeTexture.png；不要用正式项目素材做破坏性试验。",
+            "新建空场景，在 GameObject > Create Empty 创建 Probe，挂 ResourceOwnershipProbe.cs；打开 Window > General > Console。",
+            "将第二个文件 TextureHolder.cs 保存到 Assets，挂到空对象 SecondHolder，在 Inspector 把同一 ProbeTexture 拖入 Texture。该字段是第二条持有路径；释放时使用它的 Clear Held Texture 组件菜单，再让 Probe 执行一次清理观察。",
+            "播放后选 Probe，从脚本组件标题的 ⋮ 菜单执行 Release Test Reference；先确认 Holding ProbeTexture 日志出现，再做释放。"
+          ],
+          "purpose": "保留第二条引用，只解除第一条，直接检验“某个字段为空”是否足以说明资源已经不用。"
         },
         {
           "title": "建立反复加载退出的稳定点曲线",
@@ -769,7 +858,13 @@ window.COURSE_MODULES.push({
             "阅读官方 Addressables Memory management，画出加载句柄取得、共享、释放的责任链，不需要安装该可选包。",
             "写出一个“内存不下降但尚不能证明泄漏”的解释，以及还需要什么证据。"
           ],
-          "result": "持续增长的持有关系比单次工作集高低更能指向责任泄漏。"
+          "result": "持续增长的持有关系比单次工作集高低更能指向责任泄漏。",
+          "setup": [
+            "用专门的内容场景承载 Probe 与可清理的持有者，使用上一章已经验证的加载入口；先记下每轮退出后何时算清理完成。",
+            "打开 Window > Analysis > Profiler（窗口 > 分析 > 性能分析器），选择 Memory 模块，固定观察同一种资源计数与内存指标。若安装兼容 Memory Profiler，再用该包提供的快照窗口。",
+            "用于故意保留资源的 static 集合只放在实验组件中；记录添加与清空位置，结束后删除这项故障注入。Addressables 阅读比较不要求安装包。"
+          ],
+          "purpose": "先预热，再做十轮相同进退，目的是区分首轮缓存与逐轮新增的持有者；曲线只能提示该条件下的趋势，还需引用链解释原因。"
         }
       ],
       "pitfalls": [
@@ -788,7 +883,7 @@ window.COURSE_MODULES.push({
         "brief": "为一个小内容区写资源所有权表，分别说明直接引用、Resources加载和可选Addressables句柄在进入、共享、退出时由谁承担责任，并用十轮稳定点实验验证一种方案。",
         "deliverables": [
           "包含持有者、借用者和释放时机的表格",
-          "十轮资源数量与内存指标曲线",
+          "十轮相同退出稳定点的资源与内存曲线，用于寻找逐轮累积，不把十轮当作普遍保证",
           "对缓存、泄漏和托管回收的边界解释"
         ],
         "rubric": [
@@ -820,7 +915,8 @@ window.COURSE_MODULES.push({
             "脚本执行栈"
           ],
           "answer": 3,
-          "explanation": "该 API 的规则不包括检查脚本执行栈，因此需要使用的资源不能只靠局部变量保留。"
+          "explanation": "该 API 的规则不包括检查脚本执行栈，因此需要使用的资源不能只靠局部变量保留。",
+          "scenario": "题目讨论 Resources.UnloadUnusedAssets 判断资源是否使用中的规则，不是托管 GC。选项分别是可能的查找范围。"
         },
         {
           "question": "Destroy一个引用纹理的实例后，纹理会怎样？",
@@ -831,7 +927,8 @@ window.COURSE_MODULES.push({
             "只要托管 GC 运行就一定释放"
           ],
           "answer": 1,
-          "explanation": "纹理可能由其他对象共享。实例销毁没有说明所有资源引用都已经结束。"
+          "explanation": "纹理可能由其他对象共享。实例销毁没有说明所有资源引用都已经结束。",
+          "scenario": "场景角色引用一张 Texture2D，同一纹理还可能供其他角色或组件使用。现在只对其中一个角色实例调用 Destroy。"
         },
         {
           "question": "哪一项最有助于判断资源责任泄漏？",
@@ -842,7 +939,8 @@ window.COURSE_MODULES.push({
             "只比较两张不同时刻的任务管理器截图"
           ],
           "answer": 2,
-          "explanation": "预热和相同稳定点能排除部分首次创建影响，持续增加的引用关系比一次内存高低更有解释力。"
+          "explanation": "预热和相同稳定点能排除部分首次创建影响，持续增加的引用关系比一次内存高低更有解释力。",
+          "scenario": "你怀疑内容场景每次退出都多留下一批资源。首次进入可能建立缓存，任务管理器也包含不直接对应纹理数量的内存。"
         }
       ],
       "references": [
@@ -882,8 +980,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "只把纹理放在局部变量里，能保证 UnloadUnusedAssets 保留它吗？",
-          "answer": "不能。官方说明该操作不检查脚本执行栈，局部变量不是这里的保留保证。应按需要使用的范围明确持有资源。"
-        }
+          "answer": "不能。官方说明该操作不检查脚本执行栈，局部变量不是这里的保留保证。应按需要使用的范围明确持有资源。",
+          "scenario": "纹理只由当前执行方法的一个局部变量暂时保存，没有作为组件字段或静态变量保留；接下来调用 Resources.UnloadUnusedAssets。问题只问这个 API 的保留保证。"
+        },
+        "scenario": "一张测试纹理取名 ProbeTexture。ResourceOwnershipProbe 把它放在 held 字段中，另一个组件也保存同一纹理。你清空 held 后再清理资源，内存却没有如预想下降。这里的两个持有者不是两张纹理。",
+        "purpose": "学会顺着“谁还在引用它”找保留原因，区别实例消失、资源卸载和托管回收。"
       }
     },
     {
@@ -979,7 +1080,13 @@ window.COURSE_MODULES.push({
             "逐个 Return One，记录空闲数何时达到四，以及额外对象归还后被销毁的行为。",
             "重复第二轮，比较创建次数、Awake/Start与OnEnable次数；给每个观察标明实例寿命或租用寿命。"
           ],
-          "result": "集合初始容量、池内最大空闲数和场上活跃上限是不同概念。"
+          "result": "集合初始容量、池内最大空闲数和场上活跃上限是不同概念。",
+          "setup": [
+            "创建空场景，用 GameObject > Create Empty 建 PoolRoot，把 PoolLeaseProbe.cs 挂到它；打开 Window > General > Hierarchy 与 Console。",
+            "播放后选 PoolRoot，在 Inspector 的脚本组件 ⋮ 菜单找 Rent One、Return One。场上立方体由脚本创建，不需要先做 Prefab。",
+            "记录源码中的 defaultCapacity=4、maxSize=4；每次重做不同预热方案前停止并重新播放，避免沿用上一组池内容。"
+          ],
+          "purpose": "连续借十个是为了跨过数值4，再看活跃与空闲各怎样计数；两种预热顺序的对照则检查“重复使用一个”和“创建四个”的区别。"
         },
         {
           "title": "制造并修复复用污染",
@@ -990,7 +1097,13 @@ window.COURSE_MODULES.push({
             "设计碰撞与超时同时归还的场景，用租用标记保护，保存重复归还前后证据。",
             "写出关卡退出时活跃列表与空闲池的清理顺序，再在同条件下测一次复用与创建销毁的开销。"
           ],
-          "result": "池的正确性来自每次租用的重置与一次归还责任，性能收益必须在正确性通过后测量。"
+          "result": "池的正确性来自每次租用的重置与一次归还责任，性能收益必须在正确性通过后测量。",
+          "setup": [
+            "先在上一组借出一个立方体，确认能归还并再次借出同一实例。",
+            "在实验副本中自行加一个记录目标、颜色与已命中状态的组件；先不加入真实弹道，让每一项状态都能在 Inspector 或一次性日志里看到。",
+            "再补一个可控的延时归还入口，与手动归还共用同一处处理；为每次借用记录编号，明确这部分是你要完成的扩展，不是示例已经实现。"
+          ],
+          "purpose": "让上一轮故意留下可见状态，再检查下一轮是否污染；最后把碰撞与超时两个归还来源接起来，验证一次借用只归还一次。"
         }
       ],
       "pitfalls": [
@@ -1041,7 +1154,8 @@ window.COURSE_MODULES.push({
             "第一次归还会自动补足十个"
           ],
           "answer": 1,
-          "explanation": "defaultCapacity 预留的是内部集合空间。只有实际创建或显式预热，才会产生可借出的游戏对象。"
+          "explanation": "defaultCapacity 预留的是内部集合空间。只有实际创建或显式预热，才会产生可借出的游戏对象。",
+          "scenario": "准备创建一个 ObjectPool，defaultCapacity 参数为10，尚未调用 Get，也没有执行额外的预热代码。"
         },
         {
           "question": "对象第二次从池取出时，哪项初始化不能只依赖 Start？",
@@ -1052,7 +1166,8 @@ window.COURSE_MODULES.push({
             "验证脚本上要求的组件类型"
           ],
           "answer": 1,
-          "explanation": "Start 对同一实例只执行一次。本次目标和生命值必须在每次使用开始时设置。"
+          "explanation": "Start 对同一实例只执行一次。本次目标和生命值必须在每次使用开始时设置。",
+          "scenario": "投射物实例第一次借出时已执行过 Start，归还时只是停用。随后借出的仍是这个实例，但这一轮目标与生命值可能不同。"
         },
         {
           "question": "清空池后仍有活跃对象在外使用，应该怎样处理？",
@@ -1063,7 +1178,8 @@ window.COURSE_MODULES.push({
             "把池设为静态字段就不用关闭"
           ],
           "answer": 2,
-          "explanation": "清空空闲池不会替你安排借出对象的退出。需要记录仍在使用的对象，先结束它们，再按规定归还或销毁。"
+          "explanation": "清空空闲池不会替你安排借出对象的退出。需要记录仍在使用的对象，先结束它们，再按规定归还或销毁。",
+          "scenario": "池中有空闲对象，也有已经借出、仍在场上的对象；现在准备退出关卡，调用方仍知道这些借出对象的引用。"
         }
       ],
       "references": [
@@ -1103,8 +1219,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "maxSize=4，能保证最多只借出四个对象吗？",
-          "answer": "不能。它限制保留的空闲对象数量。若要限制同时活跃的数量，需要由借用逻辑另行判断。"
-        }
+          "answer": "不能。它限制保留的空闲对象数量。若要限制同时活跃的数量，需要由借用逻辑另行判断。",
+          "scenario": "ObjectPool 的 maxSize 设为4。当前你准备连续借出对象，期间一个也不归还；池没有另外设置活跃数量限制。"
+        },
+        "scenario": "做一个简化投射物实验：池中保存可复用的立方体，代码把某个实例称为 A。A 第一次使用时指向目标甲，命中后归还；第二次又借出同一个 A，准备改为目标乙。归还并没有重新创建实例。",
+        "purpose": "避免复用对象带着上一轮目标、速度或延时任务回来；同时看懂池的容量到底限制什么。"
       }
     }
   ]

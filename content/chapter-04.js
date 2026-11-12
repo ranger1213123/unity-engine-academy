@@ -110,7 +110,13 @@ window.COURSE_MODULES.push({
             "每次只改父级一项，保持子级localPosition不动，比较世界结果。",
             "用父级TransformPoint转换子级局部位置，核对简单相加在哪些前提才成立。"
           ],
-          "result": "用具体数值说明参照系参与位置换算。"
+          "result": "用具体数值说明参照系参与位置换算。",
+          "purpose": "用具体父子坐标观察参照变换，避免直接相加推广过度。",
+          "setup": [
+            "创建空对象 Root、Child，将 Child 拖到 Root 下。设 Root Position=(5,0,0)、Rotation=(0,0,0)、Scale=(1,1,1)；Child Inspector 的 Position 设(2,0,0)。有父级时这组 Position 是局部值。",
+            "打开 Scene，选 Child 按 F 聚焦。世界值用一个观察脚本打印 transform.position，局部值打印 transform.localPosition；不要把 Inspector 局部字段误当第二套世界读数。",
+            "转换时使用 Root 的 TransformPoint(child.localPosition)，两者参照一致；再只改 Root 的旋转或缩放。"
+          ]
         },
         {
           "title": "明确换父和挂点吸附",
@@ -120,7 +126,13 @@ window.COURSE_MODULES.push({
             "记录局部与世界变化，再执行示例显式归零，区分换父和吸附。",
             "解除父级并保留世界姿态，观察是否跳变，同时检查层级活动状态。"
           ],
-          "result": "每次操作都能说明希望保留哪一组结果。"
+          "result": "每次操作都能说明希望保留哪一组结果。",
+          "purpose": "把换父、位置对齐、旋转对齐与解除跟随分别验证。",
+          "setup": [
+            "创建 SocketA、SocketB、Item；设两挂点不同位置和旋转，初始缩放均为1。Item 添加 ParentSpaceProbe，从 Hierarchy 将 SocketA 拖到 Socket 槽。",
+            "Play 中在该组件三点菜单选择 Attach at socket / Detach keeping world。原菜单的 Attach 会立即归零位置和旋转；若要仅测试 SetParent true/false，需在实验副本单独调用，不把 Attach 的全部行为归给 SetParent。",
+            "每轮记录父对象身份、localPosition、position、localRotation、rotation、localScale；再替换 Socket 引用对照。"
+          ]
         }
       ],
       "pitfalls": [
@@ -171,7 +183,8 @@ window.COURSE_MODULES.push({
             "只有改变缩放才会改变世界位置"
           ],
           "answer": 0,
-          "explanation": "局部位置相对于父级，父级旋转会改变它对应的世界位置。"
+          "explanation": "局部位置相对于父级，父级旋转会改变它对应的世界位置。",
+          "scenario": "Child 是 Root 的子对象，localPosition=(2,0,0)。Root 从零旋转改成绕 Y 轴90度，平移与缩放不变；Child 局部位置字段未改。"
         },
         {
           "question": "TransformPoint 适合转换什么？",
@@ -182,7 +195,8 @@ window.COURSE_MODULES.push({
             "只需要改变长度的速度"
           ],
           "answer": 1,
-          "explanation": "位置点与方向意义不同，TransformPoint 包含位置点所需的变换。"
+          "explanation": "位置点与方向意义不同，TransformPoint 包含位置点所需的变换。",
+          "scenario": "已知某挂点相对 Root 的局部位置，需要得到它在世界中的位置；Root 可有平移、旋转和缩放。"
         },
         {
           "question": "想吸附到挂点，较明确的做法是？",
@@ -193,7 +207,8 @@ window.COURSE_MODULES.push({
             "只设localScale为1，位置与旋转便会自动归零"
           ],
           "answer": 2,
-          "explanation": "归零位置和指定相对旋转，才能清楚表达对齐结果。"
+          "explanation": "归零位置和指定相对旋转，才能清楚表达对齐结果。",
+          "scenario": "要让 Item 与 Socket 的原点和朝向对齐，不保留原来的局部偏移；尺寸处理另有规则。"
         }
       ],
       "references": [
@@ -229,8 +244,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "仅调用 SetParent(socket,false)，是否就一定吸附到挂点原点？",
-          "answer": "不一定。它保留局部变换数值，不会自动把已有 localPosition 归零；示例另有明确归零步骤。"
-        }
+          "answer": "不一定。它保留局部变换数值，不会自动把已有 localPosition 归零；示例另有明确归零步骤。",
+          "scenario": "Item 当前 localPosition=(2,0,0)，准备调用 Item.SetParent(socket,false)，调用后没有执行任何归零语句；socket 是另一个位置和旋转已设好的 Transform。"
+        },
+        "scenario": "Root 世界位置为(5,0,0)、无旋转且缩放为1；Child 是它的子对象，局部位置为(2,0,0)。接着分别移动或旋转 Root。挂点实验另用 Item 与 SocketA/SocketB，明确换父时保留世界姿态还是局部数值。",
+        "purpose": "让每组坐标都带上参照对象，为跟随、装备挂点与放下物品建立可检查的规则。"
       }
     },
     {
@@ -337,7 +355,13 @@ window.COURSE_MODULES.push({
             "比较原值、normalized和ClampMagnitude后的值，预测每秒位移。",
             "在无刚体对象上测相同时间的距离，表中分开输入强度、速度与位移。"
           ],
-          "result": "能解释斜向限速与半推慢走是怎样同时成立的。"
+          "result": "能解释斜向限速与半推慢走是怎样同时成立的。",
+          "purpose": "用相同输入比较不同大小处理，验证速度单位。",
+          "setup": [
+            "创建空对象 MotionMarker，添加 VectorMotionProbe，确保没有 Rigidbody/Rigidbody2D；Time Scale=1。选中对象，在 Inspector 修改 Input 与 Speed。",
+            "每组从新 Play 和相同起点开始，记录运行前后 Position 与经过时间。输入为二维，但代码把第二分量映射到世界 Z，不是世界 Y。",
+            "原例使用 ClampMagnitude；若比较 normalized 与原值，另存实验版且每次只运行一种移动组件，避免叠加。"
+          ]
         },
         {
           "title": "把点积与投影画出来",
@@ -347,7 +371,13 @@ window.COURSE_MODULES.push({
             "将一个带竖直分量的方向投影到水平面，用不同颜色画原向量和结果。",
             "旋转角色后重做，比较前方判断为何不能只看世界z。"
           ],
-          "result": "数字结果与方向几何对应，而非只背公式。"
+          "result": "数字结果与方向几何对应，而非只背公式。",
+          "purpose": "用实际几何位置解释点积和投影，不靠背诵公式。",
+          "setup": [
+            "创建空对象 Actor，位置与旋转为零；创建 Front(0,0,3)、Back(0,0,-3)、Right(3,0,0)、Left(-3,0,0)。这些是世界位置。",
+            "另建方向观察脚本，计算(target.position-actor.position).normalized，再与 actor.forward 点乘并记录目标名。",
+            "投影对照取向量(1,2,3)与法线 Vector3.up，使用 ProjectOnPlane，并在 Scene 通过 Debug.DrawRay 画原值和结果；开启 Gizmos，方向线不是碰撞检测。"
+          ]
         }
       ],
       "pitfalls": [
@@ -398,7 +428,8 @@ window.COURSE_MODULES.push({
             "目标相对当前的速度"
           ],
           "answer": 0,
-          "explanation": "相减保留距离大小，不会自动归一化或求速度。"
+          "explanation": "相减保留距离大小，不会自动归一化或求速度。",
+          "scenario": "currentPosition=(1,0,0)，targetPosition=(4,0,0)，两者都为世界位置。现在只计算 targetPosition-currentPosition，没有除时间或归一化。"
         },
         {
           "question": "轻推手柄仍要慢走，应优先考虑？",
@@ -409,7 +440,8 @@ window.COURSE_MODULES.push({
             "先把每个分量都设为1"
           ],
           "answer": 1,
-          "explanation": "限幅保留未超过上限的输入强度；归一化会丢掉非零输入的大小。"
+          "explanation": "限幅保留未超过上限的输入强度；归一化会丢掉非零输入的大小。",
+          "scenario": "摇杆输入可能为(0.3,0.4)，长度0.5；希望它保留半强度，同时把超过长度1的输入限制到1。"
         },
         {
           "question": "两个单位方向的点积是什么？",
@@ -420,7 +452,8 @@ window.COURSE_MODULES.push({
             "只要都是单位向量就总为1"
           ],
           "answer": 2,
-          "explanation": "单位方向点积描述夹角关系，不是位置距离或角度单位。"
+          "explanation": "单位方向点积描述夹角关系，不是位置距离或角度单位。",
+          "scenario": "u、v 是两个长度为1的方向向量；调用 Vector3.Dot(u,v)，要解释这个标量与两方向夹角的关系。"
         }
       ],
       "references": [
@@ -460,8 +493,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "两段方向都是单位向量，点积为0，是否表示两个对象在同一位置？",
-          "answer": "不是。它说明方向相互垂直；点积没有提供对象位置是否相同的信息。"
-        }
+          "answer": "不是。它说明方向相互垂直；点积没有提供对象位置是否相同的信息。",
+          "scenario": "u、v 是两个描述朝向的单位 Vector3，长度都为1，且 Vector3.Dot(u,v)=0；题目没有给出任何对象的位置坐标。"
+        },
+        "scenario": "VectorMotionProbe 的 Input 是手动填写的二维值，不读取真实键盘或摇杆。无刚体对象在 XZ 平面运动，Speed=3单位/秒。比较(1,0)、(1,1)、(0.3,0.4)和零，观察限幅、速度与位移之间的关系。",
+        "purpose": "把输入强度、方向、速度和位移逐层写清，能解释斜向超速与摇杆半推的问题。"
       }
     },
     {
@@ -568,7 +604,13 @@ window.COURSE_MODULES.push({
             "分别做两个90度轴旋转，再交换执行顺序，用模型前方标记比较。",
             "记录不同欧拉显示是否可能描述相同朝向，画出最终forward。"
           ],
-          "result": "参照系与组合顺序会影响旋转结果。"
+          "result": "参照系与组合顺序会影响旋转结果。",
+          "purpose": "通过父子层级和前方标记观察旋转参照与顺序。",
+          "setup": [
+            "创建 Root 与子对象 Model，将 Root 绕 Y 轴转45度；在 Model 下再建 Nose 小立方体，局部位置(0,0,1)，用于指示局部前方。",
+            "每组从相同姿态开始，用独立观察脚本分别设置 Model.rotation 和 Model.localRotation，打印两者与 forward；不要同时挂自动转向组件。",
+            "组合实验写明绕世界轴还是局部轴，并记录第一步、第二步，交换顺序时保持其他条件不变。"
+          ]
         },
         {
           "title": "测量三种转向过程",
@@ -578,7 +620,13 @@ window.COURSE_MODULES.push({
             "另用固定起点做定时Slerp，再对比每帧从当前值插值的中间角度。",
             "加入目标重合、目标消失与帧率变化测试，记录每种停止或保持行为。"
           ],
-          "result": "区分恒速、定时与渐近过程，并处理无方向情况。"
+          "result": "区分恒速、定时与渐近过程，并处理无方向情况。",
+          "purpose": "按角差和耗时，区分三种看起来都平滑的过程。",
+          "setup": [
+            "创建 TurnHost 与 Target，TurnHost 添加 TurnTowardsProbe；将 Target 从 Hierarchy 拖入 Target 字段，Degrees Per Second=120，两个对象都不加刚体。",
+            "TurnHost 起点(0,0,0)、零旋转，目标放(3,0,0)作90度对照，另轮放(0,0,-3)作180度对照。目标保持不动。",
+            "固定时长与逐渐靠近是另写的对照组件：前者保存固定起始旋转和累计时间，后者每帧重取当前旋转。一次只启用一种算法，记录中间角差及容差内结束时刻。"
+          ]
         }
       ],
       "pitfalls": [
@@ -629,7 +677,8 @@ window.COURSE_MODULES.push({
             "只有世界旋转可以直接这样写"
           ],
           "answer": 1,
-          "explanation": "四元数分量不是欧拉角，必须按旋转表示的规则构造。"
+          "explanation": "四元数分量不是欧拉角，必须按旋转表示的规则构造。",
+          "scenario": "代码要建立绕 Y 轴90度的旋转。你看到 Quaternion 的 x、y、z、w 字段，考虑直接把90写入其中一个分量；没有调用 Quaternion.Euler 等构造接口。"
         },
         {
           "question": "匀速每秒转一百二十度更适合？",
@@ -640,7 +689,8 @@ window.COURSE_MODULES.push({
             "在四个分量上分别加角度"
           ],
           "answer": 0,
-          "explanation": "角速度先乘时间得到单步角度，才符合这个接口参数。"
+          "explanation": "角速度先乘时间得到单步角度，才符合这个接口参数。",
+          "scenario": "炮塔要求每秒最多转120度，帧间隔不固定。你要选择方法及其每步参数，而不是固定0.5秒转到任意目标。"
         },
         {
           "question": "目标与当前位置重合时应怎样？",
@@ -651,7 +701,8 @@ window.COURSE_MODULES.push({
             "把旋转值全部设成零分量"
           ],
           "answer": 2,
-          "explanation": "重合点没有唯一方向，应先处理问题本身缺少方向的情况。"
+          "explanation": "重合点没有唯一方向，应先处理问题本身缺少方向的情况。",
+          "scenario": "水平转向代码使用目标位置减自身位置，但本次两个位置完全相同；没有其他默认朝向规则。"
         }
       ],
       "references": [
@@ -687,8 +738,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "每帧用当前旋转和目标做 Slerp，t 固定0.1，是否一定1秒转完？",
-          "answer": "不是。它每次只走剩余差距的一部分，通常逐渐靠近；t 不是秒数，也不是角速度。"
-        }
+          "answer": "不是。它每次只走剩余差距的一部分，通常逐渐靠近；t 不是秒数，也不是角速度。",
+          "scenario": "目标旋转固定不动。每帧都调用 Slerp(当前旋转,目标旋转,0.1f)，下一帧起点取刚得到的当前值，没有保存整段过程的初始旋转或累计秒数。"
+        },
+        "scenario": "无刚体的 TurnHost 起始朝世界前方，Target 放在它右侧；TurnTowardsProbe 只在水平面计算朝向，Degrees Per Second=120。先研究父级旋转与组合，再测90度、180度的恒角速度转向。",
+        "purpose": "把恒定角速度、固定总时长和逐渐靠近分开，选择与时间要求相符的旋转算法。"
       }
     },
     {
@@ -795,7 +849,13 @@ window.COURSE_MODULES.push({
             "切换正交与透视，再转相机，检查深度为什么不能当世界z。",
             "将结果回投影，比较像素误差，并说明回到原像素不保证落在地面。"
           ],
-          "result": "屏幕点与具体世界点之间需要额外约束。"
+          "result": "屏幕点与具体世界点之间需要额外约束。",
+          "purpose": "把同一屏幕点的多个深度结果与回投影逐一对应。",
+          "setup": [
+            "使用带 Camera 的 Basic 场景；选 Main Camera，在 Inspector Transform 设 Position=(0,5,-5)、Rotation=(45,0,0)，Camera 的 Projection 先用 Perspective。",
+            "另建投影观察组件，显式引用该 Camera；屏幕点取(Screen.width*0.5f,Screen.height*0.5f)，分别给 ScreenToWorldPoint 的深度5和10。",
+            "打印世界结果，再用同一 Camera.WorldToScreenPoint 回投影。切 Orthographic 只改 Projection 后重做，保留其他参数记录。"
+          ]
         },
         {
           "title": "测试几何求交限制",
@@ -805,7 +865,13 @@ window.COURSE_MODULES.push({
             "把平面高度改为2，先预测交点变化，再观察不是简单固定补偿。",
             "令射线接近平行平面，检查无交点处理，再用两个窗口尺寸重测。"
           ],
-          "result": "成功与失败都能由几何条件解释。"
+          "result": "成功与失败都能由几何条件解释。",
+          "purpose": "明确几何交点成立与失败的条件，并验证窗口变化。",
+          "setup": [
+            "创建空对象 ScreenHost 添加 ScreenPlaneProbe，创建可见小 Cube 为 Marker；Inspector 的 View 拖入 Main Camera，Marker 拖入小 Cube。",
+            "相机设在(0,5,-5)、旋转(45,0,0)作为向下观察基线。可以建 Plane 显示地面，但代码的数学求交不要求场景地面有 Collider。",
+            "高度2对照只在实验副本把建平面的通过点改成(0,2,0)；无交点对照把相机改为水平看向前方。窗口尺寸使用 Game 视图分辨率下拉切换并记录，原示例不输出失败日志，可在副本补成功/失败标签。"
+          ]
         }
       ],
       "pitfalls": [
@@ -856,7 +922,8 @@ window.COURSE_MODULES.push({
             "指定距屏幕左边的像素"
           ],
           "answer": 1,
-          "explanation": "深度以相机为参照，相机旋转后尤其不能当成世界 z。"
+          "explanation": "深度以相机为参照，相机旋转后尤其不能当成世界 z。",
+          "scenario": "相机已旋转，不再沿世界 Z 轴观察；调用 Camera.ScreenToWorldPoint(new Vector3(x,y,z))，x/y 是屏幕像素，想判断第三个输入的参照。"
         },
         {
           "question": "屏幕点变世界点还缺什么？",
@@ -867,7 +934,8 @@ window.COURSE_MODULES.push({
             "只需给结果加一个固定偏移"
           ],
           "answer": 0,
-          "explanation": "同一屏幕点对应视线上的多个点，额外条件才确定具体位置。"
+          "explanation": "同一屏幕点对应视线上的多个点，额外条件才确定具体位置。",
+          "scenario": "已知相机和一个屏幕像素(x,y)，希望确定场景中一个唯一的位置；尚未指定相机深度、地面或碰撞表面。"
         },
         {
           "question": "几何 Plane.Raycast 会自动考虑墙体遮挡吗？",
@@ -878,7 +946,8 @@ window.COURSE_MODULES.push({
             "只要地面有 Collider 就会考虑所有遮挡"
           ],
           "answer": 2,
-          "explanation": "数学平面求交不查询场景碰撞体，条件与物理射线不同。"
+          "explanation": "数学平面求交不查询场景碰撞体，条件与物理射线不同。",
+          "scenario": "代码只用 Plane.Raycast 对 y=0 无限数学平面求交，场景有带 BoxCollider 的墙，但代码未做物理查询。"
         }
       ],
       "references": [
@@ -918,8 +987,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "Plane.Raycast 得到交点前，若有一堵墙，它会自动返回墙上位置吗？",
-          "answer": "不会。它只求与指定数学平面的交点；实际墙体遮挡需要另用物理查询等方式处理。"
-        }
+          "answer": "不会。它只求与指定数学平面的交点；实际墙体遮挡需要另用物理查询等方式处理。",
+          "scenario": "ScreenPlaneProbe 使用 new Plane(Vector3.up,Vector3.zero)，只调用 ground.Raycast；场景中即使放一堵带 Collider 的墙，也没有调用 Physics.Raycast。"
+        },
+        "scenario": "ScreenPlaneProbe 不读取鼠标，它取 Game 画面中心像素，经指定 Camera 产生射线，再求与 y=0 的无限数学平面交点，移动 Marker。画面中心只有二维位置，地面条件才补上需要的第三维约束。",
+        "purpose": "让屏幕像素、视口比例、相机深度和世界位置各有明确含义，避免用随意偏移修补转换。"
       }
     },
     {
@@ -1026,7 +1098,13 @@ window.COURSE_MODULES.push({
             "观察红绿线重合、蓝线长度不同。只把世界x由5改为8，分别记录三个返回值和线段起点，解释为什么平移改变Point却没有让红绿线分开。",
             "再分别改变旋转和非均匀缩放，用对应逆变换核对返回值；不要将“线段重合”等同于“返回值相同”。"
           ],
-          "result": "同时解释返回量与画线方式，能用Point减起点得到Vector，按含义选择转换接口。"
+          "result": "同时解释返回量与画线方式，能用Point减起点得到Vector，按含义选择转换接口。",
+          "purpose": "同时记录返回值与画线位移，解释重合线条。",
+          "setup": [
+            "创建空对象 KindsHost，添加 TransformKindsProbe；设 Position=(5,0,0)、Rotation=(0,0,0)、Scale=(2,1,1)，组件 Local=(1,0,0)。",
+            "打开 Scene，选中 KindsHost，按 F 聚焦并开启 Gizmos；代码使用 OnDrawGizmosSelected，没选中时不画，不要求进入 Play。",
+            "Inspector 中组件三点菜单点 Report transformed values，在 Console 对照 point、vector、direction 与 point-origin；绿色可能遮住相同位置的红色。"
+          ]
         },
         {
           "title": "检查父级造成的形状变化",
@@ -1036,7 +1114,13 @@ window.COURSE_MODULES.push({
             "比较实际形状、轴线和lossyScale，说明三分量为何可能不足以完整还原。",
             "把美术修正移到视觉子对象，检查物理根、相机目标与挂点引用。"
           ],
-          "result": "层级调整有明确控制范围，并检查关联对象。"
+          "result": "层级调整有明确控制范围，并检查关联对象。",
+          "purpose": "从父级条件寻找形状异常，并验证调整层级后的相关引用。",
+          "setup": [
+            "创建 UniformRoot、NonuniformRoot，各放一个相同 Cube 子对象；父级缩放分别设(2,2,2)、(2,1,1)，子级相对旋转保持相同。",
+            "选中子级观察 Scene 形状；用观察脚本输出 lossyScale 与父级条件，不能把 Inspector 中 localScale 当世界缩放。",
+            "做职责对照时建 LogicRoot/Visual/Model，尺寸修正仅移到 Visual。相机目标和挂点若原来引用 Model，逐项重新确认应跟哪层；原 Gizmo 示例没有自动相机或物理控制器。"
+          ]
         }
       ],
       "pitfalls": [
@@ -1087,7 +1171,8 @@ window.COURSE_MODULES.push({
             "会自动变成单位长度"
           ],
           "answer": 0,
-          "explanation": "不受缩放与归一化是不同概念，长度不会自动变为1。"
+          "explanation": "不受缩放与归一化是不同概念，长度不会自动变为1。",
+          "scenario": "一个 Transform 有非默认缩放，输入向量为(2,0,0)。代码调用 TransformDirection 转到世界方向，未额外 normalized。"
         },
         {
           "question": "非均匀缩放与旋转组合可能产生什么？",
@@ -1098,7 +1183,8 @@ window.COURSE_MODULES.push({
             "lossyScale 必定能无损重建完整矩阵"
           ],
           "answer": 1,
-          "explanation": "非均匀缩放与旋转组合可能包含比三个缩放分量更多的信息。"
+          "explanation": "非均匀缩放与旋转组合可能包含比三个缩放分量更多的信息。",
+          "scenario": "父对象 Scale=(2,1,1)，子模型又相对父级旋转。希望用三个世界缩放分量描述并重建完整层级变换。"
         },
         {
           "question": "拆视觉根的主要依据是什么？",
@@ -1109,7 +1195,8 @@ window.COURSE_MODULES.push({
             "增加一层必定没有维护成本"
           ],
           "answer": 2,
-          "explanation": "拆层应解决具体控制职责，而不是追求对象数量。"
+          "explanation": "拆层应解决具体控制职责，而不是追求对象数量。",
+          "scenario": "导入模型尺寸和朝向需要修正，角色逻辑与物理又需要稳定根节点。正在考虑增加视觉子对象以明确哪些层被哪些系统控制。"
         }
       ],
       "references": [
@@ -1153,7 +1240,8 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "上述对象只从世界x=5移到8，红绿线仍重合，能否据此说TransformPoint忽略了平移？",
-          "answer": "不能。Point由7变为10，确实包含平移；但红线起点也从5变为8，两次线段的位移都为2。辅助线重合只能说明两种画法形成相同线段，不能代替检查返回值。"
+          "answer": "不能。Point由7变为10，确实包含平移；但红线起点也从5变为8，两次线段的位移都为2。辅助线重合只能说明两种画法形成相同线段，不能代替检查返回值。",
+          "scenario": "对象从(5,0,0)平移到(8,0,0)，旋转为零、缩放(2,1,1)、局部输入(1,0,0)不变。红线从对象位置连到 TransformPoint 结果，绿线从同一起点沿 TransformVector 画出。"
         },
         "comparison": {
           "caption": "对象位置(5,0,0)、无旋转、缩放(2,1,1)，局部输入(1,0,0)",
@@ -1179,7 +1267,9 @@ window.COURSE_MODULES.push({
               "(1,0,0)"
             ]
           ]
-        }
+        },
+        "scenario": "TransformKindsProbe 把同一个局部输入(1,0,0)分别作为点、偏移向量和方向转换。对象位置(5,0,0)、零旋转、缩放(2,1,1)。同时观察 Report 的返回数值和 Scene 辅助线，红绿线重合本身也是需要解释的现象。",
+        "purpose": "从量的含义和画线起终点出发选择转换，并认识父级非均匀缩放的限制。"
       }
     }
   ]

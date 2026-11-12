@@ -98,7 +98,7 @@ window.COURSE_MODULES.push({
         "filename": "ClockProbe.cs",
         "source": "using UnityEngine;\npublic sealed class ClockProbe : MonoBehaviour\n{\n    float gameSeconds;\n    float realSeconds;\n    void Update()\n    {\n        gameSeconds += Time.deltaTime;\n        realSeconds += Time.unscaledDeltaTime;\n    }\n    [ContextMenu(\"Report clocks\")]\n    void Report() => Debug.Log($\"game={gameSeconds:F2}; unscaled={realSeconds:F2}\", this);\n}",
         "explanation": [
-          "将 ClockProbe 挂到空对象，分别在timeScale=1、0.5、0时运行，从组件菜单报告累计值。realSeconds 在此只表示非缩放帧增量累计，不是跨后台的完整计时方案。"
+          "创建空对象挂 ClockProbe。Edit > Project Settings > Time 中可设置 Time Scale，先记录原值，再分别设1、0.5、0，从新 Play 比较。运行中在组件三点菜单点 Report clocks 看累计值；realSeconds 只表示非缩放帧增量累计，实验后恢复时间设置。"
         ]
       },
       "lab": [
@@ -110,7 +110,13 @@ window.COURSE_MODULES.push({
             "记录两种累计值、Update与FixedUpdate次数，说明时间为零和代码不执行的区别。",
             "在副本加入每帧固定位置增量，观察它为何不随暂停停止，之后移除。"
           ],
-          "result": "实测区分游戏时间、非缩放时间与直接状态修改。"
+          "result": "实测区分游戏时间、非缩放时间与直接状态修改。",
+          "purpose": "区分零时间增量与没有方法调用，观察两种累计时钟。",
+          "setup": [
+            "创建 ClockHost 并添加 ClockProbe；Inspector 组件三点菜单可点 Report clocks，累计字段本身没有显示在 Inspector。",
+            "打开 Edit > Project Settings > Time，记录原 Time Scale 与 Fixed Timestep；分别设 Time Scale=1、0.5、0。每次新 Play 并等待约2秒真实时间后手动 Report，测试后恢复原值。",
+            "若要数 Update/FixedUpdate，另加仅计数、按菜单报告的观察组件；ClockProbe 原代码不含回调计数，不要用报告行数充当调用次数。"
+          ]
         },
         {
           "title": "从慢动作进入暂停再恢复",
@@ -120,7 +126,13 @@ window.COURSE_MODULES.push({
             "为移动、动画、音频、粒子、菜单和输入写出暂停规则及负责组件。",
             "从Update等有效入口恢复，重复切换并核对没有其他脚本覆盖最终比例。"
           ],
-          "result": "恢复保留原状态，各系统规则有具体验证。"
+          "result": "恢复保留原状态，各系统规则有具体验证。",
+          "purpose": "验证暂停恢复保留之前比例，并把各系统需求列清楚。",
+          "setup": [
+            "先用 Project Settings > Time 中的 Time Scale 手动走一遍0.5→0→0.5，比较两时钟；再实现统一暂停组件，不让多个脚本各自恢复。",
+            "控制组件保存暂停前比例，在 Update、UI事件或组件测试菜单接收恢复操作；不要把唯一恢复入口放 FixedUpdate。",
+            "系统对照只列实际建出的移动、动画、音频、粒子或菜单；尚未搭建的系统写清计划配置与待测项，不用时钟探针一并宣称通过。"
+          ]
         }
       ],
       "pitfalls": [
@@ -171,7 +183,8 @@ window.COURSE_MODULES.push({
             "只要deltaTime为零，任何代码都不能改变状态"
           ],
           "answer": 0,
-          "explanation": "时间增量为零不等于禁止执行代码；不依赖该增量的逻辑仍可能改变状态。"
+          "explanation": "时间增量为零不等于禁止执行代码；不依赖该增量的逻辑仍可能改变状态。",
+          "scenario": "对象与组件都保持有效，应用继续运行，只把 Time.timeScale 设为0；脚本定义普通 Update，未主动禁用自身。"
         },
         {
           "question": "暂停菜单继续计时更适合？",
@@ -182,7 +195,8 @@ window.COURSE_MODULES.push({
             "只累加FixedUpdate次数"
           ],
           "answer": 1,
-          "explanation": "暂停菜单若要忽略timeScale，应选择非缩放时间；更新次数本身不是秒数。"
+          "explanation": "暂停菜单若要忽略timeScale，应选择非缩放时间；更新次数本身不是秒数。",
+          "scenario": "暂停期间菜单仍要执行一段按秒计时的渐变，应用处于前台并持续更新；这段计时明确不希望随游戏 timeScale 变慢。"
         },
         {
           "question": "控制全局暂停最需要避免什么？",
@@ -193,7 +207,8 @@ window.COURSE_MODULES.push({
             "在暂停期间保留恢复入口"
           ],
           "answer": 2,
-          "explanation": "互相覆盖全局比例会破坏恢复结果，需要明确负责决定最终值的入口。"
+          "explanation": "互相覆盖全局比例会破坏恢复结果，需要明确负责决定最终值的入口。",
+          "scenario": "慢动作、暂停菜单和演出系统都可能请求改变全局比例。需要确定多个请求并存或依次结束时，最终比例由谁决定。"
         }
       ],
       "references": [
@@ -241,8 +256,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "先慢动作0.5，再暂停，恢复时直接设成1是否总正确？",
-          "answer": "不一定。若应回到慢动作，需要保存暂停前比例，由统一入口恢复；还要处理其他系统的暂停需求。"
-        }
+          "answer": "不一定。若应回到慢动作，需要保存暂停前比例，由统一入口恢复；还要处理其他系统的暂停需求。",
+          "scenario": "游戏正在使用0.5倍慢动作。打开菜单时把 Time.timeScale 设为0，关闭菜单希望恢复打开前的状态；期间没有规定必须结束慢动作。"
+        },
+        "scenario": "ClockProbe 在 Update 分别累计 deltaTime 和 unscaledDeltaTime，通过 Report clocks 打印。我们从 Time Scale=1 改到0.5再到0，比较同一真实时间里两个累计值，并单独记录代码是否继续执行。",
+        "purpose": "为暂停明确选择时钟和恢复规则，避免把时间缩放当作停止一切代码的开关。"
       }
     },
     {
@@ -345,11 +363,17 @@ window.COURSE_MODULES.push({
           "title": "比较两种时间的等待结果",
           "minutes": 60,
           "steps": [
-            "timeScale为1和0.5时各运行5次，记录两段等待的真实与游戏经过时间。",
+            "timeScale为1和0.5时各重新运行5次，等两段日志全部输出再停止，记录第一段game/real及第二段real；5次用于观察差异，并非等待API要求的次数。若要第二段游戏经过时间，需在实验副本另加采样。",
             "降低实际帧率重做，比较恢复误差与帧长，记录测量容差。",
             "解释调用所在帧工作很长时，为何WaitForSeconds不保证从该行瞬间精确起算。"
           ],
-          "result": "误差解释包含时钟、起算点和恢复帧。"
+          "result": "误差解释包含时钟、起算点和恢复帧。",
+          "purpose": "分别测缩放效果和恢复误差，避免把小数位数当精度。",
+          "setup": [
+            "创建 WaitHost 添加 WaitClockProbe，打开 Console。Time Scale 在 Edit > Project Settings > Time 调整，先1再0.5，每次新 Play。",
+            "每组5次是比较分布的观察样本；每次必须等第二段 Unscaled wait 输出后才停止。原例第一段会打印 game/real，第二段只打印 real，表格中未记录的值不要凭空填写。",
+            "降低帧率时另记录真实帧耗时；Time Scale=0会卡在第一段，若要独立测暂停中的 Realtime，另用仅等待 Realtime 的实验脚本。完成后恢复时间设置。"
+          ]
         },
         {
           "title": "等待中改变状态",
@@ -359,7 +383,13 @@ window.COURSE_MODULES.push({
             "等待中分别暂停、禁用脚本、关闭对象，每次从独立运行开始比较。",
             "给延迟提示写清结束规则，销毁等待目标后确认不再访问过期对象。"
           ],
-          "result": "知道等什么，也知道任务何时不该继续。"
+          "result": "知道等什么，也知道任务何时不该继续。",
+          "purpose": "分开等待条件、恢复阶段与任务是否仍应继续。",
+          "setup": [
+            "另建 WaitVariants 测试组件，每次只启动一段：yield return null、WaitForFixedUpdate 或 WaitUntil(()=>ready)，前后记录 frame 与阶段标记。",
+            "ready 是你在测试脚本里定义的 bool，可分别由 Update 或 LateUpdate 置为 true；WaitUntil 条件只读取它，不在条件中修改游戏状态。",
+            "建 Target 并通过序列化槽赋给测试组件，等待中删除 Target；每种暂停、组件禁用、对象关闭都新开一轮，恢复后先检目标，再记录是否继续。"
+          ]
         }
       ],
       "pitfalls": [
@@ -410,7 +440,8 @@ window.COURSE_MODULES.push({
             "等待时间足够长就不受帧影响"
           ],
           "answer": 0,
-          "explanation": "协程在游戏循环中恢复，不是硬实时定时器；小数位数不等于保证精度。"
+          "explanation": "协程在游戏循环中恢复，不是硬实时定时器；小数位数不等于保证精度。",
+          "scenario": "调用 yield return new WaitForSeconds(1f)，调用所在帧还可能有其他工作；项目可能调整 timeScale，协程只能随游戏循环恢复。"
         },
         {
           "question": "等待资源准备的更强条件是什么？",
@@ -421,7 +452,8 @@ window.COURSE_MODULES.push({
             "提前把timeScale设大"
           ],
           "answer": 1,
-          "explanation": "完成状态直接表达依赖，固定延时无法适应不同负载。"
+          "explanation": "完成状态直接表达依赖，固定延时无法适应不同负载。",
+          "scenario": "使用者必须等异步资源真正准备好，实际耗时不固定；系统能提供完成信号或 ready 状态。"
         },
         {
           "question": "周期循环每次工作后等一秒，长期可能怎样？",
@@ -432,7 +464,8 @@ window.COURSE_MODULES.push({
             "代码写在协程里就自动并行"
           ],
           "answer": 2,
-          "explanation": "每次从工作结束再等一段时间，会把额外成本带入周期。"
+          "explanation": "每次从工作结束再等一段时间，会把额外成本带入周期。",
+          "scenario": "循环每轮先做一段有耗时的工作，再执行 WaitForSeconds(1f)，随后从头开始；没有按绝对截止时刻校准。"
         }
       ],
       "references": [
@@ -472,8 +505,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "等待资源完成时，固定等0.5秒是否比检查 ready 更可靠？",
-          "answer": "不是。设备速度和负载会变化；实际完成信号或状态更直接表达依赖，固定延时可能过早也可能浪费时间。"
-        }
+          "answer": "不是。设备速度和负载会变化；实际完成信号或状态更直接表达依赖，固定延时可能过早也可能浪费时间。",
+          "scenario": "某资源的准备耗时随设备和负载变化。使用者已经能读取 ready 或接收完成通知，却打算统一等0.5秒就直接使用。"
+        },
+        "scenario": "WaitClockProbe 的 Start 协程先等1个缩放游戏秒并输出，再开始等1个非缩放秒并输出，两段是顺序执行。分别在 Time Scale=1和0.5运行，记录输出用的时钟与实际帧边界。",
+        "purpose": "解释等待为何有误差，并按时间条件、阶段和完成状态选择等待方式。"
       }
     },
     {
@@ -568,7 +604,8 @@ window.COURSE_MODULES.push({
         "filename": "AwaitableLifetimeProbe.cs",
         "source": "using System;\nusing UnityEngine;\npublic sealed class AwaitableLifetimeProbe : MonoBehaviour\n{\n    async void Start()\n    {\n        var token = destroyCancellationToken;\n        try\n        {\n            for (int i = 0; i < 120; i++)\n                await Awaitable.NextFrameAsync(token);\n            Debug.Log(\"120 frame waits completed.\", this);\n        }\n        catch (OperationCanceledException) { }\n    }\n}",
         "explanation": [
-          "挂空对象，等待中销毁应取消。仅禁用组件不触发同一销毁令牌；120次帧等待不是固定2秒。代码只处理预期取消，不会忽略所有异常。"
+          "挂空对象，等待中销毁应取消。仅禁用组件不触发同一销毁令牌；120次帧等待不是固定2秒。代码只处理预期取消，不会忽略所有异常。",
+          "本例捕获取消后安静结束，不打印“已取消”。验证销毁时应记录操作发生在120帧完成之前；需要更长人工操作窗口时，在单独副本扩大轮数并注明。只关闭组件不会重跑已执行过的 Start。"
         ]
       },
       "lab": [
@@ -580,7 +617,13 @@ window.COURSE_MODULES.push({
             "等待中销毁对象，确认取消后不打印完成，也不访问无效成员。",
             "另一次运行只禁用组件，比较销毁令牌没有覆盖此种结束需求。"
           ],
-          "result": "知道销毁取消何时生效，以及何时需要另一种取消。"
+          "result": "知道销毁取消何时生效，以及何时需要另一种取消。",
+          "purpose": "分别观察自然完成、仅禁用与销毁取消。",
+          "setup": [
+            "使用 Unity 6.3 创建空对象 AsyncHost，添加完整 AwaitableLifetimeProbe；不要求安装额外异步插件。",
+            "Console 清空后 Play。自然完成等到 120 frame waits completed；销毁实验在等待结束前从 Hierarchy 删除 AsyncHost，禁用实验则只取消组件勾选。",
+            "若需更多人工操作时间，在另存的实验副本延长等待轮数并记录；原例取消处理不打印日志，因此“无完成日志”要结合删除时刻与操作记录判断，不能冒充已测所有异常。"
+          ]
         },
         {
           "title": "建立只在启用期间的任务",
@@ -590,7 +633,13 @@ window.COURSE_MODULES.push({
             "分别测试完成、禁用、销毁、再次启用，标注每次任务属于哪一轮。",
             "检查没有重复await同一实例，后台代码没有随意访问场景对象，异常有观察入口。"
           ],
-          "result": "旧任务不会干扰新一轮，取消与资源释放有人负责。"
+          "result": "旧任务不会干扰新一轮，取消与资源释放有人负责。",
+          "purpose": "把任务限定到启用期，并验证旧任务不会覆盖新一轮。",
+          "setup": [
+            "另建 EnableAwaitableProbe，不改原示例。引入 System.Threading，为每次 OnEnable 创建新的 CancellationTokenSource，传给支持 token 的等待。",
+            "OnDisable 请求 Cancel；为每轮保留独立来源与编号，在完成/取消/finally 日志中输出编号，明确由谁 Dispose，并避免旧 finally 无条件清掉新轮次字段。",
+            "对象保持活动，快速切组件勾选，再测试销毁；每次等待都调用新的 NextFrameAsync，不复用已 await 的实例。本实验不需要后台线程，不把它写成线程安全测试。"
+          ]
         }
       ],
       "pitfalls": [
@@ -641,7 +690,8 @@ window.COURSE_MODULES.push({
             "用了Awaitable就允许任意UnityAPI跨线程"
           ],
           "answer": 0,
-          "explanation": "async提供等待表达，线程安排必须看具体操作和API条件。"
+          "explanation": "async提供等待表达，线程安排必须看具体操作和API条件。",
+          "scenario": "某 async 方法在首次 await 之前有很长的普通计算，尚未显式切线程或安排后台工作；想知道 async 关键字本身是否改变执行线程。"
         },
         {
           "question": "destroyCancellationToken 何时对应取消？",
@@ -652,7 +702,8 @@ window.COURSE_MODULES.push({
             "enabled=false时总会触发"
           ],
           "answer": 1,
-          "explanation": "禁用和销毁是不同边界，启用期间任务需要额外取消设计。"
+          "explanation": "禁用和销毁是不同边界，启用期间任务需要额外取消设计。",
+          "scenario": "MonoBehaviour 在仍有效时取得 destroyCancellationToken，并传给支持取消的等待；对照操作包括禁用组件、失焦与销毁对象。"
         },
         {
           "question": "同一个 Awaitable 实例可随意多次 await 吗？",
@@ -663,7 +714,8 @@ window.COURSE_MODULES.push({
             "每帧重新await同一实例就是下一帧等待"
           ],
           "answer": 2,
-          "explanation": "每次等待应按API取得适用的新实例，不能照搬所有Task的复用习惯。"
+          "explanation": "每次等待应按API取得适用的新实例，不能照搬所有Task的复用习惯。",
+          "scenario": "你保存了 Unity API 返回的一个 Awaitable 实例，准备让同一流程或多个消费者重复 await 它；这里不是每次调用 API 取得新实例。"
         }
       ],
       "references": [
@@ -703,8 +755,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "保存一次 NextFrameAsync 的 Awaitable，之后反复 await 它，是否和重复等下一帧相同？",
-          "answer": "不是。Awaitable实例使用池化，有单次等待限制；应为每次等待取得新的实例，不能当作可反复复用的Task。"
-        }
+          "answer": "不是。Awaitable实例使用池化，有单次等待限制；应为每次等待取得新的实例，不能当作可反复复用的Task。",
+          "scenario": "准备把 Awaitable.NextFrameAsync() 的一个返回实例保存在字段里，然后在循环每轮反复 await 这同一个实例，意图连续等待多个下一帧。"
+        },
+        "scenario": "AwaitableLifetimeProbe 在 Start 连续等待120个后续帧，每轮取得新的 NextFrameAsync，并传入销毁令牌。它不做后台计算；120是便于看见等待中销毁的演示长度，实际秒数随帧率变化。",
+        "purpose": "明确异步流程在哪个生命周期结束，以及等待、线程调度和取消各自负责什么。"
       }
     },
     {
@@ -811,7 +866,13 @@ window.COURSE_MODULES.push({
             "比较触发后归零与减1秒两种方法，记录触发次数和剩余时间。",
             "准备总时长相同但分段不同的输入，核对规则是否按预期一致。"
           ],
-          "result": "用数值说明归零丢余量如何产生漂移。"
+          "result": "用数值说明归零丢余量如何产生漂移。",
+          "purpose": "用可控输入计算触发数和余量，检验分段是否影响结果。",
+          "setup": [
+            "创建 PeriodHost 添加 PeriodicProbe，Inspector 设 Period=1、Max Per Frame=4，先在正常 Play 观察 Period elapsed。",
+            "算法实验另建普通计时模型，将累计、循环、上限和取余步骤移到显式 Tick(double dt)；测试组件 Start 依次传0.4、0.4、0.4，并打印调用前后余量与本次触发数。",
+            "对照“归零”与“减周期”使用独立模型和相同输入；不要让其 Update 同时额外加入 Time.deltaTime。"
+          ]
         },
         {
           "title": "明确长帧后的处理",
@@ -821,7 +882,13 @@ window.COURSE_MODULES.push({
             "为每种策略写具体适用例子，估计最多需要执行多少次工作。",
             "加入maxPerFrame限制，记录超过上限的完整周期最后保留还是丢弃。"
           ],
-          "result": "时间含义与每帧工作上限都可解释。"
+          "result": "时间含义与每帧工作上限都可解释。",
+          "purpose": "把落后策略与每帧成本一起说明，而不是无条件追赶。",
+          "setup": [
+            "沿用接收 dt 的模型，初始余量0、Period=1、每次允许最多4次，直接输入10.2秒。此数是算法压力输入，不是要求让编辑器真卡10秒。",
+            "准备三列表记录全部补发、合并总量、跳过旧周期各自的触发次数、剩余量与成本；先用数值演算，再实现选定策略。",
+            "需要记录丢弃量时在模型增加观察结果；原 PeriodicProbe 只有触发日志，不输出被丢弃周期数。再检查 Time.maximumDeltaTime 如何限制真实 Update 输入，区分两层限制。"
+          ]
         }
       ],
       "pitfalls": [
@@ -872,7 +939,8 @@ window.COURSE_MODULES.push({
             "负0.1秒"
           ],
           "answer": 0,
-          "explanation": "超过周期的0.1秒已经发生，减周期会保留这部分余量。"
+          "explanation": "超过周期的0.1秒已经发生，减周期会保留这部分余量。",
+          "scenario": "计时器周期为1秒，触发前 accumulated=1.1秒。当前仅处理一个周期，并执行 accumulated-=1，没有归零或其他操作。"
         },
         {
           "question": "长帧后是否总应补发全部周期？",
@@ -883,7 +951,8 @@ window.COURSE_MODULES.push({
             "只要改成double就无需选择策略"
           ],
           "answer": 1,
-          "explanation": "显示、伤害与重试的要求不同，不能套一个补发答案。"
+          "explanation": "显示、伤害与重试的要求不同，不能套一个补发答案。",
+          "scenario": "同样落后10个周期，界面只需最新显示、伤害可能需算总量、网络重试又有请求预算。现在选择通用策略。"
         },
         {
           "question": "有界补偿主要防止什么？",
@@ -894,7 +963,8 @@ window.COURSE_MODULES.push({
             "自动让每个回调在精确时刻运行"
           ],
           "answer": 2,
-          "explanation": "限制每帧补偿次数控制最坏工作量，剩余积压仍需明确处理。"
+          "explanation": "限制每帧补偿次数控制最坏工作量，剩余积压仍需明确处理。",
+          "scenario": "一个卡顿后的调度器积压大量待补工作，每次工作本身又增加本帧耗时。准备设置每帧最多补几次。"
         }
       ],
       "references": [
@@ -938,8 +1008,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "只要用 while 补齐所有周期，就一定比单次触发更好吗？",
-          "answer": "不一定。积压过多时补发本身会继续卡顿；应按功能决定补发、合并或跳过，并设置每帧工作上限。"
-        }
+          "answer": "不一定。积压过多时补发本身会继续卡顿；应按功能决定补发、合并或跳过，并设置每帧工作上限。",
+          "scenario": "某定时工作本来每秒执行一次，现已落后许多周期。每次补发都要占主线程时间，功能可能是界面刷新、持续伤害或网络重试，尚未决定容许的遗漏规则。"
+        },
+        "scenario": "PeriodicProbe 用游戏时间累计，Period=1秒、Max Per Frame=4。每触发一次减去一个周期；若剩余仍跨周期，取余会丢弃额外完整周期。我们用人工传入0.4、0.4、0.4和10.2秒等序列，拆开规则与引擎时间来源。",
+        "purpose": "解释余量、漂移和追赶成本，并按功能选择补发、合并或跳过。"
       }
     },
     {
@@ -1046,7 +1119,13 @@ window.COURSE_MODULES.push({
             "启用插值，使用同样输入比较current记录，确认模型没有因显示改变。",
             "记录显示位置与最新current的差别，解释平滑为何伴随一定落后。"
           ],
-          "result": "同时比较连续性与延迟，而不把两者当作模拟精度。"
+          "result": "同时比较连续性与延迟，而不把两者当作模拟精度。",
+          "purpose": "在相同模型输入下比较直接显示与插值显示。",
+          "setup": [
+            "创建可见小 Cube 为 InterpolatedMarker，移除任何刚体与其他移动脚本，添加 InterpolationProbe；以固定起点新 Play。",
+            "先在实验副本将最后显示语句改为直接赋 current，再恢复原 Lerp；两种模式一次只运行一种，保持 Step=0.1与时间输入相同。",
+            "current、previous、accumulator 是私有字段，不会自动出现在 Inspector；用实验观察日志或独立 Gizmo 标记分别记录，不把 Transform.position 当 current。"
+          ]
         },
         {
           "title": "测试传送与写入来源",
@@ -1056,7 +1135,13 @@ window.COURSE_MODULES.push({
             "在副本仅改current，观察跨距离过渡，再恢复完整重置。",
             "另用刚体插值实验，检查所有写Transform的脚本，明确物理根由谁控制。"
           ],
-          "result": "传送历史会重置，位置不会被多个系统无意竞争。"
+          "result": "传送历史会重置，位置不会被多个系统无意竞争。",
+          "purpose": "验证突变时历史重置，并排查多个位置写入者。",
+          "setup": [
+            "在自定义插值实验副本加一个明确 Teleport 方法，设置 previous=current=目标位置，并按定义处理余量；用组件菜单触发便于复现。",
+            "每轮从同一起点，先在错误对照只改 current，再测完整重置，目标 x=100。远处目标可能离开相机，先用 Scene 聚焦与位置日志观察，不凭 Game 消失推断算法停止。",
+            "刚体插值对照另建对象，加 Rigidbody 并按物理接口移动，在 Inspector 的 Interpolate 选择插值；原自定义 InterpolationProbe 不挂该对象，逐项核对其他 Transform 写入者。"
+          ]
         }
       ],
       "pitfalls": [
@@ -1107,7 +1192,8 @@ window.COURSE_MODULES.push({
             "只要画面连续就说明模拟精度提高"
           ],
           "answer": 0,
-          "explanation": "显示中间位置不是额外物理模拟。"
+          "explanation": "显示中间位置不是额外物理模拟。",
+          "scenario": "物理或数值模型已经产生相邻两个样本，显示端只在它们之间绘制插值位置，没有额外调用物理模拟。"
         },
         {
           "question": "传送时通常应如何处理历史？",
@@ -1118,7 +1204,8 @@ window.COURSE_MODULES.push({
             "只提高插值速度"
           ],
           "answer": 1,
-          "explanation": "传送要明确打断连续轨迹，否则旧历史仍参与显示。"
+          "explanation": "传送要明确打断连续轨迹，否则旧历史仍参与显示。",
+          "scenario": "对象从旧地点瞬间传送到远处，新位置不应被解释为连续穿过中间区域；自定义显示仍保存旧的前后样本。"
         },
         {
           "question": "刚体插值后再每帧覆盖同一 Transform 有什么风险？",
@@ -1129,7 +1216,8 @@ window.COURSE_MODULES.push({
             "会自动把刚体改成无碰撞模式"
           ],
           "answer": 2,
-          "explanation": "应明确物理根由谁控制，避免插值与Transform覆盖互相竞争。"
+          "explanation": "应明确物理根由谁控制，避免插值与Transform覆盖互相竞争。",
+          "scenario": "动态刚体已经启用物理插值，另一个脚本还在每个 Update 直接覆盖同一个根对象 Transform.position。"
         }
       ],
       "references": [
@@ -1169,8 +1257,11 @@ window.COURSE_MODULES.push({
         ],
         "prediction": {
           "question": "从x=1传送到x=100，只改current却保留旧previous，会看到什么？",
-          "answer": "插值可能沿旧位置到新位置的长距离绘制过渡。传送应同时重置历史样本，明确中断原来的连续轨迹。"
-        }
+          "answer": "插值可能沿旧位置到新位置的长距离绘制过渡。传送应同时重置历史样本，明确中断原来的连续轨迹。",
+          "scenario": "自定义插值器保存 previous 和 current。当前 current.x=1，传送操作仅把 current.x 改为100，previous 仍留在旧位置；显示继续用两者做 Lerp。"
+        },
+        "scenario": "InterpolationProbe 没有刚体：它每0.1秒把模拟位置 current 向右推进0.1单位，同时保存上一样本 previous；每帧显示两样本之间的位置。我们比较最新模拟样本与画面值，再测试从x=1传送到100的突变。",
+        "purpose": "区分模拟频率、显示连续性与延迟，知道什么时候必须重置历史。"
       }
     }
   ]
