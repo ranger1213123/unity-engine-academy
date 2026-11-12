@@ -1,0 +1,19 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+*.log
+
+# Local reports and temporary learning-data fixtures.
+/code-audit.json
+/browser-audit.json
+/content-audit.json
+/editorial-audit.json
+/artifacts/*
+
+# Editorial source fixture and selected website previews.
+!/artifacts/editorial-baseline.json
+!/artifacts/desktop-home.png
+!/artifacts/lifecycle-guide.png

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="基于 Unity 6.3 LTS 官方文档的中文引擎教材。100课、500小时，理解生命周期、组件、物理、动画、资源和性能。">
+  <title>引擎之内 · Unity 引擎原理与实践</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <aside class="sidebar" id="sidebar" aria-label="课程导航">
+    <a class="brand" href="#home" aria-label="引擎之内首页"><span class="brand-mark" aria-hidden="true">内</span><span>引擎之内<small>THE ENGINE ATLAS</small></span></a>
+    <div class="edition">UNITY 6.3 LTS <span>中文教材 · 讲解修订版</span></div>
+    <nav class="primary-nav" aria-label="学习空间">
+      <a href="#home" data-route="home"><span aria-hidden="true">◉</span> 学习总览</a>
+      <a href="#roadmap" data-route="roadmap"><span aria-hidden="true">≡</span> 500 小时学习路线</a>
+      <a href="#components" data-route="components"><span aria-hidden="true">◇</span> 常用组件速查</a>
+      <a href="#lab/lifecycle" data-route="lab"><span aria-hidden="true">⌘</span> 引擎交互实验室</a>
+      <a href="#notes" data-route="notes"><span aria-hidden="true">▤</span> 我的学习笔记</a>
+      <a href="#references" data-route="references"><span aria-hidden="true">↗</span> 官方文档索引</a>
+    </nav>
+    <div class="nav-caption">教材目录 <span>20 CHAPTERS</span></div>
+    <nav id="chapter-nav" class="chapter-nav" aria-label="章节目录"></nav>
+    <div class="sidebar-footer"><div><span id="side-progress-text">学习旅程 · 0 / 100 课</span><span id="side-progress-percent">0%</span></div><progress id="side-progress" value="0" max="100" aria-label="课程完成进度"></progress><small>理解原理，用实验建立直觉。</small></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar">
+      <button class="icon-button menu-toggle" id="menu-toggle" aria-label="打开课程目录" aria-expanded="false">☰</button>
+      <div class="breadcrumb" id="breadcrumb">学习空间 <span>/</span> 总览</div>
+      <div class="topbar-actions"><button class="search-trigger" id="open-search"><span>搜索知识、组件、API…</span><kbd>Ctrl K</kbd></button><button class="icon-button" id="theme-toggle" aria-label="切换深色阅读">◐</button><button class="text-button" id="export-progress">导出进度</button><button class="text-button import-button" id="import-progress">导入</button></div>
+    </header>
+    <main id="main" tabindex="-1"></main>
+    <footer class="page-footer"><span>引擎之内 · Unity 引擎原理与实践</span><span>原创中文讲解 · 基于 Unity 官方文档 · 6000.3</span></footer>
+  </div>
+  <div class="mobile-scrim" id="mobile-scrim" hidden></div>
+  <dialog id="search-dialog" class="search-dialog" aria-labelledby="search-title"><form method="dialog" class="search-head"><label class="sr-only" id="search-title" for="search-input">搜索教材</label><input type="search" id="search-input" placeholder="输入生命周期、Rigidbody、资源加载…" autocomplete="off"><button class="icon-button" aria-label="关闭搜索">×</button></form><div id="search-results" class="search-results"></div><div class="search-hint">支持标题、正文、API 和章名搜索 · Esc 关闭</div></dialog>
+  <input id="import-file" type="file" accept="application/json,.json" hidden>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script>window.COURSE_MODULES = [];</script>
+  <script src="content/chapter-01.js"></script>
+  <script src="content/chapter-02.js"></script>
+  <script src="content/chapter-03.js"></script>
+  <script src="content/chapter-04.js"></script>
+  <script src="content/chapter-05.js"></script>
+  <script src="content/chapter-06.js"></script>
+  <script src="content/chapter-07.js"></script>
+  <script src="content/chapter-08.js"></script>
+  <script src="content/chapter-09.js"></script>
+  <script src="content/chapter-10.js"></script>
+  <script src="content/chapter-11.js"></script>
+  <script src="content/chapter-12.js"></script>
+  <script src="content/chapter-13.js"></script>
+  <script src="content/chapter-14.js"></script>
+  <script src="content/chapter-15.js"></script>
+  <script src="content/chapter-16.js"></script>
+  <script src="content/chapter-17.js"></script>
+  <script src="content/chapter-18.js"></script>
+  <script src="content/chapter-19.js"></script>
+  <script src="content/chapter-20.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1080 @@
+window.COURSE_MODULES.push({
+  "id": "m13",
+  "number": 13,
+  "title": "音频、粒子与反馈",
+  "subtitle": "把表现效果做成有预算的引擎系统",
+  "description": "理解音频信号链、空间声音、粒子模块、效果复用与反馈时序，而不把效果当成随意播放的附件。",
+  "accent": "#a66652",
+  "lessons": [
+    {
+      "hours": 5,
+      "prerequisites": [
+        "l060"
+      ],
+      "timePlan": [
+        {
+          "label": "阅读与预测",
+          "minutes": 50
+        },
+        {
+          "label": "引擎实验",
+          "minutes": 120
+        },
+        {
+          "label": "独立练习",
+          "minutes": 75
+        },
+        {
+          "label": "自测与回忆",
+          "minutes": 35
+        },
+        {
+          "label": "复盘与归档",
+          "minutes": 20
+        }
+      ],
+      "id": "l061",
+      "title": "AudioClip、AudioSource、Listener 与 Mixer",
+      "goals": [
+        "区分声音素材、播放组件、监听器与混音器的作用",
+        "按顺序定位正在播放却无声的原因",
+        "把线性设置换算为分贝，并说明零值怎样处理"
+      ],
+      "theory": [
+        {
+          "title": "声音从素材到耳机，经过哪些环节",
+          "paragraphs": [
+            "可以先把AudioClip看成一段录音，AudioSource看成播放它的播放器。把录音拖进项目，只是获得了素材；将它赋给Source并发起播放，才开始使用。AudioListener表示游戏中的听者，AudioMixer则可以在输出前组织音量与效果。它们各做一件事，不能只添加其中一个就期待所有设置自动正确。",
+            "先建最小实验：一个短Clip、一个Source、一个有效Listener，用二维播放排除距离影响。能听见后再接入Mixer。若后来无声，就逐项比较新增了什么：Mute是否打开、Source音量是否为零、输出组是否静音、设备是否选对。这样每一步都有已知可工作的对照。"
+          ]
+        },
+        {
+          "title": "Play和PlayOneShot分别适合什么",
+          "paragraphs": [
+            "Play使用Source当前配置的Clip进行播放；PlayOneShot可以在同一个Source上叠加短声音。例如连续两次命中，可以让第二声开始时第一声仍有尾音。但叠加能力不等于“十次声音一定合理”：过多重复音可能太响，也会增加运行成本。",
+            "要先规定短时间内的重复声音是否合并、替换或限制数量。子弹命中后立即销毁时，也要考虑声音由谁继续播放；如果播放器跟着子弹退出，尾音可能被截断。可以让独立音效对象承担播放，但也要明确它何时停止、何时回收。"
+          ]
+        },
+        {
+          "title": "用三个数字理解线性幅度与分贝",
+          "paragraphs": [
+            "Source的volume常用0到1表示线性幅度。Mixer中的衰减参数则以分贝表示，这是一种描述相对比值的对数刻度。幅度换算公式是dB=20×log10(幅度)。输入1得到0dB，表示这个环节不额外衰减；输入0.5约为-6dB。主观上是否听成一半，还受声音内容和听觉影响。",
+            "零不能直接得到有限的对数值。示例先把输入限制到0.0001至1，因此零输入最后映射到-80dB，而不是无穷值。这个策略表示非常低的音量；若产品要求绝对静音，还要另外规定Mute等处理。保存用户的0到1设置，使用时统一换算，可以避免多个脚本各用一套刻度。"
+          ]
+        },
+        {
+          "title": "先画分组，再安排谁修改参数",
+          "paragraphs": [
+            "把音乐送到Music组、战斗声送到SFX组、按钮声送到UI组，主音量再统一控制它们。这样音乐滑块只改变音乐，不会误改按钮。若一个Source接错组，调参数本身可能完全成功，但听到的类别却不对，所以输出路由也是调试内容。",
+            "Mixer Snapshot用于切换一组混音状态，例如水下效果。通过SetFloat控制的暴露参数，需要另外理解与快照的关系，不能假定两者同时随意改值就会自动协调。用户音量、环境效果和暂停规则各由谁维护，应在开始组合前说明。",
+            "示例还检查SetFloat的返回值。若参数没有暴露，或填写的名称不匹配，就可能设置失败。先核对参数名和资源引用，再判断是不是换算公式出了问题。"
+          ]
+        },
+        {
+          "title": "听见声音之后，还要检查加载与并发",
+          "paragraphs": [
+            "长音乐和高频短音效的使用方式不同。导入时的压缩、加载方式、声道数会改变内存与解码工作；磁盘文件变小，不一定代表运行占用也按同一比例下降。先固定一个素材和并发数量，再比较配置，才能判断变化来自哪里。",
+            "场景叠加加载还可能带来两个AudioListener，要检查当前有效的听者。空间音效则需进一步检查听者位置和距离。最后保存导入设置、输出组、并发数与设备信息。一个可重复的正常播放基线，比无声后立即重新导入所有素材更能帮助定位原因。"
+          ]
+        }
+      ],
+      "code": {
+        "title": "把线性设置转换成 Mixer 分贝",
+        "language": "csharp",
+        "filename": "MixerVolumeControl.cs",
+        "source": "using UnityEngine;\nusing UnityEngine.Audio;\npublic class MixerVolumeControl : MonoBehaviour\n{\n    [SerializeField] AudioMixer mixer;\n    [SerializeField] string exposedParameter = \"MusicVolume\";\n    public void SetLinearVolume(float value)\n    {\n        if (!mixer) return;\n        float decibels = 20f * Mathf.Log10(Mathf.Clamp(value, 0.0001f, 1f));\n        if (!mixer.SetFloat(exposedParameter, decibels))\n            Debug.LogWarning(\"Check exposed mixer parameter.\", this);\n    }\n}",
+        "explanation": [
+          "创建AudioMixer和Music组，把该组音量参数暴露并命名为MusicVolume。AudioSource的Output指定这个组，脚本的mixer字段指定Mixer资源。",
+          "从用户操作或Start阶段及之后调用SetLinearVolume，避免在Awake、OnEnable等过早阶段设置Mixer参数。输入先被限制到0.0001至1，再换算；参数名没有正确暴露时会输出警告。"
+        ]
+      },
+      "lab": [
+        {
+          "title": "逐个制造并定位无声问题",
+          "minutes": 60,
+          "steps": [
+            "先用短Clip和二维Source建立正常播放，场景只留一个有效Listener，再接入Music组。记录这组可工作的设置。",
+            "每次只改一项：Source静音、Source音量、组音量、输出路由或监听器启用状态。记录播放标志与实际是否听见。",
+            "沿素材、Source、分组、监听与设备的顺序恢复，说明每个故障发生在哪一环，不通过重建素材绕过原因。"
+          ],
+          "result": "能区分“播放器开始工作”与“最终可以听见”，并按改变过的环节定位故障。"
+        },
+        {
+          "title": "计算音量并测试重复声音",
+          "minutes": 60,
+          "steps": [
+            "调用示例分别输入1、0.5、0，先计算预期分贝，再查看Music组的参数和听感。",
+            "以固定间隔发出10次短音效，比较全部叠加与限制重复的结果，记录同时播放数量。",
+            "画出Music、SFX、UI分组，说明主音量、类别音量和暂停效果分别由哪里调整。"
+          ],
+          "result": "滑块、分贝和分组控制各有清楚含义；重复播放数量也有明确规则。"
+        }
+      ],
+      "pitfalls": [
+        {
+          "symptom": "音量滑块变化很大，听起来却几乎不变",
+          "cause": "把0到1的线性数值直接当成了分贝，实际衰减范围与期待不同。",
+          "fix": "用明确的幅度到分贝换算，检查零值处理，再用固定素材比较参数与听感。"
+        },
+        {
+          "symptom": "子弹归还对象池时，命中声只响一小截",
+          "cause": "声音由同一个短期对象播放，对象退出也结束了这次播放。",
+          "fix": "让合适的独立音源负责完整尾音，或明确规定这种效果允许截断。"
+        }
+      ],
+      "exercise": {
+        "brief": "建立Music、SFX和UI三组音频，让用户分别调整音量。主动制造两种无声故障，再按完整输出链定位并恢复。",
+        "deliverables": [
+          "每个Source送往哪个Mixer组的连接图",
+          "0、0.5、1对应的换算结果与零值策略",
+          "密集播放与音源退出时的处理规则"
+        ],
+        "rubric": [
+          {
+            "item": "信号链完整",
+            "points": 25
+          },
+          {
+            "item": "单位转换正确",
+            "points": 25
+          },
+          {
+            "item": "类别路由清楚",
+            "points": 25
+          },
+          {
+            "item": "故障证据充分",
+            "points": 25
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "question": "线性滑块输入为0，为什么示例先设置下限再取Log10？",
+          "options": [
+            "因为所有分贝都必须为正",
+            "因为零的对数没有有限值，需要下限或独立静音处理",
+            "因为Source不能接收任何小于1的值",
+            "因为Mixer会自动把零变成1"
+          ],
+          "answer": 1,
+          "explanation": "脚本选择0.0001作为最小幅度，换算为-80dB。它避免无穷值，但是否需要绝对静音仍应另定规则。"
+        },
+        {
+          "question": "PlayOneShot可以叠加短声音，是否也自动决定了合理并发数量？",
+          "options": [
+            "是，每次都保证只有一个声音",
+            "否，合并、优先级和数量限制仍需设计",
+            "是，Source会按伤害数值自动选择",
+            "是，所有短音效都不占运行预算"
+          ],
+          "answer": 1,
+          "explanation": "叠加是播放能力，并发规则则要结合听感、信息价值和设备成本制定。"
+        },
+        {
+          "question": "Source显示播放中但无声，下一步怎样查更有效？",
+          "options": [
+            "沿音量、输出组、监听位置与设备逐环检查",
+            "只看Clip文件是否压缩得足够小",
+            "反复调用Play直到声音出现",
+            "先增加更多Source覆盖可能的问题"
+          ],
+          "answer": 0,
+          "explanation": "同一个播放状态后面还有多个输出环节。与正常基线逐项比较，才能定位哪个条件让声音不可听见。"
+        }
+      ],
+      "references": [
+        {
+          "label": "AudioSource",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AudioSource.html"
+        },
+        {
+          "label": "AudioMixer",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Audio.AudioMixer.html"
+        }
+      ],
+      "summary": [
+        "Clip、Source、Listener与Mixer各负责哪一步？",
+        "为什么线性0.5与0.5dB不能直接互换？"
+      ],
+      "teaching": {
+        "question": "AudioSource显示正在播放，却听不到声音。应该从哪个环节开始查？",
+        "keyIdea": "先沿着“素材→播放器→混音分组→监听与设备输出”检查。正在播放只说明其中一个环节有工作，不代表后面的音量、距离和输出设置都正确。",
+        "walkthrough": [
+          {
+            "title": "建立一条能听见的链",
+            "text": "给AudioSource指定短AudioClip，先用二维播放，场景只保留一个有效AudioListener，确认设备能正常输出。"
+          },
+          {
+            "title": "接入音乐混音分组",
+            "text": "把AudioSource输出送到Music组，将组音量参数暴露为MusicVolume，再把Mixer资源交给示例脚本。"
+          },
+          {
+            "title": "用三个输入验证换算",
+            "text": "分别输入1、0.5和0，脚本约得到0dB、-6dB和-80dB；最后一个来自下限保护，不是对零直接取对数。"
+          }
+        ],
+        "prediction": {
+          "question": "把线性值0.5直接当作Mixer的0.5dB，是否相当于把幅度减半？",
+          "answer": "不是。幅度减半对应20×log10(0.5)，约为-6dB。0.5dB表示另一个比值，不能把线性滑块数值和分贝数值直接互换。"
+        }
+      }
+    },
+    {
+      "hours": 5,
+      "prerequisites": [
+        "l061"
+      ],
+      "timePlan": [
+        {
+          "label": "阅读与预测",
+          "minutes": 50
+        },
+        {
+          "label": "引擎实验",
+          "minutes": 120
+        },
+        {
+          "label": "独立练习",
+          "minutes": 75
+        },
+        {
+          "label": "自测与回忆",
+          "minutes": 35
+        },
+        {
+          "label": "复盘与归档",
+          "minutes": 20
+        }
+      ],
+      "id": "l062",
+      "title": "空间音频与精确播放时钟",
+      "goals": [
+        "根据听觉需求选择二维或三维音源",
+        "用明确的听者位置解释距离与左右声像",
+        "使用音频时钟安排播放，并区分调度与设备输出延迟"
+      ],
+      "theory": [
+        {
+          "title": "先让同一段声音在远近两处播放",
+          "paragraphs": [
+            "按钮点击声通常不该因为角色走远就听不见；怪物吼声却可能需要告诉玩家它在哪。AudioSource的spatialBlend为0时按二维方式处理，为1时使用三维空间效果，中间可以混合。选择依据是声音需要传递什么信息，而不是游戏用了二维还是三维画面。",
+            "先用同一Clip、同一音量建立远近两个位置，只改变spatialBlend。然后再比较距离衰减曲线。Min Distance、Max Distance和衰减模式共同影响听感，不能把Max Distance无条件理解为一条超过就绝对无声的硬边界；要结合所选模式验证。"
+          ]
+        },
+        {
+          "title": "听者放在哪里，就从哪里计算空间关系",
+          "paragraphs": [
+            "俯视相机可能在地面上方10单位，角色附近的火堆虽然在画面上离角色很近，与相机上的Listener却仍有高度差。空间声音根据三维关系衰减，不能只看屏幕中两张图的间隔。将Listener放到角色附近会改变这套距离，也会改变玩家的听觉视角。",
+            "设置固定的左、中、右三个音源，移动并旋转Listener，比较声音的左右和音量。这样能分清位置与朝向各自的作用。多相机场景还要确认只有一个有效Listener；否则先解决重复听者，再讨论哪个衰减参数更合适。"
+          ]
+        },
+        {
+          "title": "画面帧与音频采样使用不同的时间尺度",
+          "paragraphs": [
+            "60FPS下每帧约16.7毫秒。如果等Update发现“已经到时间”再调用播放，就受本次帧调度影响。音频在48kHz采样率下，每个采样间隔约20.8微秒，两者的时间尺度差很多。游戏帧适合处理交互，不能据此承诺每个采样点都能正好执行一行脚本。",
+            "AudioSettings.dspTime提供音频系统的时间基准。PlayScheduled接收这个基准上的绝对播放时刻。示例先计算当前时间加0.5秒，再提前提交给音频系统，给加载和准备留出余量。它安排的是播放，不是让主线程精确睡到那个时刻。",
+            "不要直接将0.5传给PlayScheduled并把它理解成“从现在起等半秒”。它表示音频时钟上的0.5秒处，可能早已过去；需要相对延迟时，先加上当前音频时间。"
+          ]
+        },
+        {
+          "title": "播放准备与暂停都要有明确规则",
+          "paragraphs": [
+            "本课要求在Inspector先关闭Play On Awake，并给Source指定可加载的短Clip。若只在Start里将playOnAwake设为false，不能倒回过去阻止已经发生的自动播放。示例还调用Stop以建立已停止的起点，pitch保持1，便于只观察一次预约。",
+            "timeScale改变游戏时间，但不能据此假定所有音频同时暂停。音乐、按钮声与环境声可能有不同要求，需要结合AudioListener.pause、音源的忽略暂停选项等设置。先写清哪些要停、哪些继续，再观察已经预约的声音在暂停和恢复时怎样处理。"
+          ]
+        },
+        {
+          "title": "精确调度与最终听感还隔着设备",
+          "paragraphs": [
+            "音频准备、解码、缓冲、声卡和耳机都会参与从输入到听见的延迟。用蓝牙耳机感觉声音慢，不能直接推断是FixedUpdate顺序错误。比较时应固定设备和输出路径，并说明测的是发起调用、系统安排，还是已经记录到实际输出。",
+            "例如一个单声道片段的采样率为48000Hz，共96000个采样，原速时长是96000÷48000=2秒。要接下一段，应依据这个时长安排音频时间；若改变播放速度，原来的两秒也需要重新检查。",
+            "拼接音乐片段时，还需要根据采样数、采样率和播放速度确定持续时间。先在固定pitch下建立基线，不用WaitForSeconds等待估计长度来冒充采样精确的拼接。代码中打印预约时刻，只能证明提交了什么时间；真正验证无缝与延迟，需要相应录制和目标设备测试。"
+          ]
+        }
+      ],
+      "code": {
+        "title": "用音频时钟预约一次播放",
+        "language": "csharp",
+        "filename": "ScheduledAudioProbe.cs",
+        "source": "using UnityEngine;\n[RequireComponent(typeof(AudioSource))]\npublic class ScheduledAudioProbe : MonoBehaviour\n{\n    [SerializeField, Min(0.1f)] float leadSeconds = 0.5f;\n    void Start()\n    {\n        var source = GetComponent<AudioSource>();\n        if (!source.clip) return;\n        source.playOnAwake = false;\n        source.Stop();\n        double when = AudioSettings.dspTime + leadSeconds;\n        source.PlayScheduled(when);\n        Debug.Log($\"Scheduled DSP time: {when}\", this);\n    }\n}",
+        "explanation": [
+          "先在AudioSource的Inspector关闭Play On Awake，指定短Clip，pitch保持1。Start中的Stop建立已停止的实验起点。",
+          "when是音频时钟上的绝对时刻。日志证明脚本提交了哪一时刻，不能单凭该日志得出耳机端实际延迟。"
+        ]
+      },
+      "lab": [
+        {
+          "title": "建立空间听觉标尺",
+          "minutes": 60,
+          "steps": [
+            "固定一个Listener，在左、中、右和已知远近位置放置相同音源，保持Clip、音量和输出组一致。",
+            "分别比较spatialBlend为0、0.5和1，再单独移动或旋转Listener，记录声像与音量如何变化。",
+            "将Listener分别放在俯视相机和角色附近，记录三维位置，解释屏幕上看似相近的音源为何听起来不同。"
+          ],
+          "result": "声音模式来自听觉需求；距离和声像需要按音源与听者的三维关系解释。"
+        },
+        {
+          "title": "比较预约时钟与暂停规则",
+          "minutes": 60,
+          "steps": [
+            "运行预约探针，记录dspTime与leadSeconds。另做一个逐帧等待后调用播放的对照，说明两者分别依赖哪种调度。",
+            "分别测试timeScale变化和明确的音频暂停设置。每次从干净运行开始，记录预约、暂停、恢复和实际播放。",
+            "为游戏运动、动画、音乐和按钮声列一张表，注明暂停时继续还是停止，并标出尚未在目标设备验证的结果。"
+          ],
+          "result": "能区分游戏时钟、音频调度和设备输出，暂停策略也有逐项可检查的含义。"
+        }
+      ],
+      "pitfalls": [
+        {
+          "symptom": "画面上就在角色旁边的音效，听起来却很远",
+          "cause": "Listener放在高处相机上，计算距离包含了相机到地面的高度。",
+          "fix": "记录音源与听者的三维位置，根据希望的听觉视角选择监听位置，再验证衰减。"
+        },
+        {
+          "symptom": "多次用协程拼接音乐后，间隔越来越明显",
+          "cause": "恢复协程受游戏调度影响，并没有按音频采样时钟安排下一片段。",
+          "fix": "使用音频时间基准研究预约，核对片段实际长度，并单独测试加载和设备输出。"
+        }
+      ],
+      "exercise": {
+        "brief": "制作有已知位置的空间音源标尺，并预约一次播放。分别说明听者位置、暂停设置和输出设备怎样影响结果。",
+        "deliverables": [
+          "已知距离和朝向下的音量、声像记录",
+          "当前音频时间、预约时刻与实际观察日志",
+          "各系统在暂停时继续或停止的对照表"
+        ],
+        "rubric": [
+          {
+            "item": "空间语义正确",
+            "points": 25
+          },
+          {
+            "item": "监听位置合理",
+            "points": 25
+          },
+          {
+            "item": "调度前提完整",
+            "points": 25
+          },
+          {
+            "item": "延迟结论克制",
+            "points": 25
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "question": "二维俯视游戏中，怪物吼声应怎样选择空间模式？",
+          "options": [
+            "所有声音必须spatialBlend=0",
+            "按是否需要远近和方向信息选择",
+            "只要使用Sprite就不能使用三维声音",
+            "只有音乐才可以使用Listener"
+          ],
+          "answer": 1,
+          "explanation": "画面维度不决定声音模式。是否需要传达距离与方向，才是空间化选择的起点。"
+        },
+        {
+          "question": "用WaitForSeconds等待一段音乐的估计长度，能保证采样精确拼接吗？",
+          "options": [
+            "能，只要音乐足够短",
+            "不能，协程按游戏调度恢复，并非采样时钟",
+            "能，只要项目关闭重力",
+            "能，换成非缩放等待就自动精确"
+          ],
+          "answer": 1,
+          "explanation": "是否使用缩放时间和是否按采样时钟安排，是不同问题。音乐拼接需要研究音频时钟、片段长度与调度。"
+        },
+        {
+          "question": "PlayScheduled接收的播放时刻，主要依据哪个时间基准？",
+          "options": [
+            "AudioSettings.dspTime",
+            "当前渲染帧数乘假设帧长",
+            "Time.fixedTime对应的物理步",
+            "动画片段的归一化进度"
+          ],
+          "answer": 0,
+          "explanation": "它使用音频系统的时间基准。提前预约可以避免要求某个游戏帧恰好在目标时刻发起播放。"
+        }
+      ],
+      "references": [
+        {
+          "label": "AudioSource.PlayScheduled",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AudioSource.PlayScheduled.html"
+        },
+        {
+          "label": "AudioSettings.dspTime",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AudioSettings-dspTime.html"
+        }
+      ],
+      "summary": [
+        "spatialBlend的二维与三维，和游戏画面的维度有什么关系？",
+        "预约播放准确，并不自动证明最终耳机延迟很低，为什么？"
+      ],
+      "teaching": {
+        "question": "游戏画面是二维的，为什么怪物的声音仍可以随远近变化？",
+        "keyIdea": "音频的二维或三维设置，决定是否使用声音与听者的空间关系；它和画面使用Sprite还是三维模型是两回事。播放时刻则要另外根据音频时钟安排。",
+        "walkthrough": [
+          {
+            "title": "先建立距离对照",
+            "text": "把同一声音分别放在听者近处和远处，保持素材、音量和输出组相同，只比较spatialBlend为0与1的结果。"
+          },
+          {
+            "title": "确定预约的绝对时刻",
+            "text": "假设当前dspTime为10.0秒，leadSeconds为0.5秒，示例将播放安排在音频时钟的10.5秒。"
+          },
+          {
+            "title": "区分预约与听到的时刻",
+            "text": "预约由音频系统处理，游戏帧不用恰好在10.5秒调用Play；声卡缓冲和设备输出仍会影响最终到耳朵的延迟。"
+          }
+        ],
+        "prediction": {
+          "question": "把WaitForSeconds等待设置得更短，就能保证音乐精确到采样点拼接吗？",
+          "answer": "不能。协程仍按游戏帧的条件恢复，等待更短也不会变成音频采样时钟。精确安排音频应研究dspTime和调度接口，最终设备延迟还需单独测量。"
+        }
+      }
+    },
+    {
+      "hours": 5,
+      "prerequisites": [
+        "l062"
+      ],
+      "timePlan": [
+        {
+          "label": "阅读与预测",
+          "minutes": 50
+        },
+        {
+          "label": "引擎实验",
+          "minutes": 120
+        },
+        {
+          "label": "独立练习",
+          "minutes": 75
+        },
+        {
+          "label": "自测与回忆",
+          "minutes": 35
+        },
+        {
+          "label": "复盘与归档",
+          "minutes": 20
+        }
+      ],
+      "id": "l063",
+      "title": "ParticleSystem 的模块与模拟空间",
+      "goals": [
+        "区分发射持续时间、粒子寿命与效果最终结束",
+        "用数字估算粒子数量并解释局限",
+        "比较Local与World，并正确修改粒子模块"
+      ],
+      "theory": [
+        {
+          "title": "从“什么时候生成”与“活多久”开始",
+          "paragraphs": [
+            "一个发射器每秒生成12个粒子，每个粒子存活0.6秒。持续稳定发射时，存活数量约在12×0.6=7.2这个量级。它只是估算：粒子是逐个出现和消失的，还可能有爆发、随机寿命与最大数量限制，不能要求每帧都显示同一个数。",
+            "Duration描述发射循环的时间长度，Looping决定是否重复，Start Lifetime描述单个粒子的寿命。把发射器停下，不等于抹去刚生成的所有粒子。区分这几项，才能解释烟为什么有尾巴，以及特效什么时候可以回收。"
+          ]
+        },
+        {
+          "title": "发射器移动，旧粒子要不要跟着走",
+          "paragraphs": [
+            "角色脚下的光环常希望跟随角色；角色跑过留下的灰尘，则通常希望留在原来的世界轨迹上。Local让粒子在发射器的局部空间模拟，World让它们在世界空间模拟。先只移动发射器，就能看出旧粒子是否随它整体平移。",
+            "World不等于静止。粒子仍可按自己的速度、重力或其他模块运动。Custom则允许指定另一个参考Transform。旋转、缩放以及粒子系统的缩放设置还会带来更多影响，先固定这些条件，再逐项比较，避免将所有变化误归因于速度曲线。"
+          ]
+        },
+        {
+          "title": "为什么取出main后直接修改就有效",
+          "paragraphs": [
+            "示例先执行var main=particles.main，再设置main.startLifetime。main在C#中是模块结构体，但它负责访问所属粒子系统的内部配置。这个接口与普通的“复制一个Vector3再改副本”不同，设置模块属性会作用到对应系统，不需要把整个main赋回去。",
+            "这不是说所有结构体都自动共享修改，而是这个特定API的设计。startLifetime、rateOverTime还支持曲线等配置，本例通过常数赋值设置简单值。遇到其他属性时，要查对应模块接受的类型，不要把Inspector里每个选项都想成一个普通float字段。"
+          ]
+        },
+        {
+          "title": "让两次观察具备可比较的条件",
+          "paragraphs": [
+            "同样一团烟，两次生成方向却可能不同，因为用了随机速度或寿命。调试一个参数时，可以固定随机种子，保持素材、发射形状、相机和位置相同，只改变待研究的条件。先证明基础现象，再重新加入随机性，比较就更容易解释。",
+            "数量也不是全部成本。少量巨大透明粒子反复覆盖同一区域，可能有明显绘制压力；碰撞、噪声、子发射器又会增加不同工作。应分别记录存活峰值、屏幕覆盖和模块组合，而不是看到Max Particles不高，就认定效果一定便宜。",
+            "把发射速率从12改为24，寿命仍是0.6秒，估算数量就从7.2变为14.4。不过如果Max Particles只有5，数量会受上限限制。这组对照能说明公式用了哪些前提，也提醒你不能只凭数量翻倍就断定总帧时间翻倍。"
+          ]
+        },
+        {
+          "title": "结束效果时，检查整个效果还有没有工作",
+          "paragraphs": [
+            "StopEmitting停止继续发射，但保留已经存在的粒子；StopEmittingAndClear还会清空现有粒子。前者适合让尾迹自然消散，后者适合回收时重置。根据固定一秒就回收，可能在美术把寿命改长后截断尾迹，所以结束条件应与实际效果一致。",
+            "IsAlive可以连同子系统检查是否仍有粒子或继续产生粒子的可能。循环系统可能一直保持存活，一次性效果应先关闭所有相关循环。若同一特效还包括音源、灯或其他延迟行为，也要分别规定结束时机；只检查主粒子系统，无法证明整套效果都已完成。"
+          ]
+        }
+      ],
+      "code": {
+        "title": "修改粒子寿命、发射速率与模拟空间",
+        "language": "csharp",
+        "filename": "ParticleModuleProbe.cs",
+        "source": "using UnityEngine;\n[RequireComponent(typeof(ParticleSystem))]\npublic class ParticleModuleProbe : MonoBehaviour\n{\n    [SerializeField] float lifetime = 0.6f;\n    void Start()\n    {\n        var particles = GetComponent<ParticleSystem>();\n        var main = particles.main;\n        main.startLifetime = lifetime;\n        main.simulationSpace = ParticleSystemSimulationSpace.World;\n        var emission = particles.emission;\n        emission.rateOverTime = 12f;\n        particles.Play();\n    }\n}",
+        "explanation": [
+          "脚本设置寿命0.6秒、每秒发射12个粒子，并使用World模拟空间。先保持简单材质与发射形状，再移动发射器观察旧粒子。",
+          "main和emission是访问所属系统配置的模块接口。通过局部模块变量设置属性即可，不需要把模块整体重新赋回粒子组件。"
+        ]
+      },
+      "lab": [
+        {
+          "title": "估算数量并比较参考空间",
+          "minutes": 60,
+          "steps": [
+            "关闭爆发，设置固定速率与固定寿命，先计算速率乘寿命的估值，再观察系统稳定后的数量范围。",
+            "只改变模拟空间，分别平移发射器观察Local与World；恢复基线后再单独研究旋转和Custom。",
+            "固定随机种子，保持相同相机与素材，记录数量峰值和屏幕覆盖，说明估算没有包含哪些因素。"
+          ],
+          "result": "能用生成、寿命和参考空间解释效果，而不把粒子变化一概当作随机结果。"
+        },
+        {
+          "title": "区分停止发射与清空",
+          "minutes": 60,
+          "steps": [
+            "从同一状态开始，分别调用StopEmitting和StopEmittingAndClear，观察旧粒子是否立即消失。",
+            "增加一个持续更久的子效果，比较只观察主系统与包含子系统的IsAlive结果。",
+            "关闭一次性效果的所有循环，写出自然结束和强制回收时各采用哪一种停止方式。"
+          ],
+          "result": "自然尾迹与立即重置是不同需求；回收前应检查所有相关子效果。"
+        }
+      ],
+      "pitfalls": [
+        {
+          "symptom": "角色已经跑开，旧灰尘却整体跟着滑走",
+          "cause": "粒子在发射器的局部空间中模拟，会受发射器移动影响。",
+          "fix": "根据需要比较World或Custom，固定其他运动参数，只改变模拟空间观察。"
+        },
+        {
+          "symptom": "直接写particles.main.startLifetime时编译失败",
+          "cause": "模块以结构体形式返回，不能把这种链式写法当作普通字段修改。",
+          "fix": "先保存var main=particles.main，再通过这个模块接口设置main.startLifetime。"
+        }
+      ],
+      "exercise": {
+        "brief": "制作角色移动时的脚底扬尘，解释为什么选择这个模拟空间。修改速率与寿命后，重新预测数量，并证明停止与回收不会截断需要保留的尾迹。",
+        "deliverables": [
+          "速率、寿命与数量估值的计算表",
+          "发射器移动前后的粒子对照",
+          "两种停止方式及子系统结束的测试"
+        ],
+        "rubric": [
+          {
+            "item": "数量推导合理",
+            "points": 25
+          },
+          {
+            "item": "空间选择准确",
+            "points": 25
+          },
+          {
+            "item": "模块操作正确",
+            "points": 25
+          },
+          {
+            "item": "生命周期完整",
+            "points": 25
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "question": "忽略爆发与上限，稳定发射的粒子数量可以怎样初步估算？",
+          "options": [
+            "每秒发射数乘平均寿命",
+            "只用Duration乘循环次数",
+            "只看Max Particles配置值",
+            "每秒发射数除以相机帧率"
+          ],
+          "answer": 0,
+          "explanation": "稳定状态下，这段寿命内生成且尚未消失的粒子形成存活数量。估算还需结合爆发、随机值和上限。"
+        },
+        {
+          "question": "扬尘使用World空间，通常想实现什么？",
+          "options": [
+            "旧粒子继续世界轨迹，不整体随角色平移",
+            "粒子生成后全部停止运动",
+            "所有粒子不再受重力影响",
+            "发射器不能再改变位置"
+          ],
+          "answer": 0,
+          "explanation": "World改变的是参考空间，粒子的速度和其他运动模块仍可以工作。"
+        },
+        {
+          "question": "只执行StopEmitting，是否意味着所有粒子立即消失？",
+          "options": [
+            "意味着停止整个模拟并清空",
+            "不意味着，已有粒子仍可走完寿命",
+            "意味着同时销毁ParticleSystem组件",
+            "意味着所有子系统已自动回收"
+          ],
+          "answer": 1,
+          "explanation": "停止新生成与清空已生成粒子是两种行为。回收时选择哪种，要根据尾迹与重置需求判断。"
+        }
+      ],
+      "references": [
+        {
+          "label": "ParticleSystem",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ParticleSystem.html"
+        },
+        {
+          "label": "ParticleSystem.IsAlive",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ParticleSystem.IsAlive.html"
+        }
+      ],
+      "summary": [
+        "为什么Duration、Start Lifetime和Looping不能当成同一个时间？",
+        "粒子模块同样是结构体，为什么修改模块属性与修改Vector3副本的结果不同？"
+      ],
+      "teaching": {
+        "question": "发射器每秒生成12个粒子，每个存活0.6秒，为什么停止发射后还能看到一小段烟？",
+        "keyIdea": "发射器何时生成粒子，与每个粒子何时结束，是两种不同时间。停止生成新粒子后，已经存在的粒子仍会走完自己的寿命。",
+        "walkthrough": [
+          {
+            "title": "先估算持续发射的数量",
+            "text": "忽略爆发和数量上限，稳态存活数量约为12×0.6=7.2个，意味着在这个量级变化，不是每帧必须恰有小数个粒子。"
+          },
+          {
+            "title": "在世界空间移动发射器",
+            "text": "将simulationSpace设为World，发射后移动对象；旧粒子继续自己的世界轨迹，新粒子从新的发射位置出现。"
+          },
+          {
+            "title": "只停止生成新粒子",
+            "text": "使用StopEmitting后观察已有粒子逐个消失，再与StopEmittingAndClear对照，后者会把已有粒子一并清空。"
+          }
+        ],
+        "prediction": {
+          "question": "把粒子模拟空间设为World，是否表示生成后粒子完全不再移动？",
+          "answer": "不是。改变的是计算运动所参考的空间。粒子仍可以按速度、重力等模块运动，只是不再因为发射器自身平移，就整体跟着它走。"
+        }
+      }
+    },
+    {
+      "hours": 5,
+      "prerequisites": [
+        "l063"
+      ],
+      "timePlan": [
+        {
+          "label": "阅读与预测",
+          "minutes": 50
+        },
+        {
+          "label": "引擎实验",
+          "minutes": 120
+        },
+        {
+          "label": "独立练习",
+          "minutes": 75
+        },
+        {
+          "label": "自测与回忆",
+          "minutes": 35
+        },
+        {
+          "label": "复盘与归档",
+          "minutes": 20
+        }
+      ],
+      "id": "l064",
+      "title": "对象池与效果租约",
+      "goals": [
+        "解释一次效果从取得、播放到归还的完整过程",
+        "分别限制活跃数量和空闲保留数量",
+        "检查复用前的状态，以及管理器停用时的清理"
+      ],
+      "theory": [
+        {
+          "title": "先看一个实例怎样被反复使用",
+          "paragraphs": [
+            "一次火花播放完就Destroy，下次命中再Instantiate，频繁发生时可能带来创建和销毁成本。对象池改为保留结束后的实例，下次再取出来使用。它复用的是同一个对象，不是把上一次状态自动恢复成最初值，因此“能再次显示”只是最基本的要求。",
+            "本课把一次取得到归还的过程称为一次借用，也称租约：管理器借出效果，效果在这一轮内播放，结束后由管理器收回。归还后旧调用者就不该继续改它，因为下一次请求可能已经拿走了同一个实例。引用仍非空，不代表仍有权把它当自己的效果使用。"
+          ]
+        },
+        {
+          "title": "按示例的四个回调走一遍",
+          "paragraphs": [
+            "ObjectPool接收创建、取出、归还和销毁回调。没有可复用对象时，创建回调Instantiate；取得时启用对象；归还时停止并清空粒子，再关闭对象；空闲对象不再保留时，销毁回调负责Destroy。Emit还会设置本次位置，并把取得的实例加入active列表。",
+            "这里要求Prefab及相关子系统不循环，关闭Play On Awake，并使用不自动销毁对象的Stop Action，例如None。这样由管理器负责开始和结束，避免刚取出时就在旧位置自动发射，或粒子自己销毁后active列表仍保存失效引用。不要另挂一个同时负责归还的脚本。"
+          ]
+        },
+        {
+          "title": "把两种容量分别算清楚",
+          "paragraphs": [
+            "示例的maxActive=12表示同时最多接受12份效果。Emit先检查active.Count，达到上限便拒绝新请求。ObjectPool构造时的maxSize=16，表示归还后最多保留多少空闲对象；它不会替你拒绝所有额外Get。即使把它改成2，并发上限也不会自动变成2。",
+            "defaultCapacity=4同样不是提前创建4份效果，只是内部存储的初始容量。真正预热要主动创建再归还。应该先记录常见峰值、创建次数和内存，再决定是否预热、保留多少。无限预热只会把创建尖峰提前，并可能留下不必要的驻留内存。",
+            "例如空闲上限改为2，8个效果结束后依次归还，期间没有再次借出。池最终保留2个空闲对象，其余调用销毁回调。结束前有8个活跃对象，与结束后只留2个空闲对象并不矛盾。"
+          ]
+        },
+        {
+          "title": "归还前，检查旧状态是否真的结束",
+          "paragraphs": [
+            "Update倒序遍历active，用IsAlive(true)检查主系统和相关子系统。自然结束后归还；归还回调还会StopEmittingAndClear，避免旧粒子留到下一次。下一轮Emit重新设置位置后再Play。循环效果可能一直存活，所以配置前提本身就是结束条件的一部分。",
+            "以后若加入闪红材质、音源或计时协程，也要逐项规定如何恢复。旧延迟任务若在新一轮才回收对象，就会让新效果突然消失。可以在归还时取消旧任务，必要时增加借用轮次标识；不能只看它是不是同一个GameObject。"
+          ]
+        },
+        {
+          "title": "管理器退出时，借出去的对象也要处理",
+          "paragraphs": [
+            "只等待效果自然结束，无法覆盖管理器中途禁用或场景退出。示例OnDisable归还仍在active中的对象，再清空列表；OnDestroy清理池里保留的空闲对象。外部代码不能自行销毁借出的粒子，否则管理器记录与真实对象会不一致。",
+            "测试时不只看创建数是否停止增长。还应反复播放、改变位置、禁用管理器再启用，检查旧粒子、旧颜色和旧任务是否残留。性能比较包含预热成本、峰值内存与正常帧时间。只有在正确性和成本都得到验证后，才能说明这个池解决了实际问题。"
+          ]
+        }
+      ],
+      "code": {
+        "title": "记录一次粒子效果的取得、播放与归还",
+        "language": "csharp",
+        "filename": "OneShotParticlePool.cs",
+        "source": "using System.Collections.Generic;\nusing UnityEngine;\nusing UnityEngine.Pool;\npublic class OneShotParticlePool : MonoBehaviour\n{\n    [SerializeField] ParticleSystem prefab;\n    [SerializeField, Min(1)] int maxActive = 12;\n    ObjectPool<ParticleSystem> pool;\n    readonly List<ParticleSystem> active = new List<ParticleSystem>();\n    void Awake()\n    {\n        if (!prefab) { enabled = false; return; }\n        pool = new ObjectPool<ParticleSystem>(\n            () => Instantiate(prefab, transform),\n            p => p.gameObject.SetActive(true),\n            p => { p.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); p.gameObject.SetActive(false); },\n            p => Destroy(p.gameObject), true, 4, 16);\n    }\n    public void Emit(Vector3 position)\n    {\n        if (!isActiveAndEnabled || pool == null || active.Count >= maxActive) return;\n        var p = pool.Get();\n        p.transform.position = position;\n        p.Play(true);\n        active.Add(p);\n    }\n    void Update()\n    {\n        for (int i = active.Count - 1; i >= 0; i--)\n            if (!active[i].IsAlive(true)) { pool.Release(active[i]); active.RemoveAt(i); }\n    }\n    void OnDisable()\n    {\n        if (pool == null) return;\n        foreach (var p in active) pool.Release(p);\n        active.Clear();\n    }\n    void OnDestroy() { pool?.Clear(); }\n}",
+        "explanation": [
+          "挂在独立管理对象。粒子Prefab及相关子系统需非循环、关闭Play On Awake，Stop Action使用不会自行Destroy的设置；不要由外部销毁这些实例。",
+          "active记录正在借用的对象；maxActive=12是显式并发限制，ObjectPool的16是空闲保留限制，4则不是预热数量。Emit与回调合起来才构成一次完整使用过程。"
+        ]
+      },
+      "lab": [
+        {
+          "title": "检查同一实例的第二次使用",
+          "minutes": 60,
+          "steps": [
+            "用固定间隔请求100次效果，记录创建总数和活跃峰值。用实例ID确认归还后确实复用了旧实例。",
+            "在实验副本中改变一轮的位置、颜色或粒子状态，观察下一轮是否残留；一次只改一个条件。",
+            "补充明确的重置步骤，检查子系统和旧计时任务。恢复原始配置后重新运行完整序列，保存对照。"
+          ],
+          "result": "复用的不只是外观相似的对象；每一轮开始时，所需状态都符合本轮要求。"
+        },
+        {
+          "title": "分别验证数量限制与中途退出",
+          "minutes": 60,
+          "steps": [
+            "在效果还活跃时连续请求超过12份，核对接受和拒绝数量。再改变空闲maxSize，解释并发限制为何仍来自maxActive。",
+            "效果尚未结束时禁用管理器，检查active清空与对象归还；重新启用后再次发出请求。",
+            "退出场景并比较实例与资源记录，将预热、稳定播放和结束清理分开评估。"
+          ],
+          "result": "活跃上限、空闲保留和退出清理各有独立、可观察的结果。"
+        }
+      ],
+      "pitfalls": [
+        {
+          "symptom": "第二次播放出现上一轮的粒子或颜色",
+          "cause": "取得的是原实例，但部分状态没有在归还或重新取得时重置。",
+          "fix": "列出每轮会修改的状态，逐项明确恢复位置，并使用相同实例做重复验证。"
+        },
+        {
+          "symptom": "效果还没结束就禁用管理器，之后留下失去管理的对象",
+          "cause": "只在自然结束时归还，没有覆盖管理器中途退出。",
+          "fix": "在停用路径处理仍活跃的借出对象，并在最终销毁时清理空闲池。"
+        }
+      ],
+      "exercise": {
+        "brief": "制作最多同时播放12份的一次性火花池。分别测试自然结束、请求过多和管理器中途停用，解释每种情况下实例去了哪里。",
+        "deliverables": [
+          "谁取得、谁归还、何时结束的一次使用说明",
+          "100次复用中的创建数与状态记录",
+          "禁用管理器与退出场景后的清理结果"
+        ],
+        "rubric": [
+          {
+            "item": "获取归还正确",
+            "points": 25
+          },
+          {
+            "item": "重置覆盖完整",
+            "points": 25
+          },
+          {
+            "item": "并发预算明确",
+            "points": 25
+          },
+          {
+            "item": "异常结束稳定",
+            "points": 25
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "question": "ObjectPool的maxSize=16，是否自动保证最多16个活跃实例？",
+          "options": [
+            "是，所有Get都会在16个时被拒绝",
+            "不是，需要另行规定并检查活跃上限",
+            "是，defaultCapacity会自动参与并发限流",
+            "不是，因为maxSize只表示每秒请求数"
+          ],
+          "answer": 1,
+          "explanation": "maxSize约束归还后保留的空闲数量。示例另用active.Count与maxActive决定是否接受新请求。"
+        },
+        {
+          "question": "归还实例后，旧调用者仍持有引用，能否继续改变它的位置？",
+          "options": [
+            "可以，引用非空就表示仍归自己",
+            "不应，下一轮可能已经将同一实例交给别的请求",
+            "可以，只要不修改粒子颜色",
+            "可以，池会自动复制对象隔离修改"
+          ],
+          "answer": 1,
+          "explanation": "池复用同一实例。归还结束了这一轮使用，旧引用不会自动赋予新一轮的修改权。"
+        },
+        {
+          "question": "验证效果池，除了创建数不增长，还需检查什么？",
+          "options": [
+            "只需看一张最终截图",
+            "状态重置、数量限制和各条退出清理路径",
+            "只要maxSize足够大就不需再查",
+            "只检查第一次播放是否正常"
+          ],
+          "answer": 1,
+          "explanation": "残留状态、旧任务和退出泄漏通常出现在重复使用或中途结束时，单看创建次数不能发现。"
+        }
+      ],
+      "references": [
+        {
+          "label": "ObjectPool<T>",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Pool.ObjectPool_1.html"
+        },
+        {
+          "label": "ParticleSystem.IsAlive",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ParticleSystem.IsAlive.html"
+        }
+      ],
+      "summary": [
+        "为什么空闲保留上限、活跃上限和预热数量是三件事？",
+        "归还后对象还存在，为什么旧调用者却不能继续随意修改？"
+      ],
+      "teaching": {
+        "question": "粒子池设置maxSize=16，为什么还要单独写maxActive=12？",
+        "keyIdea": "池中等待复用的空闲对象，与当前正在播放的对象，是两份数量。ObjectPool的maxSize限制归还后保留多少空闲对象，不会自动成为同时播放数量的上限。",
+        "walkthrough": [
+          {
+            "title": "第一次取得一个效果",
+            "text": "池里没有空闲对象，Get调用创建函数获得实例。示例把它激活、放到指定位置、开始播放，并加入active列表。"
+          },
+          {
+            "title": "结束后归还原实例",
+            "text": "Update检查包含子系统的IsAlive。结束时Release停止并清空粒子、关闭对象，再从active移除；下次可复用。"
+          },
+          {
+            "title": "连续请求超过并发上限",
+            "text": "已有12个活跃实例时，Emit直接拒绝额外请求。这个判断来自active.Count，不是构造ObjectPool时填写的16。"
+          }
+        ],
+        "prediction": {
+          "question": "构造池时defaultCapacity=4，是否表示已经创建好4份粒子效果？",
+          "answer": "不是。它设置池内部存储的初始容量，不等于调用了4次创建函数。真正的预热需要明确创建并归还相应实例，而且要确认预热成本与保留内存都值得。"
+        }
+      }
+    },
+    {
+      "hours": 5,
+      "prerequisites": [
+        "l064"
+      ],
+      "timePlan": [
+        {
+          "label": "阅读与预测",
+          "minutes": 50
+        },
+        {
+          "label": "引擎实验",
+          "minutes": 120
+        },
+        {
+          "label": "独立练习",
+          "minutes": 75
+        },
+        {
+          "label": "自测与回忆",
+          "minutes": 35
+        },
+        {
+          "label": "复盘与归档",
+          "minutes": 20
+        }
+      ],
+      "id": "l065",
+      "title": "反馈编排：音效、粒子、镜头与时间",
+      "goals": [
+        "分清已经发生的结果与用于表现它的效果",
+        "解释限频、并发和强度合并分别解决什么",
+        "为反馈规定时间、结束与缺失资源的处理方式"
+      ],
+      "theory": [
+        {
+          "title": "从一次确认命中开始",
+          "paragraphs": [
+            "假设碰撞规则已经确认敌人受伤10点。火花、命中声和镜头震动随后帮助玩家看懂这次结果。如果火花资源没有赋值，敌人的生命不应又回升10点；表现是否成功，不该反过来决定已经确认的伤害。先分开这两个步骤，反馈资源才能安全替换。",
+            "反馈入口接收必要信息，例如位置、方向和强度，再选择怎样表现。很多时候保存一个接触位置就足够，不必让每个延迟效果长期抓住整只敌人。敌人销毁之后，声音可能仍要播完；如果只保留所需数据，后续流程也更容易结束。"
+          ]
+        },
+        {
+          "title": "沿着示例看一次请求怎样被接受",
+          "paragraphs": [
+            "Present先比较Time.unscaledTime与nextAllowed。若还没到允许时间，直接返回；接受后，将下一次时间设为当前值加minimumInterval。默认0.05秒即50毫秒。这限制的是这个入口接受请求的频率，并不自动保证每种设备的性能，也不表示每个敌人分别拥有一份计时器。",
+            "随后分别检查粒子、音源和声音资源，再调用相应API。Present是普通公开方法，禁用MonoBehaviour不会自动阻止别的代码直接调用它，调用者仍需遵守启用规则。本例也只有一个粒子发射器；密集多点命中时，不能假定每次调用都会创建独立效果，完整并发方案要接入前课的池。"
+          ]
+        },
+        {
+          "title": "十次命中，怎样避免表现堆成一团",
+          "paragraphs": [
+            "十次同时命中，不一定需要十倍震屏与十层闪白。可以按短窗口合并同类声音，限制同屏火花，或对震动取最大值、限幅叠加。每种方式表达的信息不同：重要暴击可能需要保留，重复小伤害则可能合并。应先选择规则，再检查输出是否符合它。",
+            "限频、并发与强度也不要混为一件事：限频控制多快接受请求，并发控制同时存在几份效果，强度控制最终晃多大或闪多亮。示例只提供最小接受间隔，没有替你完成其他预算。验证时分别记录请求数、接受数和实际输出，才能知道变化发生在哪一步。"
+          ]
+        },
+        {
+          "title": "停顿与恢复必须使用能继续前进的时间",
+          "paragraphs": [
+            "timeScale可以制造短暂命中停顿，但它是全局状态。若设为0后用WaitForSeconds等待恢复，就把恢复条件放在已经停止的时钟上。应该使用适合的非缩放时间，或由独立管理流程恢复，而不是让每个特效脚本各自保存并覆盖timeScale。",
+            "暂停菜单、慢动作和命中停顿同时发生时，还要规定怎样组合。一个脚本恢复旧值，可能意外解除另一个系统仍要求的暂停。先让一个明确的管理者负责最终时间设置，再分别说明UI、音频、动画和粒子在这些状态下继续还是停止。"
+          ]
+        },
+        {
+          "title": "结束后恢复基础状态，也要让反馈容易辨认",
+          "paragraphs": [
+            "相机震动应叠加到正常跟随之外，结束后偏移归零，不能把相机永久留在偏移位置。角色闪白也要恢复原来的显示设置；角色中途销毁时，不再访问失效的渲染对象。不同反馈可以自然结束或立即停止，但每种选择都要写清楚。",
+            "最后用固定事件序列比较方案：单次命中、密集命中、格挡、暂停和切场景。观察玩家是否能区分结果，检查声音和颜色是否相互补充，并提供适当的震动、闪光强度设置。表现更强不一定更清楚；能在重复和异常路径下保持可理解，才是一套可维护的反馈。"
+          ]
+        }
+      ],
+      "code": {
+        "title": "最小反馈入口",
+        "language": "csharp",
+        "filename": "ImpactFeedback.cs",
+        "source": "using UnityEngine;\npublic class ImpactFeedback : MonoBehaviour\n{\n    [SerializeField] ParticleSystem particles;\n    [SerializeField] AudioSource source;\n    [SerializeField] AudioClip impact;\n    [SerializeField, Min(0)] float minimumInterval = 0.05f;\n    float nextAllowed;\n    public void Present(Vector3 position)\n    {\n        if (Time.unscaledTime < nextAllowed) return;\n        nextAllowed = Time.unscaledTime + minimumInterval;\n        if (particles) { particles.transform.position = position; particles.Play(true); }\n        if (source && impact) source.PlayOneShot(impact);\n    }\n}",
+        "explanation": [
+          "将脚本放在独立反馈对象上，指定非循环粒子、AudioSource和命中Clip，由已经确认结果的逻辑调用Present。音源与反馈对象应在需要播放期间保持有效。",
+          "这是单入口、单发射器的限频示例，minimumInterval不是每个敌人的独立计时，也不是多点并发池。连续调用Play不应被当成每次都创建一份新效果的保证。"
+        ]
+      },
+      "lab": [
+        {
+          "title": "让表现缺失不影响确认结果",
+          "minutes": 60,
+          "steps": [
+            "用可重复的测试脚本先记录一次已确认命中及伤害，再调用Present，并记录请求与接受的时间。",
+            "分别移除粒子、Clip等引用，逐次运行同一序列，核对伤害结果与仍可用的表现。",
+            "以小于和大于0.05秒的间隔提交请求，记录接受数，说明这个限制作用于哪里；不要用粒子数量代替接受次数。"
+          ],
+          "result": "核心结果独立成立，资源缺失和限频只影响本例提供的表现。"
+        },
+        {
+          "title": "规定密集事件、暂停与结束规则",
+          "minutes": 60,
+          "steps": [
+            "固定单次和密集事件序列，为声音、粒子与震屏分别写下限频、并发或强度合并规则。",
+            "列出timeScale=0时哪些系统继续，说明恢复时间由谁维护，并避免用已停止的游戏时间等待恢复。",
+            "测试关闭反馈设置、切场景和中途销毁目标，检查镜头偏移、显示状态和仍需播放的尾音各如何结束。"
+          ],
+          "result": "每种反馈都能说明自己的数量、时钟和清理，不靠互相覆盖全局状态维持效果。"
+        }
+      ],
+      "pitfalls": [
+        {
+          "symptom": "粒子没有显示，伤害结果也被撤回",
+          "cause": "把表现成功误当成命中成立的前提。",
+          "fix": "先确认核心结果，再发送反馈请求，分别处理表现资源缺失。"
+        },
+        {
+          "symptom": "命中停顿后一直无法恢复游戏",
+          "cause": "恢复等待使用了已经被timeScale=0停止的缩放时间，或多个脚本互相覆盖暂停状态。",
+          "fix": "用适合的非缩放时间安排恢复，并由统一流程管理最终timeScale。"
+        }
+      ],
+      "exercise": {
+        "brief": "为普通命中与格挡设计可以辨认的反馈。使用固定事件序列测试密集请求、暂停和关闭反馈设置，确认核心结果不受表现开关影响。",
+        "deliverables": [
+          "请求需要哪些数据，以及资源缺失时怎么处理",
+          "声音、粒子和震动各自的数量与时间规则",
+          "单次、密集事件和中途退出的验收记录"
+        ],
+        "rubric": [
+          {
+            "item": "事实表现分离",
+            "points": 25
+          },
+          {
+            "item": "时钟责任明确",
+            "points": 25
+          },
+          {
+            "item": "强度并发受控",
+            "points": 25
+          },
+          {
+            "item": "可读舒适可配置",
+            "points": 25
+          }
+        ]
+      },
+      "quiz": [
+        {
+          "question": "已经确认伤害，但粒子资源缺失，反馈层应怎样处理？",
+          "options": [
+            "撤销伤害，直到粒子准备好",
+            "保留已确认结果，按资源可用情况处理表现",
+            "每帧重算一次伤害直到显示成功",
+            "强制创建任意粒子才允许更新生命"
+          ],
+          "answer": 1,
+          "explanation": "事实与表现分开后，声音或粒子缺失不会破坏已经成立的核心结果。"
+        },
+        {
+          "question": "timeScale=0后，用WaitForSeconds等待恢复存在什么风险？",
+          "options": [
+            "等待依赖的缩放时间已停止，恢复可能一直等不到",
+            "等待会自动改成真实时间",
+            "所有音源会因此立即销毁",
+            "物理会自动以两倍频率弥补暂停"
+          ],
+          "answer": 0,
+          "explanation": "恢复逻辑不能只依赖自己刚刚停止的时钟。要选择适合的非缩放时间，并协调全局暂停状态。"
+        },
+        {
+          "question": "同时命中10个目标，怎样决定镜头震动强度？",
+          "options": [
+            "一律放大为单次的10倍",
+            "按信息与舒适性制定合并、优先级和上限",
+            "只要帧率高就无限叠加",
+            "由粒子素材文件数量自动决定"
+          ],
+          "answer": 1,
+          "explanation": "镜头震动要帮助辨认结果。并发事件可能需要合并和限幅，单纯叠加强度会降低可读性。"
+        }
+      ],
+      "references": [
+        {
+          "label": "Time.unscaledTime",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-unscaledTime.html"
+        },
+        {
+          "label": "AudioSource.PlayOneShot",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AudioSource.PlayOneShot.html"
+        }
+      ],
+      "summary": [
+        "限频、并发和强度上限各控制什么？",
+        "为什么反馈对象与发起命中的对象可能需要不同的结束时间？"
+      ],
+      "teaching": {
+        "question": "一次攻击造成伤害后，火花素材缺失了。是否应该因此撤销伤害？",
+        "keyIdea": "先确定命中等事实，再用声音、粒子和镜头表现这个事实。表现资源缺失或被限制时，已经成立的核心结果仍应一致。",
+        "walkthrough": [
+          {
+            "title": "先得到已确认结果",
+            "text": "命中逻辑完成判断并记录伤害，只把需要的接触位置交给Present，避免让粒子是否播放决定伤害是否生效。"
+          },
+          {
+            "title": "检查最小接受间隔",
+            "text": "假设minimumInterval=0.05秒，首次请求被接受后，在接下来50毫秒内到来的请求会被这个单一入口过滤。"
+          },
+          {
+            "title": "分别尝试可用表现",
+            "text": "接受后，粒子引用存在就移动并调用Play；音源与Clip存在才调用PlayOneShot。缺少其中一项不会回头修改伤害。"
+          }
+        ],
+        "prediction": {
+          "question": "命中停顿把timeScale设为0，再用WaitForSeconds等0.1秒恢复，会有什么问题？",
+          "answer": "WaitForSeconds依赖缩放后的游戏时间，而这个时间已被自己停止，恢复逻辑可能一直等不到。应使用合适的非缩放时间，并让统一的时间管理者协调暂停、慢动作与命中停顿。"
+        }
+      }
+    }
+  ]
+});

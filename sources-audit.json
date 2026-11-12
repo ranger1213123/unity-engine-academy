@@ -1,0 +1,2084 @@
+{
+  "checkedAt": "2026-11-12T05:35:56.013Z",
+  "total": 168,
+  "ok": 168,
+  "failed": 0,
+  "note": "HTTP和标题检查表示当时链接可用，不代表逐行人工核实了全部文档。excerpt是核对来源的短摘录；教材正文为原创解释。",
+  "sources": [
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/Manual/assembly-definition-files.html",
+      "label": "Organize scripts into assemblies",
+      "lessons": [
+        "l078",
+        "l079"
+      ],
+      "checkedAt": "2026-11-12T04:51:34.940Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/programming-environment/script-compilation/assembly-definition-files",
+      "title": "Organize scripts into assemblies • Script compilation • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Unity 6.3 User Manual Unity programming environment Script compilation Organize scripts into assemblies Information about assembly definitions, which you can use to orga"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/Manual/class-GameObject.html",
+      "label": "GameObjects",
+      "lessons": [
+        "l002"
+      ],
+      "checkedAt": "2026-11-12T04:51:20.485Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/working-with-gameobjects/gameobject-fundamentals/class-game-object",
+      "title": "The GameObject class • GameObject fundamentals • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Unity 6.3 User Manual GameObjects GameObject fundamentals The GameObject class Understand the fundamental Unity GameObject class, which you can interact with through the"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/Manual/Coroutines.html",
+      "label": "Write and run coroutines",
+      "lessons": [
+        "l014"
+      ],
+      "checkedAt": "2026-11-12T05:10:21.562Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/scripting/coroutines-section/coroutines",
+      "title": "Write and run coroutines • Split tasks across frames with coroutines • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Unity 6.3 User Manual Gameplay programming Split tasks across frames with coroutines Write and run coroutines Write and run coroutine methods to do work that takes effec"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/Manual/execution-order.html",
+      "label": "Event function execution order",
+      "lessons": [
+        "l011",
+        "l012",
+        "l015"
+      ],
+      "checkedAt": "2026-11-12T05:10:21.558Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/scripting/managing-update-order/execution-order",
+      "title": "Event function execution order • Control when your code updates • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Unity 6.3 User Manual Gameplay programming Control when your code updates Event function execution order Understand the execution order of Unity's built-in event functio"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/Manual/FrameDebugger.html",
+      "label": "Frame Debugger",
+      "lessons": [
+        "l054"
+      ],
+      "checkedAt": "2026-11-12T05:10:42.030Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/analysis/graphics-performance-profiling/profile-rendering/frame-debugger/frame-debugger",
+      "title": "Introduction to the Frame Debugger • Frame Debugger • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Unity 6.3 User Manual Optimization Graphics performance and profiling Collect rendering performance data Frame Debugger Introduction to the Frame Debugger Understand how"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/Manual/Prefabs.html",
+      "label": "Prefabs",
+      "lessons": [
+        "l003"
+      ],
+      "checkedAt": "2026-11-12T04:51:20.487Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/working-with-gameobjects/prefabs",
+      "title": "Prefabs • GameObjects • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Unity 6.3 User Manual GameObjects Prefabs Create reusable GameObject templates to use across your projects. Read time 1 minute Last updated 13 days ago Unity's prefab sy"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/Manual/Profiler.html",
+      "label": "Profiler",
+      "lessons": [
+        "l081",
+        "l082",
+        "l085",
+        "l100"
+      ],
+      "checkedAt": "2026-11-12T05:10:55.585Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/analysis/profiler",
+      "title": "Unity Profiler • Optimization • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Unity 6.3 User Manual Optimization Unity Profiler Analyze the performance of your application with the Profiler. Read time 1 minute Last updated 2 months ago The Unity P"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AI.NavMeshAgent.SetDestination.html",
+      "label": "NavMeshAgent.SetDestination",
+      "lessons": [
+        "l091"
+      ],
+      "checkedAt": "2026-11-12T05:11:00.131Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/ai/navmeshagent/setdestination",
+      "title": "SetDestination(Vector3) • NavMeshAgent • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine UnityEngine.AI NavMeshAgent SetDestination(Vector3) Sets or updates the destination thus triggering the calculation for a new path. Read tim"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AnimationClip.html",
+      "label": "AnimationClip",
+      "lessons": [
+        "l046",
+        "l050"
+      ],
+      "checkedAt": "2026-11-12T05:10:36.819Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/animationclip",
+      "title": "AnimationClip • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine AnimationClip Provides an asset that assigns animation curves to animatable properties. Read time 9 minutes Last updated 2 months ago Defini"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AnimationEvent.html",
+      "label": "AnimationEvent",
+      "lessons": [
+        "l049"
+      ],
+      "checkedAt": "2026-11-12T05:10:38.859Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/animationevent",
+      "title": "AnimationEvent • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine AnimationEvent AnimationEvent lets you call a script function similar to SendMessage as part of playing back an animation. Read time 2 minut"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Animator-applyRootMotion.html",
+      "label": "Animator.applyRootMotion",
+      "lessons": [
+        "l049"
+      ],
+      "checkedAt": "2026-11-12T05:10:39.035Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/animator/applyrootmotion",
+      "title": "applyRootMotion • Animator • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Animator applyRootMotion Should root motion be applied? Read time 1 minute Last updated 2 months ago Definition Type: Property Namespace: Un"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Animator.GetCurrentAnimatorClipInfo.html",
+      "label": "Animator.GetCurrentAnimatorClipInfo",
+      "lessons": [
+        "l046"
+      ],
+      "checkedAt": "2026-11-12T05:10:36.916Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/animator/getcurrentanimatorclipinfo",
+      "title": "GetCurrentAnimatorClipInfo • Animator • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Animator GetCurrentAnimatorClipInfo Returns an array of all the AnimatorClipInfo in the current state of the given layer. Read time 1 minute"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Animator.html",
+      "label": "Animator",
+      "lessons": [
+        "l047",
+        "l050"
+      ],
+      "checkedAt": "2026-11-12T05:10:37.324Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/animator",
+      "title": "Animator • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Animator Manages, controls, and evaluates the animation of a GameObject. Read time 20 minutes Last updated 13 days ago Definition Type: Clas"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Animator.SetBool.html",
+      "label": "Animator.SetBool",
+      "lessons": [
+        "l047"
+      ],
+      "checkedAt": "2026-11-12T05:10:38.060Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/animator/setbool",
+      "title": "SetBool • Animator • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Animator SetBool Sets the value of the given boolean parameter. Read time 4 minutes Last updated 2 months ago Definition Type: Method Namesp"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Animator.SetFloat.html",
+      "label": "Animator.SetFloat",
+      "lessons": [
+        "l048"
+      ],
+      "checkedAt": "2026-11-12T05:10:38.233Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/animator/setfloat",
+      "title": "SetFloat • Animator • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Animator SetFloat Send float values to the Animator to affect transitions. Read time 6 minutes Last updated 2 months ago Definition Type: Me"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Animator.SetLayerWeight.html",
+      "label": "Animator.SetLayerWeight",
+      "lessons": [
+        "l048"
+      ],
+      "checkedAt": "2026-11-12T05:10:38.741Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/animator/setlayerweight",
+      "title": "SetLayerWeight(int, float) • Animator • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Animator SetLayerWeight(int, float) Changes the weight of the layer at a specific index. Read time 1 minute Last updated 2 months ago Defini"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Application-persistentDataPath.html",
+      "label": "Application.persistentDataPath",
+      "lessons": [
+        "l073",
+        "l074",
+        "l097"
+      ],
+      "checkedAt": "2026-11-12T04:51:33.047Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/application/persistentdatapath",
+      "title": "persistentDataPath • Application • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Application persistentDataPath Contains the path to a persistent data directory (Read-only). Read time 2 minutes Last updated 12 days ago De"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Application-unityVersion.html",
+      "label": "Application.unityVersion",
+      "lessons": [
+        "l001"
+      ],
+      "checkedAt": "2026-11-12T04:51:20.431Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/application/unityversion",
+      "title": "unityVersion • Application • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Application unityVersion The version of the Unity runtime used to play the content. Read time 1 minute Last updated 2 months ago Definition "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AssetDatabase.GetDependencies.html",
+      "label": "AssetDatabase.GetDependencies",
+      "lessons": [
+        "l044"
+      ],
+      "checkedAt": "2026-11-12T04:51:32.802Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/assetdatabase/getdependencies",
+      "title": "GetDependencies • AssetDatabase • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor AssetDatabase GetDependencies Returns an array of all the assets that are dependencies of the asset at the specified pathName. Note: AssetDa"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AssetImporter.html",
+      "label": "AssetImporter",
+      "lessons": [
+        "l042",
+        "l045"
+      ],
+      "checkedAt": "2026-11-12T04:51:31.370Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/assetimporter",
+      "title": "AssetImporter • UnityEditor • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor AssetImporter Provides access to import settings and base functionality for all asset types. Read time 5 minutes Last updated 2 months ago D"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AssetPostprocessor.html",
+      "label": "AssetPostprocessor",
+      "lessons": [
+        "l089"
+      ],
+      "checkedAt": "2026-11-12T05:10:58.976Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/assetpostprocessor",
+      "title": "AssetPostprocessor • UnityEditor • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor AssetPostprocessor AssetPostprocessor lets you hook into the import pipeline and run scripts before or after importing assets. Read time 4 m"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AsyncOperation-allowSceneActivation.html",
+      "label": "AsyncOperation.allowSceneActivation",
+      "lessons": [
+        "l067"
+      ],
+      "checkedAt": "2026-11-12T05:10:52.846Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/asyncoperation/allowsceneactivation",
+      "title": "allowSceneActivation • AsyncOperation • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine AsyncOperation allowSceneActivation Allows a scene to be activated as soon as it's ready. Read time 2 minutes Last updated 2 months ago Defi"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AsyncOperation-progress.html",
+      "label": "AsyncOperation.progress",
+      "lessons": [
+        "l067"
+      ],
+      "checkedAt": "2026-11-12T05:10:52.883Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/asyncoperation/progress",
+      "title": "progress • AsyncOperation • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine AsyncOperation progress A floating point value representing the operation's current state of progress toward completion, where 1.0 represent"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Audio.AudioMixer.html",
+      "label": "AudioMixer",
+      "lessons": [
+        "l061"
+      ],
+      "checkedAt": "2026-11-12T05:10:46.768Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/audio/audiomixer",
+      "title": "AudioMixer • UnityEngine.Audio • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine UnityEngine.Audio AudioMixer AudioMixer asset. Read time 4 minutes Last updated 2 months ago Definition Type: Class Namespace: UnityEngine.A"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AudioSettings-dspTime.html",
+      "label": "AudioSettings.dspTime",
+      "lessons": [
+        "l062"
+      ],
+      "checkedAt": "2026-11-12T05:10:48.470Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/audiosettings/dsptime",
+      "title": "dspTime • AudioSettings • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine AudioSettings dspTime Returns the current time of the audio system. Read time 1 minute Last updated 2 months ago Definition Type: Property N"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AudioSource.html",
+      "label": "AudioSource",
+      "lessons": [
+        "l061"
+      ],
+      "checkedAt": "2026-11-12T05:10:46.465Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/audiosource",
+      "title": "AudioSource • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine AudioSource A representation of audio sources in 3D. Read time 11 minutes Last updated 2 months ago Definition Type: Class Namespace: UnityE"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AudioSource.PlayOneShot.html",
+      "label": "AudioSource.PlayOneShot",
+      "lessons": [
+        "l065"
+      ],
+      "checkedAt": "2026-11-12T05:10:50.836Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/audiosource/playoneshot",
+      "title": "PlayOneShot(AudioClip, float) • AudioSource • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine AudioSource PlayOneShot(AudioClip, float) Plays an AudioClip, and scales the AudioSource volume by volumeScale. Read time 1 minute Last upda"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/AudioSource.PlayScheduled.html",
+      "label": "AudioSource.PlayScheduled",
+      "lessons": [
+        "l062"
+      ],
+      "checkedAt": "2026-11-12T05:10:48.027Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/audiosource/playscheduled",
+      "title": "PlayScheduled(double) • AudioSource • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine AudioSource PlayScheduled(double) Plays the AudioSource.clip at a specific time on the absolute time-line that AudioSettings.dspTime reads f"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Awaitable.html",
+      "label": "Awaitable",
+      "lessons": [
+        "l023"
+      ],
+      "checkedAt": "2026-11-12T05:10:33.069Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/awaitable",
+      "title": "Awaitable • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Awaitable Custom Unity type that can be awaited and used as an async return type in the C# asynchronous programming model. Read time 1 minut"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Awaitable.NextFrameAsync.html",
+      "label": "Awaitable.NextFrameAsync",
+      "lessons": [
+        "l023"
+      ],
+      "checkedAt": "2026-11-12T05:10:33.190Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/awaitable/nextframeasync",
+      "title": "NextFrameAsync(CancellationToken) • Awaitable • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Awaitable NextFrameAsync(CancellationToken) Resumes execution on the next frame. Read time 1 minute Last updated 2 months ago Definition Typ"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/BuildPipeline.BuildPlayer.html",
+      "label": "BuildPipeline.BuildPlayer",
+      "lessons": [
+        "l096",
+        "l098",
+        "l099"
+      ],
+      "checkedAt": "2026-11-12T05:11:01.952Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/buildpipeline/buildplayer",
+      "title": "BuildPlayer • BuildPipeline • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor BuildPipeline BuildPlayer Builds a player from a specific build profile. Read time 4 minutes Last updated 13 days ago Definition Type: Metho"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/BuildPlayerOptions.html",
+      "label": "BuildPlayerOptions",
+      "lessons": [
+        "l096"
+      ],
+      "checkedAt": "2026-11-12T05:11:02.021Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/buildplayeroptions",
+      "title": "BuildPlayerOptions • UnityEditor • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor BuildPlayerOptions Provide various options to control the behavior of BuildPipeline.BuildPlayer. Read time 1 minute Last updated 2 months ag"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Camera-targetTexture.html",
+      "label": "Camera.targetTexture",
+      "lessons": [
+        "l055"
+      ],
+      "checkedAt": "2026-11-12T05:10:43.422Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/camera/targettexture",
+      "title": "targetTexture • Camera • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Camera targetTexture Destination render texture. Read time 1 minute Last updated 2 months ago Definition Type: Property Namespace: UnityEngi"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Camera.html",
+      "label": "Camera",
+      "lessons": [
+        "l051"
+      ],
+      "checkedAt": "2026-11-12T05:10:40.324Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/camera",
+      "title": "Camera • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Camera A Camera is a device through which the player views the world. Read time 16 minutes Last updated 13 days ago Definition Type: Class N"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Camera.ScreenPointToRay.html",
+      "label": "Camera.ScreenPointToRay",
+      "lessons": [
+        "l019",
+        "l051"
+      ],
+      "checkedAt": "2026-11-12T05:10:28.733Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/camera/screenpointtoray",
+      "title": "ScreenPointToRay • Camera • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Camera ScreenPointToRay Returns a ray going from camera through a screen point. Read time 2 minutes Last updated 2 months ago Definition Typ"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Camera.ScreenToWorldPoint.html",
+      "label": "Camera.ScreenToWorldPoint",
+      "lessons": [
+        "l019"
+      ],
+      "checkedAt": "2026-11-12T05:10:27.801Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/camera/screentoworldpoint",
+      "title": "ScreenToWorldPoint • Camera • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Camera ScreenToWorldPoint Transforms a point from screen space into world space, where world space is defined as the coordinate system at th"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Canvas.ForceUpdateCanvases.html",
+      "label": "Canvas.ForceUpdateCanvases",
+      "lessons": [
+        "l057"
+      ],
+      "checkedAt": "2026-11-12T05:10:44.511Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/canvas/forceupdatecanvases",
+      "title": "ForceUpdateCanvases() • Canvas • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Canvas ForceUpdateCanvases() Force all canvases to update their content. Read time 1 minute Last updated 2 months ago Definition Type: Metho"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Canvas.html",
+      "label": "Canvas",
+      "lessons": [
+        "l056",
+        "l060"
+      ],
+      "checkedAt": "2026-11-12T05:10:43.610Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/canvas",
+      "title": "Canvas • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Canvas Element that can be used for screen rendering. Read time 8 minutes Last updated 2 months ago Definition Type: Class Namespace: UnityE"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/CharacterController.Move.html",
+      "label": "CharacterController.Move",
+      "lessons": [
+        "l035"
+      ],
+      "checkedAt": "2026-11-12T05:29:52.696Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/charactercontroller/move",
+      "title": "Move(Vector3) • CharacterController • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine CharacterController Move(Vector3) Supplies the movement of a GameObject with an attached CharacterController component. Read time 1 minute L"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Collider-attachedRigidbody.html",
+      "label": "Collider.attachedRigidbody",
+      "lessons": [
+        "l033"
+      ],
+      "checkedAt": "2026-11-12T05:17:49.949Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/collider/attachedrigidbody",
+      "title": "attachedRigidbody • Collider • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Collider attachedRigidbody The rigidbody the collider is attached to. Read time 1 minute Last updated 2 months ago Definition Type: Property"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Collider.html",
+      "label": "Collider",
+      "lessons": [
+        "l031"
+      ],
+      "checkedAt": "2026-11-12T05:17:46.936Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/collider",
+      "title": "Collider • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Collider A base class of all colliders. Read time 8 minutes Last updated 2 months ago Definition Type: Class Namespace: UnityEngine Assembly"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Collider2D.Cast.html",
+      "label": "Collider2D.Cast",
+      "lessons": [
+        "l038"
+      ],
+      "checkedAt": "2026-11-12T04:51:29.557Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/collider2d/cast",
+      "title": "Cast • Collider2D • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Collider2D Cast Casts the Collider shape into the Scene starting at the Collider position ignoring the Collider itself. Read time 10 minutes"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Collider2D.html",
+      "label": "Collider2D",
+      "lessons": [
+        "l037"
+      ],
+      "checkedAt": "2026-11-12T04:51:28.282Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/collider2d",
+      "title": "Collider2D • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Collider2D The parent class for collider types used with 2D gameplay. Provides methods to defines the shape and physical behavior for 2D obj"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/CollisionDetectionMode2D.html",
+      "label": "CollisionDetectionMode2D",
+      "lessons": [
+        "l040"
+      ],
+      "checkedAt": "2026-11-12T04:51:29.866Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/collisiondetectionmode2d",
+      "title": "CollisionDetectionMode2D • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine CollisionDetectionMode2D Controls how collisions are detected when a Rigidbody2D moves. Read time 1 minute Last updated 2 months ago Definit"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Compilation.CompilationPipeline.GetAssemblies.html",
+      "label": "CompilationPipeline.GetAssemblies",
+      "lessons": [
+        "l078"
+      ],
+      "checkedAt": "2026-11-12T05:29:52.698Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/compilation/compilationpipeline/getassemblies",
+      "title": "GetAssemblies • CompilationPipeline • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor UnityEditor.Compilation CompilationPipeline GetAssemblies Get all script assemblies compiled by Unity filtered by AssembliesType. Read time "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponent.html",
+      "label": "Component.GetComponent",
+      "lessons": [
+        "l008",
+        "l076"
+      ],
+      "checkedAt": "2026-11-12T04:51:25.744Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/component/getcomponent",
+      "title": "GetComponent • Component • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Component GetComponent The non-generic version of this method. Read time 3 minutes Last updated 2 months ago Definition Type: Method Namespa"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Debug.Log.html",
+      "label": "Debug.Log",
+      "lessons": [
+        "l005"
+      ],
+      "checkedAt": "2026-11-12T04:51:24.215Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/debug/log",
+      "title": "Log • Debug • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Debug Log Logs a message to the Unity Console. Read time 6 minutes Last updated a month ago Definition Type: Method Namespace: UnityEngine A"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Debug.LogError.html",
+      "label": "Debug.LogError",
+      "lessons": [
+        "l005"
+      ],
+      "checkedAt": "2026-11-12T04:51:24.309Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/debug/logerror",
+      "title": "LogError • Debug • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Debug LogError A variant of Debug.Log that logs an error message to the console. Read time 2 minutes Last updated 2 months ago Definition Ty"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/DefaultExecutionOrder.html",
+      "label": "DefaultExecutionOrder",
+      "lessons": [
+        "l015"
+      ],
+      "checkedAt": "2026-11-12T05:10:25.312Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/defaultexecutionorder",
+      "title": "DefaultExecutionOrder • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine DefaultExecutionOrder Specifies the script execution order for a MonoBehaviour-derived class relative to other MonoBehaviour-derived types. "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Editor.html",
+      "label": "Editor",
+      "lessons": [
+        "l086"
+      ],
+      "checkedAt": "2026-11-12T05:10:56.541Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/editor",
+      "title": "Editor • UnityEditor • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor Editor Derive from this base class to create a custom inspector or editor for your custom object. Read time 11 minutes Last updated 13 days "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/EditorWindow.html",
+      "label": "EditorWindow",
+      "lessons": [
+        "l090"
+      ],
+      "checkedAt": "2026-11-12T05:10:59.034Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/editorwindow",
+      "title": "EditorWindow • UnityEditor • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor EditorWindow Derive from this class to create a custom Editor window. Read time 8 minutes Last updated 2 months ago Definition Type: Class N"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/GameObject-activeInHierarchy.html",
+      "label": "GameObject.activeInHierarchy",
+      "lessons": [
+        "l002"
+      ],
+      "checkedAt": "2026-11-12T04:51:20.486Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/gameobject/activeinhierarchy",
+      "title": "activeInHierarchy • GameObject • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine GameObject activeInHierarchy The active state of the GameObject in the Scene hierarchy. True if active, false if inactive. (Read Only) Read "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/GameObject.SetActive.html",
+      "label": "GameObject.SetActive",
+      "lessons": [
+        "l070"
+      ],
+      "checkedAt": "2026-11-12T05:10:55.364Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/gameobject/setactive",
+      "title": "SetActive(bool) • GameObject • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine GameObject SetActive(bool) Activates or deactivates the GameObject locally, according to the value of the supplied parameter. Read time 1 mi"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Handles.RadiusHandle.html",
+      "label": "Handles.RadiusHandle",
+      "lessons": [
+        "l088"
+      ],
+      "checkedAt": "2026-11-12T05:10:57.650Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/handles/radiushandle",
+      "title": "RadiusHandle • Handles • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor Handles RadiusHandle Make a Scene view radius handle. Read time 2 minutes Last updated 13 days ago Definition Type: Method Namespace: UnityE"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ISerializationCallbackReceiver.html",
+      "label": "ISerializationCallbackReceiver",
+      "lessons": [
+        "l075"
+      ],
+      "checkedAt": "2026-11-12T04:51:34.498Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/iserializationcallbackreceiver",
+      "title": "ISerializationCallbackReceiver • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine ISerializationCallbackReceiver Interface for receiving callbacks before serialization and after deserialization, to process datatypes that c"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Joint.html",
+      "label": "Joint",
+      "lessons": [
+        "l033"
+      ],
+      "checkedAt": "2026-11-12T05:29:52.655Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/joint",
+      "title": "Joint • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Joint Joint is the base class for all joints. Read time 7 minutes Last updated 12 days ago Definition Type: Class Namespace: UnityEngine Ass"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/JsonUtility.FromJson.html",
+      "label": "JsonUtility.FromJson",
+      "lessons": [
+        "l074"
+      ],
+      "checkedAt": "2026-11-12T04:51:33.867Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/jsonutility/fromjson",
+      "title": "FromJson • JsonUtility • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine JsonUtility FromJson Create an object from its JSON representation. Read time 3 minutes Last updated a month ago Definition Type: Method Nam"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/JsonUtility.html",
+      "label": "JsonUtility",
+      "lessons": [
+        "l073"
+      ],
+      "checkedAt": "2026-11-12T04:51:32.930Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/jsonutility",
+      "title": "JsonUtility • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine JsonUtility Provides functions for converting between objects and JSON data. Read time 2 minutes Last updated a month ago Definition Type: C"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MaterialPropertyBlock.html",
+      "label": "MaterialPropertyBlock",
+      "lessons": [
+        "l053",
+        "l083"
+      ],
+      "checkedAt": "2026-11-12T05:10:41.928Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/materialpropertyblock",
+      "title": "MaterialPropertyBlock • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MaterialPropertyBlock A block of material values to apply. Read time 4 minutes Last updated 2 months ago Definition Type: Class Namespace: U"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ModelImporter.html",
+      "label": "ModelImporter",
+      "lessons": [
+        "l044"
+      ],
+      "checkedAt": "2026-11-12T04:51:32.849Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/modelimporter",
+      "title": "ModelImporter • UnityEditor • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor ModelImporter Model importer lets you modify model import settings from editor scripts. Read time 9 minutes Last updated 13 days ago Definit"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour-destroyCancellationToken.html",
+      "label": "MonoBehaviour.destroyCancellationToken",
+      "lessons": [
+        "l023"
+      ],
+      "checkedAt": "2026-11-12T05:10:33.557Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/destroycancellationtoken",
+      "title": "destroyCancellationToken • MonoBehaviour • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour destroyCancellationToken Cancellation token raised when the MonoBehaviour is destroyed (Read Only). Read time 1 minute Last up"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.Awake.html",
+      "label": "MonoBehaviour.Awake",
+      "lessons": [
+        "l001",
+        "l011"
+      ],
+      "checkedAt": "2026-11-12T04:51:20.484Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/awake",
+      "title": "Awake() • MonoBehaviour • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour Awake() Unity calls Awake when loading an instance of a script component. Read time 2 minutes Last updated a month ago Definit"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.FixedUpdate.html",
+      "label": "MonoBehaviour.FixedUpdate",
+      "lessons": [
+        "l012"
+      ],
+      "checkedAt": "2026-11-12T05:10:21.559Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/fixedupdate",
+      "title": "FixedUpdate() • MonoBehaviour • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour FixedUpdate() Update called at regular, fixed intervals as part of Unity's physics update loop. Read time 2 minutes Last updat"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.html",
+      "label": "MonoBehaviour",
+      "lessons": [
+        "l099",
+        "l100"
+      ],
+      "checkedAt": "2026-11-12T05:11:02.513Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour",
+      "title": "MonoBehaviour • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour MonoBehaviour is a base class that many Unity scripts derive from. Read time 11 minutes Last updated a month ago Definition Ty"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.InvokeRepeating.html",
+      "label": "MonoBehaviour.InvokeRepeating",
+      "lessons": [
+        "l024"
+      ],
+      "checkedAt": "2026-11-12T05:10:34.684Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/invokerepeating",
+      "title": "InvokeRepeating(string, float, float) • MonoBehaviour • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour InvokeRepeating(string, float, float) Invokes the specified method after a specified delay, then repeatedly at the specified r"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.LateUpdate.html",
+      "label": "MonoBehaviour.LateUpdate",
+      "lessons": [
+        "l012"
+      ],
+      "checkedAt": "2026-11-12T05:10:21.560Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/lateupdate",
+      "title": "LateUpdate() • MonoBehaviour • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour LateUpdate() LateUpdate is called every frame, if the Behaviour is enabled. Read time 1 minute Last updated 2 months ago Defin"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.OnApplicationPause.html",
+      "label": "MonoBehaviour.OnApplicationPause",
+      "lessons": [
+        "l097"
+      ],
+      "checkedAt": "2026-11-12T05:11:02.420Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/onapplicationpause",
+      "title": "OnApplicationPause(bool) • MonoBehaviour • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour OnApplicationPause(bool) Sent to all GameObjects when the playing application pauses or resumes on losing or regaining focus. "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.OnCollisionEnter.html",
+      "label": "MonoBehaviour.OnCollisionEnter",
+      "lessons": [
+        "l033"
+      ],
+      "checkedAt": "2026-11-12T05:17:49.708Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/oncollisionenter",
+      "title": "OnCollisionEnter(Collision) • MonoBehaviour • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour OnCollisionEnter(Collision) OnCollisionEnter is called when this collider/rigidbody has begun touching another rigidbody/colli"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.OnDestroy.html",
+      "label": "MonoBehaviour.OnDestroy",
+      "lessons": [
+        "l013"
+      ],
+      "checkedAt": "2026-11-12T05:10:21.561Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/ondestroy",
+      "title": "OnDestroy() • MonoBehaviour • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour OnDestroy() Called when a GameObject or component is about to be destroyed. Read time 2 minutes Last updated a month ago Defin"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.OnDisable.html",
+      "label": "MonoBehaviour.OnDisable",
+      "lessons": [
+        "l013",
+        "l077"
+      ],
+      "checkedAt": "2026-11-12T04:51:34.767Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/ondisable",
+      "title": "OnDisable() • MonoBehaviour • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour OnDisable() Called when a component itself is disabled or its parent GameObject is deactivated. Read time 1 minute Last update"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.OnEnable.html",
+      "label": "MonoBehaviour.OnEnable",
+      "lessons": [
+        "l009",
+        "l077"
+      ],
+      "checkedAt": "2026-11-12T04:51:26.202Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/onenable",
+      "title": "OnEnable() • MonoBehaviour • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour OnEnable() Called when a component of an active GameObject is first enabled. Read time 1 minute Last updated a month ago Defin"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.OnTriggerEnter.html",
+      "label": "MonoBehaviour.OnTriggerEnter",
+      "lessons": [
+        "l033"
+      ],
+      "checkedAt": "2026-11-12T05:17:49.939Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/ontriggerenter",
+      "title": "OnTriggerEnter(Collider) • MonoBehaviour • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour OnTriggerEnter(Collider) Called when a collider enters a trigger collider. Read time 1 minute Last updated a day ago Definitio"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.OnValidate.html",
+      "label": "MonoBehaviour.OnValidate",
+      "lessons": [
+        "l004",
+        "l007",
+        "l071"
+      ],
+      "checkedAt": "2026-11-12T04:51:24.197Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/onvalidate",
+      "title": "OnValidate() • MonoBehaviour • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour OnValidate() Editor-only function that Unity calls when the script is loaded or a value changes in the Inspector. Read time 2 "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.Start.html",
+      "label": "MonoBehaviour.Start",
+      "lessons": [
+        "l011",
+        "l014",
+        "l070"
+      ],
+      "checkedAt": "2026-11-12T05:10:21.521Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/start",
+      "title": "Start() • MonoBehaviour • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour Start() Start is called on the frame when a script is enabled just before any of the Update methods are called the first time."
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.StopCoroutine.html",
+      "label": "MonoBehaviour.StopCoroutine",
+      "lessons": [
+        "l014"
+      ],
+      "checkedAt": "2026-11-12T05:10:24.987Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/stopcoroutine",
+      "title": "StopCoroutine • MonoBehaviour • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour StopCoroutine Stops the first coroutine named methodName, or the coroutine stored in routine running on this behaviour. Read t"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Object-operator_eq.html",
+      "label": "Object.operator ==",
+      "lessons": [
+        "l006"
+      ],
+      "checkedAt": "2026-11-12T04:51:24.428Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/object/op-equality",
+      "title": "operator ==(Object, Object) • Object • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Object operator ==(Object, Object) Compares two object references to see if they refer to the same object. Read time 1 minute Last updated a"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Object.Destroy.html",
+      "label": "Object.Destroy",
+      "lessons": [
+        "l010",
+        "l013",
+        "l080"
+      ],
+      "checkedAt": "2026-11-12T04:51:26.792Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/object/destroy",
+      "title": "Destroy(Object, float) • Object • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Object Destroy(Object, float) Removes a GameObject, component, or asset. Read time 2 minutes Last updated 2 months ago Definition Type: Meth"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Object.DontDestroyOnLoad.html",
+      "label": "Object.DontDestroyOnLoad",
+      "lessons": [
+        "l068",
+        "l084"
+      ],
+      "checkedAt": "2026-11-12T05:10:53.225Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/object/dontdestroyonload",
+      "title": "DontDestroyOnLoad(Object) • Object • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Object DontDestroyOnLoad(Object) Do not destroy the target Object when loading a new Scene. Read time 3 minutes Last updated 2 months ago De"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Object.Instantiate.html",
+      "label": "Object.Instantiate",
+      "lessons": [
+        "l003",
+        "l015",
+        "l043",
+        "l072"
+      ],
+      "checkedAt": "2026-11-12T04:51:20.488Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/object/instantiate",
+      "title": "Instantiate • Object • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Object Instantiate Clones the object original and sets the position and rotation of the clone. Read time 9 minutes Last updated 2 months ago"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ParticleSystem.html",
+      "label": "ParticleSystem",
+      "lessons": [
+        "l063"
+      ],
+      "checkedAt": "2026-11-12T05:10:48.475Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/particlesystem",
+      "title": "ParticleSystem • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine ParticleSystem Script interface for the Built-in Particle System. Unity's powerful and versatile particle system implementation. Read time 1"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ParticleSystem.IsAlive.html",
+      "label": "ParticleSystem.IsAlive",
+      "lessons": [
+        "l063",
+        "l064"
+      ],
+      "checkedAt": "2026-11-12T05:10:48.512Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/particlesystem/isalive",
+      "title": "IsAlive • ParticleSystem • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine ParticleSystem IsAlive Does the Particle System contain any live particles, or will it produce more? Read time 1 minute Last updated 2 month"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Physics.CheckSphere.html",
+      "label": "Physics.CheckSphere",
+      "lessons": [
+        "l035"
+      ],
+      "checkedAt": "2026-11-12T05:17:52.499Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/physics/checksphere",
+      "title": "CheckSphere(Vector3, float, int, QueryTriggerInteraction) • Physics • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Physics CheckSphere(Vector3, float, int, QueryTriggerInteraction) Returns true if there are any colliders overlapping the sphere defined by "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Physics.Raycast.html",
+      "label": "Physics.Raycast",
+      "lessons": [
+        "l034"
+      ],
+      "checkedAt": "2026-11-12T05:17:50.467Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/physics/raycast",
+      "title": "Raycast • Physics • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Physics Raycast Casts a ray, from point origin, in direction direction, of length maxDistance, against all colliders in the Scene. Read time"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Physics.SphereCast.html",
+      "label": "Physics.SphereCast",
+      "lessons": [
+        "l034"
+      ],
+      "checkedAt": "2026-11-12T05:17:50.605Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/physics/spherecast",
+      "title": "SphereCast • Physics • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Physics SphereCast Casts a sphere along a ray and returns detailed information on what was hit. Read time 3 minutes Last updated 2 months ag"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Physics2D.Raycast.html",
+      "label": "Physics2D.Raycast",
+      "lessons": [
+        "l038"
+      ],
+      "checkedAt": "2026-11-12T04:51:28.805Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/physics2d/raycast",
+      "title": "Raycast • Physics2D • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Physics2D Raycast Casts a ray against Colliders in the Scene. Read time 4 minutes Last updated 13 days ago Definition Type: Method Namespace"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Plane.Raycast.html",
+      "label": "Plane.Raycast",
+      "lessons": [
+        "l019"
+      ],
+      "checkedAt": "2026-11-12T05:10:29.408Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/plane/raycast",
+      "title": "Raycast • Plane • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Plane Raycast Intersects a ray with the plane. Read time 4 minutes Last updated 2 months ago Definition Type: Method Namespace: UnityEngine "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Pool.ObjectPool_1.html",
+      "label": "ObjectPool<T>",
+      "lessons": [
+        "l064",
+        "l070"
+      ],
+      "checkedAt": "2026-11-12T05:10:49.380Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/pool/objectpool1",
+      "title": "ObjectPool<T> • UnityEngine.Pool • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine UnityEngine.Pool ObjectPool<T> A stack-based pool of object instances of type T, which implements the IObjectPool interface. Read time 3 min"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/PrefabUtility.html",
+      "label": "PrefabUtility",
+      "lessons": [
+        "l043"
+      ],
+      "checkedAt": "2026-11-12T04:51:31.696Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/prefabutility",
+      "title": "PrefabUtility • UnityEditor • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor PrefabUtility Utility class for any Prefab related operations. Read time 8 minutes Last updated 2 months ago Definition Type: Class Namespac"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/PrefabUtility.RecordPrefabInstancePropertyModifications.html",
+      "label": "PrefabUtility.RecordPrefabInstancePropertyModifications",
+      "lessons": [
+        "l087"
+      ],
+      "checkedAt": "2026-11-12T05:10:57.380Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/prefabutility/recordprefabinstancepropertymodifications",
+      "title": "RecordPrefabInstancePropertyModifications(Object) • PrefabUtility • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor PrefabUtility RecordPrefabInstancePropertyModifications(Object) Causes modifications made to the Prefab instance to be recorded. Read time 1"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Profiling.Profiler.html",
+      "label": "Profiler",
+      "lessons": [
+        "l054"
+      ],
+      "checkedAt": "2026-11-12T05:10:42.089Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/profiling/profiler",
+      "title": "Profiler • UnityEngine.Profiling • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine UnityEngine.Profiling Profiler Controls the Profiler from script. Read time 3 minutes Last updated 2 months ago Definition Type: Class Names"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Quaternion.LookRotation.html",
+      "label": "Quaternion.LookRotation",
+      "lessons": [
+        "l018"
+      ],
+      "checkedAt": "2026-11-12T05:10:27.656Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/quaternion/lookrotation",
+      "title": "LookRotation • Quaternion • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Quaternion LookRotation Creates a rotation with the specified forward and upwards directions. Read time 2 minutes Last updated 2 months ago "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Quaternion.RotateTowards.html",
+      "label": "Quaternion.RotateTowards",
+      "lessons": [
+        "l018"
+      ],
+      "checkedAt": "2026-11-12T05:10:27.624Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/quaternion/rotatetowards",
+      "title": "RotateTowards • Quaternion • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Quaternion RotateTowards Rotates a rotation from towards to. Read time 2 minutes Last updated 2 months ago Definition Type: Method Namespace"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/RectTransform.html",
+      "label": "RectTransform",
+      "lessons": [
+        "l057"
+      ],
+      "checkedAt": "2026-11-12T05:10:44.246Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/recttransform",
+      "title": "RectTransform • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine RectTransform Position, size, anchor and pivot information for a rectangle. Read time 12 minutes Last updated 2 months ago Definition Type: "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/RectTransformUtility.html",
+      "label": "RectTransformUtility",
+      "lessons": [
+        "l056"
+      ],
+      "checkedAt": "2026-11-12T05:10:44.068Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/recttransformutility",
+      "title": "RectTransformUtility • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine RectTransformUtility Utility class containing helper methods for working with RectTransform. Read time 1 minute Last updated 2 months ago De"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Renderer-material.html",
+      "label": "Renderer.material",
+      "lessons": [
+        "l053",
+        "l083"
+      ],
+      "checkedAt": "2026-11-12T05:10:40.928Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/renderer/material",
+      "title": "material • Renderer • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Renderer material Returns the first instantiated Material assigned to the renderer. Read time 1 minute Last updated 2 months ago Definition "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Rendering.SortingGroup.html",
+      "label": "SortingGroup",
+      "lessons": [
+        "l052"
+      ],
+      "checkedAt": "2026-11-12T05:10:40.846Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rendering/sortinggroup",
+      "title": "SortingGroup • UnityEngine.Rendering • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine UnityEngine.Rendering SortingGroup Adding a SortingGroup component to a GameObject will ensure that all Renderers within the GameObject's de"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/RenderTexture.html",
+      "label": "RenderTexture",
+      "lessons": [
+        "l055"
+      ],
+      "checkedAt": "2026-11-12T05:10:42.370Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rendertexture",
+      "title": "RenderTexture • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine RenderTexture Render textures are textures that can be rendered to. Read time 9 minutes Last updated 2 months ago Definition Type: Class Nam"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/RequireComponent.html",
+      "label": "RequireComponent",
+      "lessons": [
+        "l008",
+        "l076"
+      ],
+      "checkedAt": "2026-11-12T04:51:26.117Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/requirecomponent",
+      "title": "RequireComponent • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine RequireComponent The RequireComponent attribute automatically adds required components as dependencies. Read time 4 minutes Last updated 2 m"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Resources.Load.html",
+      "label": "Resources.Load",
+      "lessons": [
+        "l069"
+      ],
+      "checkedAt": "2026-11-12T05:10:53.467Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/resources/load",
+      "title": "Load • Resources • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Resources Load Loads an asset stored at path in a Resources folder using an optional systemTypeInstance filter. Read time 5 minutes Last upd"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Resources.UnloadUnusedAssets.html",
+      "label": "Resources.UnloadUnusedAssets",
+      "lessons": [
+        "l069",
+        "l084"
+      ],
+      "checkedAt": "2026-11-12T05:10:54.087Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/resources/unloadunusedassets",
+      "title": "UnloadUnusedAssets() • Resources • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Resources UnloadUnusedAssets() Unloads assets that are not used. Read time 1 minute Last updated 2 months ago Definition Type: Method Namesp"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Rigidbody-collisionDetectionMode.html",
+      "label": "Rigidbody.collisionDetectionMode",
+      "lessons": [
+        "l034"
+      ],
+      "checkedAt": "2026-11-12T05:17:51.381Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody/collisiondetectionmode",
+      "title": "collisionDetectionMode • Rigidbody • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Rigidbody collisionDetectionMode The Rigidbody's collision detection mode. Read time 1 minute Last updated 2 months ago Definition Type: Pro"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Rigidbody-interpolation.html",
+      "label": "Rigidbody.interpolation",
+      "lessons": [
+        "l025"
+      ],
+      "checkedAt": "2026-11-12T05:10:34.941Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody/interpolation",
+      "title": "interpolation • Rigidbody • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Rigidbody interpolation Interpolation provides a way to manage the appearance of jitter in the movement of your Rigidbody GameObjects at run"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Rigidbody-linearVelocity.html",
+      "label": "Rigidbody.linearVelocity",
+      "lessons": [
+        "l031",
+        "l032",
+        "l035"
+      ],
+      "checkedAt": "2026-11-12T05:17:47.066Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody/linearvelocity",
+      "title": "linearVelocity • Rigidbody • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Rigidbody linearVelocity The linear velocity vector of the rigidbody. It represents the rate of change of Rigidbody position. Read time 1 mi"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Rigidbody.AddForce.html",
+      "label": "Rigidbody.AddForce",
+      "lessons": [
+        "l032"
+      ],
+      "checkedAt": "2026-11-12T05:17:47.264Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody/addforce",
+      "title": "AddForce • Rigidbody • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Rigidbody AddForce Adds a force to the Rigidbody. Read time 3 minutes Last updated 2 months ago Definition Type: Method Namespace: UnityEngi"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Rigidbody.html",
+      "label": "Rigidbody",
+      "lessons": [
+        "l031"
+      ],
+      "checkedAt": "2026-11-12T05:17:46.873Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody",
+      "title": "Rigidbody • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Rigidbody Control of an object's position through physics simulation. Read time 10 minutes Last updated a month ago Definition Type: Class N"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Rigidbody.MovePosition.html",
+      "label": "Rigidbody.MovePosition",
+      "lessons": [
+        "l032"
+      ],
+      "checkedAt": "2026-11-12T05:17:47.702Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody/moveposition",
+      "title": "MovePosition(Vector3) • Rigidbody • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Rigidbody MovePosition(Vector3) Moves the kinematic Rigidbody towards position. Read time 1 minute Last updated 2 months ago Definition Type"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Rigidbody2D-interpolation.html",
+      "label": "Rigidbody2D.interpolation",
+      "lessons": [
+        "l040"
+      ],
+      "checkedAt": "2026-11-12T04:51:30.102Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody2d/interpolation",
+      "title": "interpolation • Rigidbody2D • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Rigidbody2D interpolation Physics interpolation used between updates. Read time 1 minute Last updated 13 days ago Definition Type: Property "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Rigidbody2D-linearVelocity.html",
+      "label": "Rigidbody2D.linearVelocity",
+      "lessons": [
+        "l039"
+      ],
+      "checkedAt": "2026-11-12T04:51:29.703Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody2d/linearvelocity",
+      "title": "linearVelocity • Rigidbody2D • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Rigidbody2D linearVelocity The linear velocity of the Rigidbody2D represents the rate of change over time of the Rigidbody2D position in wor"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Rigidbody2D.html",
+      "label": "Rigidbody2D",
+      "lessons": [
+        "l036",
+        "l037"
+      ],
+      "checkedAt": "2026-11-12T04:51:27.795Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody2d",
+      "title": "Rigidbody2D • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Rigidbody2D Provides physics movement and other dynamics, and the ability to attach Collider2D to it. Read time 11 minutes Last updated 2 mo"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Rigidbody2D.MovePosition.html",
+      "label": "Rigidbody2D.MovePosition",
+      "lessons": [
+        "l036"
+      ],
+      "checkedAt": "2026-11-12T04:51:27.957Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody2d/moveposition",
+      "title": "MovePosition(Vector2) • Rigidbody2D • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Rigidbody2D MovePosition(Vector2) Moves the rigidbody to position. Read time 2 minutes Last updated 2 months ago Definition Type: Method Nam"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/RigidbodyConstraints.html",
+      "label": "RigidbodyConstraints",
+      "lessons": [
+        "l035"
+      ],
+      "checkedAt": "2026-11-12T05:17:52.520Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbodyconstraints",
+      "title": "RigidbodyConstraints • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine RigidbodyConstraints Use these flags to constrain motion of Rigidbodies. Read time 2 minutes Last updated 2 months ago Definition Type: Enum"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/RuntimeInitializeOnLoadMethodAttribute.html",
+      "label": "RuntimeInitializeOnLoadMethodAttribute",
+      "lessons": [
+        "l009",
+        "l068"
+      ],
+      "checkedAt": "2026-11-12T04:51:26.229Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/runtimeinitializeonloadmethodattribute",
+      "title": "RuntimeInitializeOnLoadMethodAttribute • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine RuntimeInitializeOnLoadMethodAttribute Use this attribute to get a callback when the runtime is starting up and loading the first scene. Rea"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/SceneManagement.SceneManager-sceneLoaded.html",
+      "label": "SceneManager.sceneLoaded",
+      "lessons": [
+        "l068"
+      ],
+      "checkedAt": "2026-11-12T05:10:53.270Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/scenemanagement/scenemanager/sceneloaded",
+      "title": "sceneLoaded • SceneManager • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine UnityEngine.SceneManagement SceneManager sceneLoaded Assign a custom callback to this event to get notifications when a Scene has loaded. Re"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/SceneManagement.SceneManager.LoadSceneAsync.html",
+      "label": "SceneManager.LoadSceneAsync",
+      "lessons": [
+        "l066",
+        "l067"
+      ],
+      "checkedAt": "2026-11-12T05:10:51.158Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/scenemanagement/scenemanager/loadsceneasync",
+      "title": "LoadSceneAsync • SceneManager • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine UnityEngine.SceneManagement SceneManager LoadSceneAsync Loads the Scene asynchronously in the background. Read time 6 minutes Last updated 2"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/SceneManagement.SceneManager.SetActiveScene.html",
+      "label": "SceneManager.SetActiveScene",
+      "lessons": [
+        "l066"
+      ],
+      "checkedAt": "2026-11-12T05:10:51.523Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/scenemanagement/scenemanager/setactivescene",
+      "title": "SetActiveScene(Scene) • SceneManager • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine UnityEngine.SceneManagement SceneManager SetActiveScene(Scene) Set the Scene to be active. Read time 2 minutes Last updated 2 months ago Def"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/SceneManagement.SceneManager.UnloadSceneAsync.html",
+      "label": "SceneManager.UnloadSceneAsync",
+      "lessons": [
+        "l066"
+      ],
+      "checkedAt": "2026-11-12T05:10:51.829Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/scenemanagement/scenemanager/unloadsceneasync",
+      "title": "UnloadSceneAsync • SceneManager • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine UnityEngine.SceneManagement SceneManager UnloadSceneAsync Destroys all GameObjects associated with the given Scene and removes the Scene fro"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ScriptableObject.html",
+      "label": "ScriptableObject",
+      "lessons": [
+        "l072"
+      ],
+      "checkedAt": "2026-11-12T04:51:32.906Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/scriptableobject",
+      "title": "ScriptableObject • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine ScriptableObject A class you can derive from if you want to create objects that live independently of GameObjects. Read time 8 minutes Last "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Selection-gameObjects.html",
+      "label": "Selection.gameObjects",
+      "lessons": [
+        "l090"
+      ],
+      "checkedAt": "2026-11-12T05:10:59.352Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/selection/gameobjects",
+      "title": "gameObjects • Selection • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor Selection gameObjects Returns the actual game object selection. Includes Prefabs, non-modifiable objects. Read time 1 minute Last updated 2 "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/SerializedObject.html",
+      "label": "SerializedObject",
+      "lessons": [
+        "l086"
+      ],
+      "checkedAt": "2026-11-12T05:10:56.603Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/serializedobject",
+      "title": "SerializedObject • UnityEditor • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor SerializedObject SerializedObject and SerializedProperty are classes for editing serialized fields on Unity objects in a completely generic "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/SerializeField.html",
+      "label": "SerializeField",
+      "lessons": [
+        "l004",
+        "l007",
+        "l071"
+      ],
+      "checkedAt": "2026-11-12T04:51:23.749Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/serializefield",
+      "title": "SerializeField • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine SerializeField Force Unity to serialize a private field. Read time 4 minutes Last updated a month ago Definition Type: Class Namespace: Unit"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/SerializeReference.html",
+      "label": "SerializeReference",
+      "lessons": [
+        "l075"
+      ],
+      "checkedAt": "2026-11-12T04:51:34.371Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/serializereference",
+      "title": "SerializeReference • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine SerializeReference Marks a field to be serialized as a reference instead of as a value. Read time 11 minutes Last updated 13 days ago Defini"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Sprite.html",
+      "label": "Sprite",
+      "lessons": [
+        "l041",
+        "l042"
+      ],
+      "checkedAt": "2026-11-12T04:51:30.790Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/sprite",
+      "title": "Sprite • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Sprite Represents a Sprite object for use in 2D gameplay. Read time 6 minutes Last updated 13 days ago Definition Type: Class Namespace: Uni"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/TextureImporter.html",
+      "label": "TextureImporter",
+      "lessons": [
+        "l041",
+        "l045",
+        "l089"
+      ],
+      "checkedAt": "2026-11-12T04:51:30.685Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/textureimporter",
+      "title": "TextureImporter • UnityEditor • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor TextureImporter Texture importer lets you modify Texture2D import settings from editor scripts. Read time 8 minutes Last updated 2 months ag"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-deltaTime.html",
+      "label": "Time.deltaTime",
+      "lessons": [
+        "l010",
+        "l024"
+      ],
+      "checkedAt": "2026-11-12T04:51:27.604Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/time/deltatime",
+      "title": "deltaTime • Time • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Time deltaTime The interval in seconds from the last frame to the current one (Read Only). Read time 3 minutes Last updated a month ago Defi"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-fixedDeltaTime.html",
+      "label": "Time.fixedDeltaTime",
+      "lessons": [
+        "l021"
+      ],
+      "checkedAt": "2026-11-12T05:10:31.530Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/time/fixeddeltatime",
+      "title": "fixedDeltaTime • Time • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Time fixedDeltaTime The interval in seconds of in-game time at which physics and other fixed frame rate updates (like MonoBehaviour's MonoBe"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-fixedTime.html",
+      "label": "Time.fixedTime",
+      "lessons": [
+        "l025"
+      ],
+      "checkedAt": "2026-11-12T05:10:35.129Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/time/fixedtime",
+      "title": "fixedTime • Time • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Time fixedTime The time at which the last MonoBehaviour.FixedUpdate() started in seconds since the start of the game (Read Only). Read time "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-timeAsDouble.html",
+      "label": "Time.timeAsDouble",
+      "lessons": [
+        "l024"
+      ],
+      "checkedAt": "2026-11-12T05:10:34.751Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/time/timeasdouble",
+      "title": "timeAsDouble • Time • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Time timeAsDouble The double precision time at the beginning of this frame (Read Only). This is the time in seconds since the start of the g"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-timeScale.html",
+      "label": "Time.timeScale",
+      "lessons": [
+        "l021"
+      ],
+      "checkedAt": "2026-11-12T05:10:31.022Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/time/timescale",
+      "title": "timeScale • Time • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Time timeScale The rate at which in-game time passes relative to real time. Read time 2 minutes Last updated a month ago Definition Type: Pr"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-unscaledDeltaTime.html",
+      "label": "Time.unscaledDeltaTime",
+      "lessons": [
+        "l021"
+      ],
+      "checkedAt": "2026-11-12T05:10:31.105Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/time/unscaleddeltatime",
+      "title": "unscaledDeltaTime • Time • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Time unscaledDeltaTime The timeScale-independent interval in seconds from the last frame to the current one (Read Only). Read time 1 minute "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-unscaledTime.html",
+      "label": "Time.unscaledTime",
+      "lessons": [
+        "l065"
+      ],
+      "checkedAt": "2026-11-12T05:10:49.977Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/time/unscaledtime",
+      "title": "unscaledTime • Time • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Time unscaledTime The timeScale-independent time for this frame (Read Only). This is the time in seconds since the start of the game. Read t"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Transform-lossyScale.html",
+      "label": "Transform.lossyScale",
+      "lessons": [
+        "l020"
+      ],
+      "checkedAt": "2026-11-12T05:10:30.389Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/transform/lossyscale",
+      "title": "lossyScale • Transform • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Transform lossyScale The global scale of the object (Read Only). Read time 1 minute Last updated 2 months ago Definition Type: Property Name"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Transform-position.html",
+      "label": "Transform.position",
+      "lessons": [
+        "l006"
+      ],
+      "checkedAt": "2026-11-12T04:51:25.717Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/transform/position",
+      "title": "position • Transform • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Transform position The world space position of the Transform. Read time 1 minute Last updated 4 days ago Definition Type: Property Namespace"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Transform.SetParent.html",
+      "label": "Transform.SetParent",
+      "lessons": [
+        "l016"
+      ],
+      "checkedAt": "2026-11-12T05:10:25.316Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/transform/setparent",
+      "title": "SetParent • Transform • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Transform SetParent Set the parent of the transform. Read time 3 minutes Last updated 2 months ago Definition Type: Method Namespace: UnityE"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Transform.TransformDirection.html",
+      "label": "Transform.TransformDirection",
+      "lessons": [
+        "l020"
+      ],
+      "checkedAt": "2026-11-12T05:10:30.130Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/transform/transformdirection",
+      "title": "TransformDirection • Transform • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Transform TransformDirection Transforms direction from local space to world space. Read time 1 minute Last updated 2 months ago Definition T"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Transform.TransformPoint.html",
+      "label": "Transform.TransformPoint",
+      "lessons": [
+        "l016",
+        "l088"
+      ],
+      "checkedAt": "2026-11-12T05:10:25.832Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/transform/transformpoint",
+      "title": "TransformPoint • Transform • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Transform TransformPoint Transforms position from local space to world space. Read time 1 minute Last updated 2 months ago Definition Type: "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Transform.TransformVector.html",
+      "label": "Transform.TransformVector",
+      "lessons": [
+        "l020"
+      ],
+      "checkedAt": "2026-11-12T05:10:30.203Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/transform/transformvector",
+      "title": "TransformVector • Transform • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Transform TransformVector Transforms vector from local space to world space. Read time 1 minute Last updated 2 months ago Definition Type: M"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/UIElements.ListView.html",
+      "label": "UI Toolkit ListView",
+      "lessons": [
+        "l060"
+      ],
+      "checkedAt": "2026-11-12T05:10:46.258Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/uielements/listview",
+      "title": "ListView • UnityEngine.UIElements • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine UnityEngine.UIElements ListView A ListView is a vertically scrollable area that links to, and displays, a list of items. Read time 15 minute"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/UIElements.UIDocument.html",
+      "label": "UIDocument",
+      "lessons": [
+        "l059"
+      ],
+      "checkedAt": "2026-11-12T05:10:46.246Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/uielements/uidocument",
+      "title": "UIDocument • UnityEngine.UIElements • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine UnityEngine.UIElements UIDocument Defines a Component that connects VisualElements to GameObjects. Read time 9 minutes Last updated 2 months"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/UIElements.VisualElement.html",
+      "label": "VisualElement",
+      "lessons": [
+        "l059"
+      ],
+      "checkedAt": "2026-11-12T05:10:45.960Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/uielements/visualelement",
+      "title": "VisualElement • UnityEngine.UIElements • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine UnityEngine.UIElements VisualElement Base class for objects that are part of the UIElements visual tree. Read time 9 minutes Last updated 2 "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Undo.html",
+      "label": "Undo",
+      "lessons": [
+        "l087"
+      ],
+      "checkedAt": "2026-11-12T05:10:57.363Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/undo",
+      "title": "Undo • UnityEditor • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor Undo Lets you register undo operations on specific objects you are about to perform changes on. Read time 3 minutes Last updated 2 months ag"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Unity.Jobs.IJob.html",
+      "label": "IJob",
+      "lessons": [
+        "l092",
+        "l094"
+      ],
+      "checkedAt": "2026-11-12T05:11:00.216Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unity/jobs/ijob",
+      "title": "IJob • Unity.Jobs • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference Unity.Jobs IJob An interface that allows you to schedule a single job that runs in parallel to other jobs and the main thread. Read time 1 minute Last u"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Unity.Jobs.IJobParallelFor.html",
+      "label": "IJobParallelFor",
+      "lessons": [
+        "l093"
+      ],
+      "checkedAt": "2026-11-12T05:11:01.476Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unity/jobs/ijobparallelfor",
+      "title": "IJobParallelFor • Unity.Jobs • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference Unity.Jobs IJobParallelFor Interface that represents a job that performs the same independent operation for each element of a native container or for a "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Unity.Jobs.JobHandle.Complete.html",
+      "label": "JobHandle.Complete",
+      "lessons": [
+        "l092"
+      ],
+      "checkedAt": "2026-11-12T05:11:00.515Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unity/jobs/jobhandle/complete",
+      "title": "Complete() • JobHandle • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference Unity.Jobs JobHandle Complete() Ensures that a job has completed. Read time 1 minute Last updated 2 months ago Definition Type: Method Namespace: Unity."
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Unity.Profiling.ProfilerMarker.html",
+      "label": "ProfilerMarker",
+      "lessons": [
+        "l081",
+        "l085"
+      ],
+      "checkedAt": "2026-11-12T05:10:55.825Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unity/profiling/profilermarker",
+      "title": "ProfilerMarker • Unity.Profiling • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference Unity.Profiling ProfilerMarker Performance marker used for profiling arbitrary code blocks. Read time 2 minutes Last updated 13 days ago Definition Type"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Unity.Profiling.ProfilerRecorder.html",
+      "label": "ProfilerRecorder",
+      "lessons": [
+        "l082"
+      ],
+      "checkedAt": "2026-11-12T05:10:55.999Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unity/profiling/profilerrecorder",
+      "title": "ProfilerRecorder • Unity.Profiling • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference Unity.Profiling ProfilerRecorder Records the Profiler metric data that a Profiler marker or counter produces. Read time 3 minutes Last updated 13 days a"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Vector3.ClampMagnitude.html",
+      "label": "Vector3.ClampMagnitude",
+      "lessons": [
+        "l017"
+      ],
+      "checkedAt": "2026-11-12T05:10:26.213Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/vector3/clampmagnitude",
+      "title": "ClampMagnitude • Vector3 • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Vector3 ClampMagnitude Creates a copy of a given Vector3 with its magnitude clamped to a maximum length. Read time 2 minutes Last updated 2 "
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Vector3.Dot.html",
+      "label": "Vector3.Dot",
+      "lessons": [
+        "l017"
+      ],
+      "checkedAt": "2026-11-12T05:10:27.111Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/vector3/dot",
+      "title": "Dot • Vector3 • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Vector3 Dot Calculates the dot product of two three-dimensional vectors defined in the same coordinate space. Read time 2 minutes Last updat"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Vector3.Lerp.html",
+      "label": "Vector3.Lerp",
+      "lessons": [
+        "l025"
+      ],
+      "checkedAt": "2026-11-12T05:10:35.040Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/vector3/lerp",
+      "title": "Lerp • Vector3 • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Vector3 Lerp Interpolates linearly between two points. Read time 6 minutes Last updated 2 months ago Definition Type: Method Namespace: Unit"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Vector3.ProjectOnPlane.html",
+      "label": "Vector3.ProjectOnPlane",
+      "lessons": [
+        "l017"
+      ],
+      "checkedAt": "2026-11-12T05:10:27.245Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/vector3/projectonplane",
+      "title": "ProjectOnPlane • Vector3 • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Vector3 ProjectOnPlane Projects a vector onto a plane. Read time 2 minutes Last updated 2 months ago Definition Type: Method Namespace: Unit"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/WaitForSeconds.html",
+      "label": "WaitForSeconds",
+      "lessons": [
+        "l022"
+      ],
+      "checkedAt": "2026-11-12T05:10:32.083Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/waitforseconds",
+      "title": "WaitForSeconds • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine WaitForSeconds Suspends the coroutine execution for the specified scaled time in seconds. Read time 1 minute Last updated 2 months ago Defin"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/WaitForSecondsRealtime.html",
+      "label": "WaitForSecondsRealtime",
+      "lessons": [
+        "l022"
+      ],
+      "checkedAt": "2026-11-12T05:10:32.616Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/waitforsecondsrealtime",
+      "title": "WaitForSecondsRealtime • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine WaitForSecondsRealtime Suspends the coroutine execution for the specified real (unscaled) time in seconds. Read time 1 minute Last updated 2"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/WaitUntil.html",
+      "label": "WaitUntil",
+      "lessons": [
+        "l022"
+      ],
+      "checkedAt": "2026-11-12T05:10:32.826Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/waituntil",
+      "title": "WaitUntil • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine WaitUntil Suspends the coroutine execution until the supplied delegate evaluates to true. Read time 1 minute Last updated 2 months ago Defin"
+    },
+    {
+      "url": "https://docs.unity3d.com/Packages/com.unity.addressables@2.7/manual/memory-assets.html",
+      "label": "Addressables 2.7 · Managing Addressable asset memory（可选包）",
+      "lessons": [
+        "l069"
+      ],
+      "checkedAt": "2026-11-12T05:29:52.697Z",
+      "status": 200,
+      "finalURL": "https://docs.unity3d.com/Packages/com.unity.addressables@2.7/manual/memory-assets.html",
+      "title": "Managing Addressable asset memory | Addressables | 2.7.6",
+      "excerpt": "Managing Addressable asset memory | Addressables | 2.7.6 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents Managing Addressable asset memory The Addressables system keeps a reference count of every item it loads to manage the memory it uses to load assets and As"
+    },
+    {
+      "url": "https://docs.unity3d.com/Packages/com.unity.ai.navigation@2.0/manual/index.html",
+      "label": "AI Navigation 2.0",
+      "lessons": [
+        "l091"
+      ],
+      "checkedAt": "2026-11-12T05:10:59.535Z",
+      "status": 200,
+      "finalURL": "https://docs.unity3d.com/Packages/com.unity.ai.navigation@2.0/manual/index.html",
+      "title": "AI Navigation | AI Navigation | 2.0.16",
+      "excerpt": "AI Navigation | AI Navigation | 2.0.16 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents AI Navigation The navigation system allows you to create characters that can intelligently move around the game world. These characters use navigation meshes that are create"
+    },
+    {
+      "url": "https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/index.html",
+      "label": "Burst compiler 1.8",
+      "lessons": [
+        "l093",
+        "l095"
+      ],
+      "checkedAt": "2026-11-12T05:11:01.403Z",
+      "status": 200,
+      "finalURL": "https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/index.html",
+      "title": "Burst compiler | Burst | 1.8.31",
+      "excerpt": "Burst compiler | Burst | 1.8.31 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents Burst compiler Compile compatible sections of your C# code into highly-optimized native CPU code. Burst is a compiler that works on a subset of C# referred to in the Unity context "
+    },
+    {
+      "url": "https://docs.unity3d.com/Packages/com.unity.entities@1.4/manual/index.html",
+      "label": "Entities package 1.4",
+      "lessons": [
+        "l094",
+        "l095"
+      ],
+      "checkedAt": "2026-11-12T05:11:01.741Z",
+      "status": 200,
+      "finalURL": "https://docs.unity3d.com/Packages/com.unity.entities@1.4/manual/index.html",
+      "title": "Entities package | Entities | 1.4.8",
+      "excerpt": "Entities package | Entities | 1.4.8 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents Entities package The Entities package is part of Unity's Data-Oriented Technology Stack (DOTS). It provides a data-oriented implementation of the Entity Component System (ECS) "
+    },
+    {
+      "url": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/api/UnityEngine.InputSystem.InputAction.html",
+      "label": "InputAction",
+      "lessons": [
+        "l027",
+        "l030"
+      ],
+      "checkedAt": "2026-11-12T05:17:44.919Z",
+      "status": 200,
+      "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/api/UnityEngine.InputSystem.InputAction.html",
+      "title": "Class InputAction | Input System | 1.20.1",
+      "excerpt": "Class InputAction | Input System | 1.20.1 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents Class InputAction A named input signal that can flexibly decide which input data to tap. Inheritance object InputAction Implements ICloneable IDisposable Namespace : Unit"
+    },
+    {
+      "url": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/api/UnityEngine.InputSystem.InputActionRebindingExtensions.html",
+      "label": "InputActionRebindingExtensions",
+      "lessons": [
+        "l029"
+      ],
+      "checkedAt": "2026-11-12T05:17:46.228Z",
+      "status": 200,
+      "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/api/UnityEngine.InputSystem.InputActionRebindingExtensions.html",
+      "title": "Class InputActionRebindingExtensions | Input System | 1.20.1",
+      "excerpt": "Class InputActionRebindingExtensions | Input System | 1.20.1 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents Class InputActionRebindingExtensions Extensions to help with dynamically rebinding InputAction s in various ways. Inheritance object InputActionRebindi"
+    },
+    {
+      "url": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/api/UnityEngine.InputSystem.PlayerInput.html",
+      "label": "PlayerInput",
+      "lessons": [
+        "l028"
+      ],
+      "checkedAt": "2026-11-12T05:17:44.919Z",
+      "status": 200,
+      "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/api/UnityEngine.InputSystem.PlayerInput.html",
+      "title": "Class PlayerInput | Input System | 1.20.1",
+      "excerpt": "Class PlayerInput | Input System | 1.20.1 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents Class PlayerInput Represents a separate player in the game complete with a set of actions exclusive to the player and a set of paired devices. Inheritance object Object C"
+    },
+    {
+      "url": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/Actions.html",
+      "label": "Actions",
+      "lessons": [
+        "l026",
+        "l027",
+        "l028"
+      ],
+      "checkedAt": "2026-11-12T05:17:44.880Z",
+      "status": 200,
+      "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/Actions.html",
+      "title": "Actions | Input System | 1.20.1",
+      "excerpt": "Actions | Input System | 1.20.1 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents Actions Actions allow you to separate the purpose of an input from the device controls which perform that input, and associate the purpose and device controls together in a flexibl"
+    },
+    {
+      "url": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/rebind-action-runtime.html",
+      "label": "Rebind an action at runtime",
+      "lessons": [
+        "l029"
+      ],
+      "checkedAt": "2026-11-12T05:17:45.907Z",
+      "status": 200,
+      "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/rebind-action-runtime.html",
+      "title": "Rebind an action at runtime | Input System | 1.20.1",
+      "excerpt": "Rebind an action at runtime | Input System | 1.20.1 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents Rebind an action at runtime Note To download a sample project which demonstrates how to set up a rebinding user interface with Input System APIs, open the Packa"
+    },
+    {
+      "url": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/Settings.html",
+      "label": "Input System settings",
+      "lessons": [
+        "l028",
+        "l030"
+      ],
+      "checkedAt": "2026-11-12T05:17:44.920Z",
+      "status": 200,
+      "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/Settings.html",
+      "title": "| Input System | 1.20.1",
+      "excerpt": "| Input System | 1.20.1 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents To configure the Input System individually for each project, go to Edit > Project Settings… > Input System Package from Unity's main menu. This section describes each input setting in deta"
+    },
+    {
+      "url": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/using-actions-workflow.html",
+      "label": "Using Actions",
+      "lessons": [
+        "l026"
+      ],
+      "checkedAt": "2026-11-12T05:17:44.917Z",
+      "status": 200,
+      "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/using-actions-workflow.html",
+      "title": "Workflow Overview - Actions | Input System | 1.20.1",
+      "excerpt": "Workflow Overview - Actions | Input System | 1.20.1 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents Workflow Overview - Actions While the Input System has a variety of workflows to choose from, this is the primary recommended workflow, which suits most common "
+    },
+    {
+      "url": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/using-direct-workflow.html",
+      "label": "Reading device state directly",
+      "lessons": [
+        "l026",
+        "l039"
+      ],
+      "checkedAt": "2026-11-12T05:17:44.918Z",
+      "status": 200,
+      "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/using-direct-workflow.html",
+      "title": "Workflow Overview - Directly Reading Device States | Input System | 1.20.1",
+      "excerpt": "Workflow Overview - Directly Reading Device States | Input System | 1.20.1 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents Workflow Overview - Directly Reading Device States This is the simplest and most direct input workflow, but the least flexible. It bypass"
+    },
+    {
+      "url": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/using-ui-input-module.html",
+      "label": "Input System UI support",
+      "lessons": [
+        "l058"
+      ],
+      "checkedAt": "2026-11-12T05:29:52.697Z",
+      "status": 200,
+      "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/using-ui-input-module.html",
+      "title": "Using UI Input Module for UI support | Input System | 1.20.1",
+      "excerpt": "Using UI Input Module for UI support | Input System | 1.20.1 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents Using UI Input Module for UI support Connect Input System actions to Unity's Event System so UI receives pointer, navigation, and tracked input. You ne"
+    },
+    {
+      "url": "https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@17.3/manual/index.html",
+      "label": "Universal Render Pipeline 17.3",
+      "lessons": [
+        "l052"
+      ],
+      "checkedAt": "2026-11-12T05:10:40.380Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/render-pipelines/universal-render-pipeline/urp-introduction",
+      "title": "Introduction to the Universal Render Pipeline • Using the Universal Render Pipeline • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Unity 6.3 User Manual Render pipelines Using the Universal Render Pipeline Introduction to the Universal Render Pipeline Learn about how URP creates optimized graphics a"
+    },
+    {
+      "url": "https://docs.unity3d.com/Packages/com.unity.test-framework@1.6/manual/index.html",
+      "label": "Unity Test Framework scripting reference",
+      "lessons": [
+        "l079",
+        "l080",
+        "l098"
+      ],
+      "checkedAt": "2026-11-12T04:51:36.325Z",
+      "status": 200,
+      "finalURL": "https://docs.unity3d.com/Packages/com.unity.test-framework@1.6/manual/index.html",
+      "title": "Unity Test Framework scripting reference | Test Framework | 1.6.0",
+      "excerpt": "Unity Test Framework scripting reference | Test Framework | 1.6.0 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents Unity Test Framework scripting reference The scripting API documentation is available on this website. The user guide for Unity Test Framework in "
+    },
+    {
+      "url": "https://docs.unity3d.com/Packages/com.unity.ugui@2.0/manual/EventSystem.html",
+      "label": "uGUI Event System",
+      "lessons": [
+        "l058"
+      ],
+      "checkedAt": "2026-11-12T05:10:44.835Z",
+      "status": 200,
+      "finalURL": "https://docs.unity3d.com/Packages/com.unity.ugui@2.0/manual/EventSystem.html",
+      "title": "Event System | uGUI | 2.0.0",
+      "excerpt": "Event System | uGUI | 2.0.0 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents Event System The Event System is a way of sending events to objects in the application based on input, be it keyboard, mouse, touch, or custom input. The Event System consists of a few"
+    }
+  ]
+}
