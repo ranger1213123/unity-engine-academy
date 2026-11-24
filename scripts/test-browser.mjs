@@ -94,8 +94,12 @@ try{
   await page.locator('#physics-next').click();check((await page.locator('#physics-stats').textContent()).includes('1物理步'),'第二帧发生物理步');
   await page.locator('#physics-scale').selectOption('0');await page.locator('#physics-ten').click();check((await page.locator('#physics-stats').textContent()).includes('0物理步'),'timeScale0停止固定步进');
   if(!draft){for(const lesson of lessons){await page.goto(base+'#lesson/'+lesson.id);check((await page.locator('.lesson-header h1').textContent())===lesson.title,`${lesson.id}正文路由正确`);check(await page.locator('.quiz-item').count()===lesson.quiz.length,`${lesson.id}测验完整`);check(await page.locator('.opening-question').textContent()===lesson.teaching.question,`${lesson.id}具体问题对应正确`);check(await page.locator('.walkthrough>li').count()===lesson.teaching.walkthrough.length,`${lesson.id}分步例题完整`);}}
+  await page.goto(base+'#lesson/l007');check(await page.locator('.code-block').count()===2,'l007同时显示配置与调用者完整代码');
+  await page.goto(base+'#lesson/l008');check(await page.locator('.teaching-comparison tbody tr').count()===7,'l008显示七种组件获取入口');check(await page.locator('.code-block').count()===2,'l008显示查找探针与依赖探针');check((await page.locator('.teaching-comparison').textContent()).includes('GetComponentsInParent'),'l008父级复数入口可见');
+  await page.goto(base+'#lesson/l009');check(await page.locator('.code-block').count()===2,'l009同时显示发布者与监听者代码');
+  await page.goto(base+'#lesson/l010');check(await page.locator('.code-block').count()===1,'l010显示完整列表寿命探针');check(!(await page.locator('.reader-content').textContent()).includes('Cooldown'),'l010网页不再混入冷却模型');
   const mobile=await context.newPage();await mobile.setViewportSize({width:390,height:844});
-  for(const route of ['#home','#roadmap','#lesson/'+first.id,'#lesson/l011','#lesson/l014','#lab/lifecycle','#lab/physics','#notes','#references','#components']){
+  for(const route of ['#home','#roadmap','#lesson/'+first.id,'#lesson/l008','#lesson/l011','#lesson/l014','#lab/lifecycle','#lab/physics','#notes','#references','#components']){
     await mobile.goto(base+route);await mobile.locator('#main').waitFor();
     check(await mobile.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'390px无横向溢出 '+route);
   }
@@ -107,7 +111,7 @@ try{
   check(await page.locator('.teaching-comparison tbody tr').count()===3,'生命周期对照表显示三种初始条件');
   await page.locator('#toast').waitFor({state:'hidden'});
   await page.locator('#start').screenshot({path:path.join(directory,'lifecycle-guide.png')});
-  for(const width of [320,768,1024]){await page.setViewportSize({width,height:900});for(const route of ['#home','#lesson/'+first.id,'#lesson/l011','#lesson/l014','#components']){await page.goto(base+route);check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`${width}px无横向溢出 ${route}`);}}
+  for(const width of [320,768,1024]){await page.setViewportSize({width,height:900});for(const route of ['#home','#lesson/'+first.id,'#lesson/l008','#lesson/l011','#lesson/l014','#components']){await page.goto(base+route);check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`${width}px无横向溢出 ${route}`);}}
   // 静态文件模式不依赖 fetch、模块加载器或服务端路由。
   const offline=await context.newPage();await offline.goto('file:///'+path.join(root,'index.html').replaceAll('\\','/'));check((await offline.evaluate(()=>window.ENGINE_ATLAS?.lessons))===lessons.length,'双击离线文件也可加载全书');await offline.close();
 }catch(error){failures.push(error.stack);}

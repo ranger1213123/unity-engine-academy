@@ -42,6 +42,8 @@ window.COURSE_MODULES.push({
 
 多文件示例使用 `code.files: [{filename, source}]`，代码标题、默认语言和 explanation 仍留在 code 上。混合文件须逐个给出 `language`，如 `.asmdef` 为 `json`、`.cs` 为 `csharp`；编译检查只选 C#。不要把含 using 的多个文件拼在一个无法编译的复制块中。每块展示完整文件与实际放置目录。
 
+第二章另有初学者连续性保护层 `scripts/apply-beginner-continuity.mjs`。它保留课程 ID、课时、评分和自测答案序号，集中维护第二章的术语顺序、完整示例与单课职责。重新生成第二章基础正文后，应再次运行该脚本，再执行 `npm run audit:beginner`；具体边界见 `BEGINNER-CONTINUITY-REVIEW.md`。
+
 ## 技术准确性
 
 不要保证不同对象的 Awake/Start/Update 顺序，不把 FixedUpdate 当真实独立线程；Start 必须在第一次 Update 前且组件启用，Awake/OnEnable 的触发需区分 inactive 对象、组件 enabled 与实例化。OnDestroy 不是可靠持久化钩子。Unity 对象的 `== null` 与 C# 引用为空不等价。协程不是线程；WaitForSeconds 受 timeScale 影响且从当前帧结束开始等待，恢复依赖后续帧。动态刚体与 Transform 写入需要解释物理所有权。2D、3D 物理分离。Unity 6 使用 Rigidbody.linearVelocity / Rigidbody2D.linearVelocity；不再把旧 velocity 推荐为首选。不要将 Addressables、Cinemachine、AI Navigation、Burst、Entities 等包假定已安装；写清可选、安装版本需与编辑器兼容。内置 Input 旧 API 与新版 Input System 必须明确分开。URP 不等于内置渲染管线；运行时与编辑器命名空间分离；Editor 脚本必须在 Editor 文件夹或 Editor-only 程序集。示意模拟器不是实际 Unity Runtime。

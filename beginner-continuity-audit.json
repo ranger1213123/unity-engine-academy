@@ -1,0 +1,29 @@
+{
+  "checkedAt": "2026-11-24T12:05:25.614Z",
+  "chapter": "Unity 中的 C#",
+  "lessons": 5,
+  "componentMethods": 7,
+  "chapterTheory": [
+    {
+      "id": "l006",
+      "cacheMentions": 0
+    },
+    {
+      "id": "l007",
+      "cacheMentions": 0
+    },
+    {
+      "id": "l008",
+      "cacheMentions": 2
+    },
+    {
+      "id": "l009",
+      "cacheMentions": 0
+    },
+    {
+      "id": "l010",
+      "cacheMentions": 0
+    }
+  ],
+  "errors": []
+}

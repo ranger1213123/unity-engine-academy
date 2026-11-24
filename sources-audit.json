@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-11-12T08:32:30.245Z",
-  "total": 177,
-  "ok": 177,
+  "checkedAt": "2026-11-24T11:53:57.360Z",
+  "total": 184,
+  "ok": 184,
   "failed": 0,
   "note": "HTTP和标题检查表示当时链接可用，不代表逐行人工核实了全部文档。excerpt是核对来源的短摘录；教材正文为原创解释。",
   "sources": [
@@ -12,7 +12,7 @@
         "l078",
         "l079"
       ],
-      "checkedAt": "2026-11-12T04:51:34.940Z",
+      "checkedAt": "2026-11-24T11:53:38.833Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/programming-environment/script-compilation/assembly-definition-files",
       "title": "Organize scripts into assemblies • Script compilation • 6000.3 • Unity Editor",
@@ -24,7 +24,7 @@
       "lessons": [
         "l002"
       ],
-      "checkedAt": "2026-11-12T04:51:20.485Z",
+      "checkedAt": "2026-11-24T11:52:33.144Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/working-with-gameobjects/gameobject-fundamentals/class-game-object",
       "title": "The GameObject class • GameObject fundamentals • 6000.3 • Unity Editor",
@@ -36,7 +36,7 @@
       "lessons": [
         "l001"
       ],
-      "checkedAt": "2026-11-12T08:32:26.658Z",
+      "checkedAt": "2026-11-24T11:52:33.143Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/unity-editor/editor-settings-reference/comp-manager-group/class-time-manager",
       "title": "Time project settings reference • Project Settings reference • 6000.3 • Unity Editor",
@@ -48,7 +48,7 @@
       "lessons": [
         "l014"
       ],
-      "checkedAt": "2026-11-12T05:10:21.562Z",
+      "checkedAt": "2026-11-24T11:52:47.539Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/scripting/coroutines-section/coroutines",
       "title": "Write and run coroutines • Split tasks across frames with coroutines • 6000.3 • Unity Editor",
@@ -62,7 +62,7 @@
         "l012",
         "l015"
       ],
-      "checkedAt": "2026-11-12T05:10:21.558Z",
+      "checkedAt": "2026-11-24T11:52:45.633Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/scripting/managing-update-order/execution-order",
       "title": "Event function execution order • Control when your code updates • 6000.3 • Unity Editor",
@@ -74,7 +74,7 @@
       "lessons": [
         "l054"
       ],
-      "checkedAt": "2026-11-12T05:10:42.030Z",
+      "checkedAt": "2026-11-24T11:53:18.487Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/analysis/graphics-performance-profiling/profile-rendering/frame-debugger/frame-debugger",
       "title": "Introduction to the Frame Debugger • Frame Debugger • 6000.3 • Unity Editor",
@@ -86,7 +86,7 @@
       "lessons": [
         "l083"
       ],
-      "checkedAt": "2026-11-12T07:21:21.843Z",
+      "checkedAt": "2026-11-24T11:53:41.964Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/analysis/graphics-performance-profiling/reduce-draw-calls/gpuinstancing/gpuinstancing",
       "title": "Introduction to GPU instancing • GPU instancing • 6000.3 • Unity Editor",
@@ -98,7 +98,7 @@
       "lessons": [
         "l087"
       ],
-      "checkedAt": "2026-11-12T07:34:20.361Z",
+      "checkedAt": "2026-11-24T11:53:44.723Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/working-with-gameobjects/prefabs/override/prefab-instance-overrides",
       "title": "Override prefab instances • Overriding prefab instance data • 6000.3 • Unity Editor",
@@ -110,11 +110,11 @@
       "lessons": [
         "l003"
       ],
-      "checkedAt": "2026-11-12T04:51:20.487Z",
+      "checkedAt": "2026-11-24T11:52:37.540Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/working-with-gameobjects/prefabs",
       "title": "Prefabs • GameObjects • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Unity 6.3 User Manual GameObjects Prefabs Create reusable GameObject templates to use across your projects. Read time 1 minute Last updated 13 days ago Unity's prefab sy"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Unity 6.3 User Manual GameObjects Prefabs Create reusable GameObject templates to use across your projects. Read time 1 minute Last updated 25 days ago Unity's prefab sy"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/Manual/Profiler.html",
@@ -125,7 +125,7 @@
         "l085",
         "l100"
       ],
-      "checkedAt": "2026-11-12T05:10:55.585Z",
+      "checkedAt": "2026-11-24T11:53:40.566Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/analysis/profiler",
       "title": "Unity Profiler • Optimization • 6000.3 • Unity Editor",
@@ -137,7 +137,7 @@
       "lessons": [
         "l083"
       ],
-      "checkedAt": "2026-11-12T07:21:21.842Z",
+      "checkedAt": "2026-11-24T11:53:41.869Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/analysis/graphics-performance-profiling/in-urp/reduce-draw-calls-urp/srpbatcher/srpbatcher",
       "title": "Scriptable Render Pipeline Batcher in URP • Scriptable Render Pipeline (SRP) Batcher in URP • 6000.3 • Unity Editor",
@@ -149,7 +149,7 @@
       "lessons": [
         "l091"
       ],
-      "checkedAt": "2026-11-12T05:11:00.131Z",
+      "checkedAt": "2026-11-24T11:53:47.147Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/ai/navmeshagent/setdestination",
       "title": "SetDestination(Vector3) • NavMeshAgent • 6000.3 • Unity Editor",
@@ -162,7 +162,7 @@
         "l046",
         "l050"
       ],
-      "checkedAt": "2026-11-12T05:10:36.819Z",
+      "checkedAt": "2026-11-24T11:53:12.442Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/animationclip",
       "title": "AnimationClip • UnityEngine • 6000.3 • Unity Editor",
@@ -174,7 +174,7 @@
       "lessons": [
         "l049"
       ],
-      "checkedAt": "2026-11-12T05:10:38.859Z",
+      "checkedAt": "2026-11-24T11:53:15.845Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/animationevent",
       "title": "AnimationEvent • UnityEngine • 6000.3 • Unity Editor",
@@ -186,7 +186,7 @@
       "lessons": [
         "l049"
       ],
-      "checkedAt": "2026-11-12T05:10:39.035Z",
+      "checkedAt": "2026-11-24T11:53:15.889Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/animator/applyrootmotion",
       "title": "applyRootMotion • Animator • 6000.3 • Unity Editor",
@@ -198,7 +198,7 @@
       "lessons": [
         "l046"
       ],
-      "checkedAt": "2026-11-12T05:10:36.916Z",
+      "checkedAt": "2026-11-24T11:53:12.976Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/animator/getcurrentanimatorclipinfo",
       "title": "GetCurrentAnimatorClipInfo • Animator • 6000.3 • Unity Editor",
@@ -211,11 +211,11 @@
         "l047",
         "l050"
       ],
-      "checkedAt": "2026-11-12T05:10:37.324Z",
+      "checkedAt": "2026-11-24T11:53:13.353Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/animator",
       "title": "Animator • UnityEngine • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Animator Manages, controls, and evaluates the animation of a GameObject. Read time 20 minutes Last updated 13 days ago Definition Type: Clas"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Animator Manages, controls, and evaluates the animation of a GameObject. Read time 20 minutes Last updated 25 days ago Definition Type: Clas"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Animator.SetBool.html",
@@ -223,7 +223,7 @@
       "lessons": [
         "l047"
       ],
-      "checkedAt": "2026-11-12T05:10:38.060Z",
+      "checkedAt": "2026-11-24T11:53:13.615Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/animator/setbool",
       "title": "SetBool • Animator • 6000.3 • Unity Editor",
@@ -235,7 +235,7 @@
       "lessons": [
         "l048"
       ],
-      "checkedAt": "2026-11-12T05:10:38.233Z",
+      "checkedAt": "2026-11-24T11:53:14.334Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/animator/setfloat",
       "title": "SetFloat • Animator • 6000.3 • Unity Editor",
@@ -247,7 +247,7 @@
       "lessons": [
         "l048"
       ],
-      "checkedAt": "2026-11-12T05:10:38.741Z",
+      "checkedAt": "2026-11-24T11:53:15.344Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/animator/setlayerweight",
       "title": "SetLayerWeight(int, float) • Animator • 6000.3 • Unity Editor",
@@ -261,11 +261,11 @@
         "l074",
         "l097"
       ],
-      "checkedAt": "2026-11-12T04:51:33.047Z",
+      "checkedAt": "2026-11-24T11:53:37.601Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/application/persistentdatapath",
       "title": "persistentDataPath • Application • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Application persistentDataPath Contains the path to a persistent data directory (Read-only). Read time 2 minutes Last updated 12 days ago De"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Application persistentDataPath Contains the path to a persistent data directory (Read-only). Read time 2 minutes Last updated 25 days ago De"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Application-unityVersion.html",
@@ -273,7 +273,7 @@
       "lessons": [
         "l001"
       ],
-      "checkedAt": "2026-11-12T04:51:20.431Z",
+      "checkedAt": "2026-11-24T11:52:33.078Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/application/unityversion",
       "title": "unityVersion • Application • 6000.3 • Unity Editor",
@@ -285,7 +285,7 @@
       "lessons": [
         "l044"
       ],
-      "checkedAt": "2026-11-12T04:51:32.802Z",
+      "checkedAt": "2026-11-24T11:53:11.757Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/assetdatabase/getdependencies",
       "title": "GetDependencies • AssetDatabase • 6000.3 • Unity Editor",
@@ -298,7 +298,7 @@
         "l042",
         "l045"
       ],
-      "checkedAt": "2026-11-12T04:51:31.370Z",
+      "checkedAt": "2026-11-24T11:53:10.347Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/assetimporter",
       "title": "AssetImporter • UnityEditor • 6000.3 • Unity Editor",
@@ -310,7 +310,7 @@
       "lessons": [
         "l089"
       ],
-      "checkedAt": "2026-11-12T05:10:58.976Z",
+      "checkedAt": "2026-11-24T11:53:45.146Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/assetpostprocessor",
       "title": "AssetPostprocessor • UnityEditor • 6000.3 • Unity Editor",
@@ -322,7 +322,7 @@
       "lessons": [
         "l067"
       ],
-      "checkedAt": "2026-11-12T05:10:52.846Z",
+      "checkedAt": "2026-11-24T11:53:31.971Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/asyncoperation/allowsceneactivation",
       "title": "allowSceneActivation • AsyncOperation • 6000.3 • Unity Editor",
@@ -334,7 +334,7 @@
       "lessons": [
         "l067"
       ],
-      "checkedAt": "2026-11-12T05:10:52.883Z",
+      "checkedAt": "2026-11-24T11:53:32.200Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/asyncoperation/progress",
       "title": "progress • AsyncOperation • 6000.3 • Unity Editor",
@@ -346,7 +346,7 @@
       "lessons": [
         "l061"
       ],
-      "checkedAt": "2026-11-12T05:10:46.768Z",
+      "checkedAt": "2026-11-24T11:53:25.268Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/audio/audiomixer",
       "title": "AudioMixer • UnityEngine.Audio • 6000.3 • Unity Editor",
@@ -358,7 +358,7 @@
       "lessons": [
         "l062"
       ],
-      "checkedAt": "2026-11-12T05:10:48.470Z",
+      "checkedAt": "2026-11-24T11:53:27.620Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/audiosettings/dsptime",
       "title": "dspTime • AudioSettings • 6000.3 • Unity Editor",
@@ -370,7 +370,7 @@
       "lessons": [
         "l061"
       ],
-      "checkedAt": "2026-11-12T05:10:46.465Z",
+      "checkedAt": "2026-11-24T11:53:25.262Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/audiosource",
       "title": "AudioSource • UnityEngine • 6000.3 • Unity Editor",
@@ -382,7 +382,7 @@
       "lessons": [
         "l065"
       ],
-      "checkedAt": "2026-11-12T05:10:50.836Z",
+      "checkedAt": "2026-11-24T11:53:30.770Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/audiosource/playoneshot",
       "title": "PlayOneShot(AudioClip, float) • AudioSource • 6000.3 • Unity Editor",
@@ -394,7 +394,7 @@
       "lessons": [
         "l062"
       ],
-      "checkedAt": "2026-11-12T05:10:48.027Z",
+      "checkedAt": "2026-11-24T11:53:26.571Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/audiosource/playscheduled",
       "title": "PlayScheduled(double) • AudioSource • 6000.3 • Unity Editor",
@@ -406,7 +406,7 @@
       "lessons": [
         "l023"
       ],
-      "checkedAt": "2026-11-12T05:10:33.069Z",
+      "checkedAt": "2026-11-24T11:52:56.279Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/awaitable",
       "title": "Awaitable • UnityEngine • 6000.3 • Unity Editor",
@@ -418,7 +418,7 @@
       "lessons": [
         "l023"
       ],
-      "checkedAt": "2026-11-12T05:10:33.190Z",
+      "checkedAt": "2026-11-24T11:52:56.658Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/awaitable/nextframeasync",
       "title": "NextFrameAsync(CancellationToken) • Awaitable • 6000.3 • Unity Editor",
@@ -432,11 +432,11 @@
         "l098",
         "l099"
       ],
-      "checkedAt": "2026-11-12T05:11:01.952Z",
+      "checkedAt": "2026-11-24T11:53:50.675Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/buildpipeline/buildplayer",
       "title": "BuildPlayer • BuildPipeline • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor BuildPipeline BuildPlayer Builds a player from a specific build profile. Read time 4 minutes Last updated 13 days ago Definition Type: Metho"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor BuildPipeline BuildPlayer Builds a player from a specific build profile. Read time 4 minutes Last updated 25 days ago Definition Type: Metho"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/BuildPlayerOptions.html",
@@ -444,7 +444,7 @@
       "lessons": [
         "l096"
       ],
-      "checkedAt": "2026-11-12T05:11:02.021Z",
+      "checkedAt": "2026-11-24T11:53:50.825Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/buildplayeroptions",
       "title": "BuildPlayerOptions • UnityEditor • 6000.3 • Unity Editor",
@@ -456,7 +456,7 @@
       "lessons": [
         "l055"
       ],
-      "checkedAt": "2026-11-12T05:10:43.422Z",
+      "checkedAt": "2026-11-24T11:53:20.269Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/camera/targettexture",
       "title": "targetTexture • Camera • 6000.3 • Unity Editor",
@@ -468,11 +468,11 @@
       "lessons": [
         "l051"
       ],
-      "checkedAt": "2026-11-12T05:10:40.324Z",
+      "checkedAt": "2026-11-24T11:53:15.970Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/camera",
       "title": "Camera • UnityEngine • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Camera A Camera is a device through which the player views the world. Read time 16 minutes Last updated 13 days ago Definition Type: Class N"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Camera A Camera is a device through which the player views the world. Read time 16 minutes Last updated 25 days ago Definition Type: Class N"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Camera.ScreenPointToRay.html",
@@ -481,7 +481,7 @@
         "l019",
         "l051"
       ],
-      "checkedAt": "2026-11-12T05:10:28.733Z",
+      "checkedAt": "2026-11-24T11:52:51.415Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/camera/screenpointtoray",
       "title": "ScreenPointToRay • Camera • 6000.3 • Unity Editor",
@@ -493,7 +493,7 @@
       "lessons": [
         "l019"
       ],
-      "checkedAt": "2026-11-12T05:10:27.801Z",
+      "checkedAt": "2026-11-24T11:52:51.177Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/camera/screentoworldpoint",
       "title": "ScreenToWorldPoint • Camera • 6000.3 • Unity Editor",
@@ -505,7 +505,7 @@
       "lessons": [
         "l057"
       ],
-      "checkedAt": "2026-11-12T05:10:44.511Z",
+      "checkedAt": "2026-11-24T11:53:22.382Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/canvas/forceupdatecanvases",
       "title": "ForceUpdateCanvases() • Canvas • 6000.3 • Unity Editor",
@@ -518,7 +518,7 @@
         "l056",
         "l060"
       ],
-      "checkedAt": "2026-11-12T05:10:43.610Z",
+      "checkedAt": "2026-11-24T11:53:21.317Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/canvas",
       "title": "Canvas • UnityEngine • 6000.3 • Unity Editor",
@@ -530,7 +530,7 @@
       "lessons": [
         "l035"
       ],
-      "checkedAt": "2026-11-12T05:29:52.696Z",
+      "checkedAt": "2026-11-24T11:53:06.168Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/charactercontroller/move",
       "title": "Move(Vector3) • CharacterController • 6000.3 • Unity Editor",
@@ -542,7 +542,7 @@
       "lessons": [
         "l033"
       ],
-      "checkedAt": "2026-11-12T05:17:49.949Z",
+      "checkedAt": "2026-11-24T11:53:03.484Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/collider/attachedrigidbody",
       "title": "attachedRigidbody • Collider • 6000.3 • Unity Editor",
@@ -554,7 +554,7 @@
       "lessons": [
         "l031"
       ],
-      "checkedAt": "2026-11-12T05:17:46.936Z",
+      "checkedAt": "2026-11-24T11:53:01.340Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/collider",
       "title": "Collider • UnityEngine • 6000.3 • Unity Editor",
@@ -566,7 +566,7 @@
       "lessons": [
         "l038"
       ],
-      "checkedAt": "2026-11-12T04:51:29.557Z",
+      "checkedAt": "2026-11-24T11:53:08.032Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/collider2d/cast",
       "title": "Cast • Collider2D • 6000.3 • Unity Editor",
@@ -578,7 +578,7 @@
       "lessons": [
         "l037"
       ],
-      "checkedAt": "2026-11-12T04:51:28.282Z",
+      "checkedAt": "2026-11-24T11:53:07.887Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/collider2d",
       "title": "Collider2D • UnityEngine • 6000.3 • Unity Editor",
@@ -590,7 +590,7 @@
       "lessons": [
         "l040"
       ],
-      "checkedAt": "2026-11-12T04:51:29.866Z",
+      "checkedAt": "2026-11-24T11:53:09.928Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/collisiondetectionmode2d",
       "title": "CollisionDetectionMode2D • UnityEngine • 6000.3 • Unity Editor",
@@ -602,7 +602,7 @@
       "lessons": [
         "l078"
       ],
-      "checkedAt": "2026-11-12T05:29:52.698Z",
+      "checkedAt": "2026-11-24T11:53:40.081Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/compilation/compilationpipeline/getassemblies",
       "title": "GetAssemblies • CompilationPipeline • 6000.3 • Unity Editor",
@@ -615,7 +615,7 @@
         "l008",
         "l076"
       ],
-      "checkedAt": "2026-11-12T04:51:25.744Z",
+      "checkedAt": "2026-11-24T11:52:41.918Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/component/getcomponent",
       "title": "GetComponent • Component • 6000.3 • Unity Editor",
@@ -627,23 +627,98 @@
       "lessons": [
         "l008"
       ],
-      "checkedAt": "2026-11-12T07:21:21.797Z",
+      "checkedAt": "2026-11-24T11:52:42.857Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/component/getcomponentinchildren",
       "title": "GetComponentInChildren • Component • 6000.3 • Unity Editor",
       "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Component GetComponentInChildren This is the non-generic version of this method. Read time 4 minutes Last updated 2 months ago Definition Ty"
     },
     {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponentInParent.html",
+      "label": "Component.GetComponentInParent",
+      "lessons": [
+        "l008"
+      ],
+      "checkedAt": "2026-11-24T11:52:43.273Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/component/getcomponentinparent",
+      "title": "GetComponentInParent • Component • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Component GetComponentInParent The non-generic version of this method. Read time 6 minutes Last updated 2 months ago Definition Type: Method"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponents.html",
+      "label": "Component.GetComponents",
+      "lessons": [
+        "l008"
+      ],
+      "checkedAt": "2026-11-24T11:52:42.603Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/component/getcomponents",
+      "title": "GetComponents • Component • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Component GetComponents The non-generic version of this method. Read time 3 minutes Last updated 2 months ago Definition Type: Method Namesp"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponentsInChildren.html",
+      "label": "Component.GetComponentsInChildren",
+      "lessons": [
+        "l008"
+      ],
+      "checkedAt": "2026-11-24T11:52:43.083Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/component/getcomponentsinchildren",
+      "title": "GetComponentsInChildren • Component • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Component GetComponentsInChildren The non-generic version of this method. Read time 4 minutes Last updated 2 months ago Definition Type: Met"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponentsInParent.html",
+      "label": "Component.GetComponentsInParent",
+      "lessons": [
+        "l008"
+      ],
+      "checkedAt": "2026-11-24T11:52:43.864Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/component/getcomponentsinparent",
+      "title": "GetComponentsInParent • Component • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Component GetComponentsInParent The non-generic version of this method. Read time 5 minutes Last updated 2 months ago Definition Type: Metho"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.TryGetComponent.html",
+      "label": "Component.TryGetComponent",
+      "lessons": [
+        "l008"
+      ],
+      "checkedAt": "2026-11-24T11:52:42.199Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/component/trygetcomponent",
+      "title": "TryGetComponent • Component • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Component TryGetComponent The non-generic version of this method. Read time 1 minute Last updated 2 months ago Definition Type: Method Names"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ContextMenu.html",
+      "label": "ContextMenu",
+      "lessons": [
+        "l007",
+        "l009",
+        "l010"
+      ],
+      "checkedAt": "2026-11-24T11:52:41.106Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/contextmenu",
+      "title": "ContextMenu • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine ContextMenu Use the ContextMenu attribute to add commands to the context menu of the Inspector window. Read time 4 minutes Last updated 2 mo"
+    },
+    {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Debug.Log.html",
       "label": "Debug.Log",
       "lessons": [
-        "l005"
+        "l005",
+        "l009"
       ],
-      "checkedAt": "2026-11-12T04:51:24.215Z",
+      "checkedAt": "2026-11-24T11:52:39.092Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/debug/log",
       "title": "Log • Debug • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Debug Log Logs a message to the Unity Console. Read time 6 minutes Last updated a month ago Definition Type: Method Namespace: UnityEngine A"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Debug Log Logs a message to the Unity Console. Read time 6 minutes Last updated 2 months ago Definition Type: Method Namespace: UnityEngine "
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Debug.LogError.html",
@@ -651,7 +726,7 @@
       "lessons": [
         "l005"
       ],
-      "checkedAt": "2026-11-12T04:51:24.309Z",
+      "checkedAt": "2026-11-24T11:52:39.342Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/debug/logerror",
       "title": "LogError • Debug • 6000.3 • Unity Editor",
@@ -663,7 +738,7 @@
       "lessons": [
         "l090"
       ],
-      "checkedAt": "2026-11-12T07:21:22.802Z",
+      "checkedAt": "2026-11-24T11:53:46.757Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/debug/logwarning",
       "title": "LogWarning • Debug • 6000.3 • Unity Editor",
@@ -675,7 +750,7 @@
       "lessons": [
         "l015"
       ],
-      "checkedAt": "2026-11-12T05:10:25.312Z",
+      "checkedAt": "2026-11-24T11:52:47.765Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/defaultexecutionorder",
       "title": "DefaultExecutionOrder • UnityEngine • 6000.3 • Unity Editor",
@@ -687,11 +762,11 @@
       "lessons": [
         "l086"
       ],
-      "checkedAt": "2026-11-12T05:10:56.541Z",
+      "checkedAt": "2026-11-24T11:53:42.433Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/editor",
       "title": "Editor • UnityEditor • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor Editor Derive from this base class to create a custom inspector or editor for your custom object. Read time 11 minutes Last updated 13 days "
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor Editor Derive from this base class to create a custom inspector or editor for your custom object. Read time 11 minutes Last updated 25 days "
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/EditorWindow.html",
@@ -699,7 +774,7 @@
       "lessons": [
         "l090"
       ],
-      "checkedAt": "2026-11-12T05:10:59.034Z",
+      "checkedAt": "2026-11-24T11:53:46.394Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/editorwindow",
       "title": "EditorWindow • UnityEditor • 6000.3 • Unity Editor",
@@ -711,7 +786,7 @@
       "lessons": [
         "l058"
       ],
-      "checkedAt": "2026-11-12T07:21:21.842Z",
+      "checkedAt": "2026-11-24T11:53:23.903Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/events/unityevent/addlistener",
       "title": "AddListener(UnityAction) • UnityEvent • 6000.3 • Unity Editor",
@@ -723,7 +798,7 @@
       "lessons": [
         "l002"
       ],
-      "checkedAt": "2026-11-12T04:51:20.486Z",
+      "checkedAt": "2026-11-24T11:52:33.145Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/gameobject/activeinhierarchy",
       "title": "activeInHierarchy • GameObject • 6000.3 • Unity Editor",
@@ -735,7 +810,7 @@
       "lessons": [
         "l070"
       ],
-      "checkedAt": "2026-11-12T05:10:55.364Z",
+      "checkedAt": "2026-11-24T11:53:35.594Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/gameobject/setactive",
       "title": "SetActive(bool) • GameObject • 6000.3 • Unity Editor",
@@ -747,11 +822,11 @@
       "lessons": [
         "l088"
       ],
-      "checkedAt": "2026-11-12T05:10:57.650Z",
+      "checkedAt": "2026-11-24T11:53:45.073Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/handles/radiushandle",
       "title": "RadiusHandle • Handles • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor Handles RadiusHandle Make a Scene view radius handle. Read time 2 minutes Last updated 13 days ago Definition Type: Method Namespace: UnityE"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor Handles RadiusHandle Make a Scene view radius handle. Read time 2 minutes Last updated 25 days ago Definition Type: Method Namespace: UnityE"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ISerializationCallbackReceiver.html",
@@ -759,7 +834,7 @@
       "lessons": [
         "l075"
       ],
-      "checkedAt": "2026-11-12T04:51:34.498Z",
+      "checkedAt": "2026-11-24T11:53:38.474Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/iserializationcallbackreceiver",
       "title": "ISerializationCallbackReceiver • UnityEngine • 6000.3 • Unity Editor",
@@ -771,11 +846,11 @@
       "lessons": [
         "l033"
       ],
-      "checkedAt": "2026-11-12T05:29:52.655Z",
+      "checkedAt": "2026-11-24T11:53:03.601Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/joint",
       "title": "Joint • UnityEngine • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Joint Joint is the base class for all joints. Read time 7 minutes Last updated 12 days ago Definition Type: Class Namespace: UnityEngine Ass"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Joint Joint is the base class for all joints. Read time 7 minutes Last updated 25 days ago Definition Type: Class Namespace: UnityEngine Ass"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/JsonUtility.FromJson.html",
@@ -783,11 +858,11 @@
       "lessons": [
         "l074"
       ],
-      "checkedAt": "2026-11-12T04:51:33.867Z",
+      "checkedAt": "2026-11-24T11:53:37.990Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/jsonutility/fromjson",
       "title": "FromJson • JsonUtility • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine JsonUtility FromJson Create an object from its JSON representation. Read time 3 minutes Last updated a month ago Definition Type: Method Nam"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine JsonUtility FromJson Create an object from its JSON representation. Read time 3 minutes Last updated 2 months ago Definition Type: Method Na"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/JsonUtility.html",
@@ -795,11 +870,11 @@
       "lessons": [
         "l073"
       ],
-      "checkedAt": "2026-11-12T04:51:32.930Z",
+      "checkedAt": "2026-11-24T11:53:36.420Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/jsonutility",
       "title": "JsonUtility • UnityEngine • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine JsonUtility Provides functions for converting between objects and JSON data. Read time 2 minutes Last updated a month ago Definition Type: C"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine JsonUtility Provides functions for converting between objects and JSON data. Read time 2 minutes Last updated 2 months ago Definition Type: "
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MaterialPropertyBlock.html",
@@ -808,11 +883,23 @@
         "l053",
         "l083"
       ],
-      "checkedAt": "2026-11-12T05:10:41.928Z",
+      "checkedAt": "2026-11-24T11:53:18.477Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/materialpropertyblock",
       "title": "MaterialPropertyBlock • UnityEngine • 6000.3 • Unity Editor",
       "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MaterialPropertyBlock A block of material values to apply. Read time 4 minutes Last updated 2 months ago Definition Type: Class Namespace: U"
+    },
+    {
+      "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MinAttribute.html",
+      "label": "MinAttribute",
+      "lessons": [
+        "l007"
+      ],
+      "checkedAt": "2026-11-24T11:52:41.080Z",
+      "status": 200,
+      "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/minattribute",
+      "title": "MinAttribute • UnityEngine • 6000.3 • Unity Editor",
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MinAttribute Attribute used to make a float or int variable in a script be restricted to a specific minimum value. Read time 3 minutes Last "
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ModelImporter.html",
@@ -820,11 +907,11 @@
       "lessons": [
         "l044"
       ],
-      "checkedAt": "2026-11-12T04:51:32.849Z",
+      "checkedAt": "2026-11-24T11:53:12.435Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/modelimporter",
       "title": "ModelImporter • UnityEditor • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor ModelImporter Model importer lets you modify model import settings from editor scripts. Read time 9 minutes Last updated 13 days ago Definit"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEditor ModelImporter Model importer lets you modify model import settings from editor scripts. Read time 9 minutes Last updated 25 days ago Definit"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour-destroyCancellationToken.html",
@@ -832,7 +919,7 @@
       "lessons": [
         "l023"
       ],
-      "checkedAt": "2026-11-12T05:10:33.557Z",
+      "checkedAt": "2026-11-24T11:52:56.750Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/destroycancellationtoken",
       "title": "destroyCancellationToken • MonoBehaviour • 6000.3 • Unity Editor",
@@ -845,11 +932,11 @@
         "l001",
         "l011"
       ],
-      "checkedAt": "2026-11-12T04:51:20.484Z",
+      "checkedAt": "2026-11-24T11:52:33.141Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/awake",
       "title": "Awake() • MonoBehaviour • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour Awake() Unity calls Awake when loading an instance of a script component. Read time 2 minutes Last updated a month ago Definit"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour Awake() Unity calls Awake when loading an instance of a script component. Read time 2 minutes Last updated 2 days ago Definiti"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.FixedUpdate.html",
@@ -857,7 +944,7 @@
       "lessons": [
         "l012"
       ],
-      "checkedAt": "2026-11-12T05:10:21.559Z",
+      "checkedAt": "2026-11-24T11:52:45.682Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/fixedupdate",
       "title": "FixedUpdate() • MonoBehaviour • 6000.3 • Unity Editor",
@@ -870,7 +957,7 @@
         "l099",
         "l100"
       ],
-      "checkedAt": "2026-11-12T05:11:02.513Z",
+      "checkedAt": "2026-11-24T11:53:54.169Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour",
       "title": "MonoBehaviour • UnityEngine • 6000.3 • Unity Editor",
@@ -882,7 +969,7 @@
       "lessons": [
         "l024"
       ],
-      "checkedAt": "2026-11-12T05:10:34.684Z",
+      "checkedAt": "2026-11-24T11:52:57.638Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/invokerepeating",
       "title": "InvokeRepeating(string, float, float) • MonoBehaviour • 6000.3 • Unity Editor",
@@ -894,7 +981,7 @@
       "lessons": [
         "l012"
       ],
-      "checkedAt": "2026-11-12T05:10:21.560Z",
+      "checkedAt": "2026-11-24T11:52:46.747Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/lateupdate",
       "title": "LateUpdate() • MonoBehaviour • 6000.3 • Unity Editor",
@@ -906,7 +993,7 @@
       "lessons": [
         "l097"
       ],
-      "checkedAt": "2026-11-12T05:11:02.420Z",
+      "checkedAt": "2026-11-24T11:53:51.085Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/onapplicationpause",
       "title": "OnApplicationPause(bool) • MonoBehaviour • 6000.3 • Unity Editor",
@@ -918,7 +1005,7 @@
       "lessons": [
         "l033"
       ],
-      "checkedAt": "2026-11-12T05:17:49.708Z",
+      "checkedAt": "2026-11-24T11:53:02.956Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/oncollisionenter",
       "title": "OnCollisionEnter(Collision) • MonoBehaviour • 6000.3 • Unity Editor",
@@ -930,20 +1017,21 @@
       "lessons": [
         "l013"
       ],
-      "checkedAt": "2026-11-12T05:10:21.561Z",
+      "checkedAt": "2026-11-24T11:52:47.394Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/ondestroy",
       "title": "OnDestroy() • MonoBehaviour • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour OnDestroy() Called when a GameObject or component is about to be destroyed. Read time 2 minutes Last updated a month ago Defin"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour OnDestroy() Called when a GameObject or component is about to be destroyed. Read time 2 minutes Last updated 2 days ago Defini"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.OnDisable.html",
       "label": "MonoBehaviour.OnDisable",
       "lessons": [
+        "l009",
         "l013",
         "l077"
       ],
-      "checkedAt": "2026-11-12T04:51:34.767Z",
+      "checkedAt": "2026-11-24T11:52:44.631Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/ondisable",
       "title": "OnDisable() • MonoBehaviour • 6000.3 • Unity Editor",
@@ -953,14 +1041,13 @@
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.OnEnable.html",
       "label": "MonoBehaviour.OnEnable",
       "lessons": [
-        "l009",
         "l077"
       ],
-      "checkedAt": "2026-11-12T04:51:26.202Z",
+      "checkedAt": "2026-11-24T11:53:38.701Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/onenable",
       "title": "OnEnable() • MonoBehaviour • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour OnEnable() Called when a component of an active GameObject is first enabled. Read time 1 minute Last updated a month ago Defin"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour OnEnable() Called when a component of an active GameObject is first enabled. Read time 1 minute Last updated 2 days ago Defini"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.OnTriggerEnter.html",
@@ -968,21 +1055,20 @@
       "lessons": [
         "l033"
       ],
-      "checkedAt": "2026-11-12T05:17:49.939Z",
+      "checkedAt": "2026-11-24T11:53:03.456Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/ontriggerenter",
       "title": "OnTriggerEnter(Collider) • MonoBehaviour • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour OnTriggerEnter(Collider) Called when a collider enters a trigger collider. Read time 1 minute Last updated a day ago Definitio"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine MonoBehaviour OnTriggerEnter(Collider) Called when a collider enters a trigger collider. Read time 1 minute Last updated 2 days ago Definiti"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.OnValidate.html",
       "label": "MonoBehaviour.OnValidate",
       "lessons": [
         "l004",
-        "l007",
         "l071"
       ],
-      "checkedAt": "2026-11-12T04:51:24.197Z",
+      "checkedAt": "2026-11-24T11:52:39.081Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/onvalidate",
       "title": "OnValidate() • MonoBehaviour • 6000.3 • Unity Editor",
@@ -996,7 +1082,7 @@
         "l014",
         "l070"
       ],
-      "checkedAt": "2026-11-12T05:10:21.521Z",
+      "checkedAt": "2026-11-24T11:52:45.241Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/start",
       "title": "Start() • MonoBehaviour • 6000.3 • Unity Editor",
@@ -1008,7 +1094,7 @@
       "lessons": [
         "l014"
       ],
-      "checkedAt": "2026-11-12T05:10:24.987Z",
+      "checkedAt": "2026-11-24T11:52:47.576Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/monobehaviour/stopcoroutine",
       "title": "StopCoroutine • MonoBehaviour • 6000.3 • Unity Editor",
@@ -1018,13 +1104,14 @@
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Object-operator_eq.html",
       "label": "Object.operator ==",
       "lessons": [
-        "l006"
+        "l006",
+        "l010"
       ],
-      "checkedAt": "2026-11-12T04:51:24.428Z",
+      "checkedAt": "2026-11-24T11:52:40.085Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/object/op-equality",
       "title": "operator ==(Object, Object) • Object • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Object operator ==(Object, Object) Compares two object references to see if they refer to the same object. Read time 1 minute Last updated a"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Object operator ==(Object, Object) Compares two object references to see if they refer to the same object. Read time 1 minute Last updated 2"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Object.Destroy.html",
@@ -1034,7 +1121,7 @@
         "l013",
         "l080"
       ],
-      "checkedAt": "2026-11-12T04:51:26.792Z",
+      "checkedAt": "2026-11-24T11:52:44.844Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/object/destroy",
       "title": "Destroy(Object, float) • Object • 6000.3 • Unity Editor",
@@ -1047,7 +1134,7 @@
         "l068",
         "l084"
       ],
-      "checkedAt": "2026-11-12T05:10:53.225Z",
+      "checkedAt": "2026-11-24T11:53:32.282Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/object/dontdestroyonload",
       "title": "DontDestroyOnLoad(Object) • Object • 6000.3 • Unity Editor",
@@ -1062,7 +1149,7 @@
         "l043",
         "l072"
       ],
-      "checkedAt": "2026-11-12T04:51:20.488Z",
+      "checkedAt": "2026-11-24T11:52:37.878Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/object/instantiate",
       "title": "Instantiate • Object • 6000.3 • Unity Editor",
@@ -1074,7 +1161,7 @@
       "lessons": [
         "l063"
       ],
-      "checkedAt": "2026-11-12T05:10:48.475Z",
+      "checkedAt": "2026-11-24T11:53:27.695Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/particlesystem",
       "title": "ParticleSystem • UnityEngine • 6000.3 • Unity Editor",
@@ -1087,7 +1174,7 @@
         "l063",
         "l064"
       ],
-      "checkedAt": "2026-11-12T05:10:48.512Z",
+      "checkedAt": "2026-11-24T11:53:28.294Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/particlesystem/isalive",
       "title": "IsAlive • ParticleSystem • 6000.3 • Unity Editor",
@@ -1099,7 +1186,7 @@
       "lessons": [
         "l035"
       ],
-      "checkedAt": "2026-11-12T05:17:52.499Z",
+      "checkedAt": "2026-11-24T11:53:05.598Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/physics/checksphere",
       "title": "CheckSphere(Vector3, float, int, QueryTriggerInteraction) • Physics • 6000.3 • Unity Editor",
@@ -1111,7 +1198,7 @@
       "lessons": [
         "l034"
       ],
-      "checkedAt": "2026-11-12T05:17:50.467Z",
+      "checkedAt": "2026-11-24T11:53:03.620Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/physics/raycast",
       "title": "Raycast • Physics • 6000.3 • Unity Editor",
@@ -1123,7 +1210,7 @@
       "lessons": [
         "l034"
       ],
-      "checkedAt": "2026-11-12T05:17:50.605Z",
+      "checkedAt": "2026-11-24T11:53:04.523Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/physics/spherecast",
       "title": "SphereCast • Physics • 6000.3 • Unity Editor",
@@ -1135,11 +1222,11 @@
       "lessons": [
         "l038"
       ],
-      "checkedAt": "2026-11-12T04:51:28.805Z",
+      "checkedAt": "2026-11-24T11:53:07.927Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/physics2d/raycast",
       "title": "Raycast • Physics2D • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Physics2D Raycast Casts a ray against Colliders in the Scene. Read time 4 minutes Last updated 13 days ago Definition Type: Method Namespace"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Physics2D Raycast Casts a ray against Colliders in the Scene. Read time 4 minutes Last updated 25 days ago Definition Type: Method Namespace"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Plane.Raycast.html",
@@ -1147,7 +1234,7 @@
       "lessons": [
         "l019"
       ],
-      "checkedAt": "2026-11-12T05:10:29.408Z",
+      "checkedAt": "2026-11-24T11:52:51.959Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/plane/raycast",
       "title": "Raycast • Plane • 6000.3 • Unity Editor",
@@ -1160,7 +1247,7 @@
         "l064",
         "l070"
       ],
-      "checkedAt": "2026-11-12T05:10:49.380Z",
+      "checkedAt": "2026-11-24T11:53:28.435Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/pool/objectpool1",
       "title": "ObjectPool<T> • UnityEngine.Pool • 6000.3 • Unity Editor",
@@ -1172,7 +1259,7 @@
       "lessons": [
         "l043"
       ],
-      "checkedAt": "2026-11-12T04:51:31.696Z",
+      "checkedAt": "2026-11-24T11:53:10.469Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/prefabutility",
       "title": "PrefabUtility • UnityEditor • 6000.3 • Unity Editor",
@@ -1184,7 +1271,7 @@
       "lessons": [
         "l087"
       ],
-      "checkedAt": "2026-11-12T05:10:57.380Z",
+      "checkedAt": "2026-11-24T11:53:44.061Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/prefabutility/recordprefabinstancepropertymodifications",
       "title": "RecordPrefabInstancePropertyModifications(Object) • PrefabUtility • 6000.3 • Unity Editor",
@@ -1196,7 +1283,7 @@
       "lessons": [
         "l054"
       ],
-      "checkedAt": "2026-11-12T05:10:42.089Z",
+      "checkedAt": "2026-11-24T11:53:19.369Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/profiling/profiler",
       "title": "Profiler • UnityEngine.Profiling • 6000.3 • Unity Editor",
@@ -1208,7 +1295,7 @@
       "lessons": [
         "l018"
       ],
-      "checkedAt": "2026-11-12T05:10:27.656Z",
+      "checkedAt": "2026-11-24T11:52:51.022Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/quaternion/lookrotation",
       "title": "LookRotation • Quaternion • 6000.3 • Unity Editor",
@@ -1220,7 +1307,7 @@
       "lessons": [
         "l018"
       ],
-      "checkedAt": "2026-11-12T05:10:27.624Z",
+      "checkedAt": "2026-11-24T11:52:50.708Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/quaternion/rotatetowards",
       "title": "RotateTowards • Quaternion • 6000.3 • Unity Editor",
@@ -1232,7 +1319,7 @@
       "lessons": [
         "l057"
       ],
-      "checkedAt": "2026-11-12T05:10:44.246Z",
+      "checkedAt": "2026-11-24T11:53:22.156Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/recttransform",
       "title": "RectTransform • UnityEngine • 6000.3 • Unity Editor",
@@ -1244,7 +1331,7 @@
       "lessons": [
         "l056"
       ],
-      "checkedAt": "2026-11-12T05:10:44.068Z",
+      "checkedAt": "2026-11-24T11:53:21.768Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/recttransformutility",
       "title": "RectTransformUtility • UnityEngine • 6000.3 • Unity Editor",
@@ -1257,7 +1344,7 @@
         "l053",
         "l083"
       ],
-      "checkedAt": "2026-11-12T05:10:40.928Z",
+      "checkedAt": "2026-11-24T11:53:17.873Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/renderer/material",
       "title": "material • Renderer • 6000.3 • Unity Editor",
@@ -1269,7 +1356,7 @@
       "lessons": [
         "l052"
       ],
-      "checkedAt": "2026-11-12T05:10:40.846Z",
+      "checkedAt": "2026-11-24T11:53:17.298Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rendering/sortinggroup",
       "title": "SortingGroup • UnityEngine.Rendering • 6000.3 • Unity Editor",
@@ -1281,7 +1368,7 @@
       "lessons": [
         "l055"
       ],
-      "checkedAt": "2026-11-12T05:10:42.370Z",
+      "checkedAt": "2026-11-24T11:53:19.726Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rendertexture",
       "title": "RenderTexture • UnityEngine • 6000.3 • Unity Editor",
@@ -1294,7 +1381,7 @@
         "l008",
         "l076"
       ],
-      "checkedAt": "2026-11-12T04:51:26.117Z",
+      "checkedAt": "2026-11-24T11:52:44.162Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/requirecomponent",
       "title": "RequireComponent • UnityEngine • 6000.3 • Unity Editor",
@@ -1306,7 +1393,7 @@
       "lessons": [
         "l069"
       ],
-      "checkedAt": "2026-11-12T05:10:53.467Z",
+      "checkedAt": "2026-11-24T11:53:34.228Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/resources/load",
       "title": "Load • Resources • 6000.3 • Unity Editor",
@@ -1319,7 +1406,7 @@
         "l069",
         "l084"
       ],
-      "checkedAt": "2026-11-12T05:10:54.087Z",
+      "checkedAt": "2026-11-24T11:53:34.866Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/resources/unloadunusedassets",
       "title": "UnloadUnusedAssets() • Resources • 6000.3 • Unity Editor",
@@ -1331,7 +1418,7 @@
       "lessons": [
         "l034"
       ],
-      "checkedAt": "2026-11-12T05:17:51.381Z",
+      "checkedAt": "2026-11-24T11:53:05.585Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody/collisiondetectionmode",
       "title": "collisionDetectionMode • Rigidbody • 6000.3 • Unity Editor",
@@ -1343,7 +1430,7 @@
       "lessons": [
         "l025"
       ],
-      "checkedAt": "2026-11-12T05:10:34.941Z",
+      "checkedAt": "2026-11-24T11:52:58.157Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody/interpolation",
       "title": "interpolation • Rigidbody • 6000.3 • Unity Editor",
@@ -1357,7 +1444,7 @@
         "l032",
         "l035"
       ],
-      "checkedAt": "2026-11-12T05:17:47.066Z",
+      "checkedAt": "2026-11-24T11:53:01.383Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody/linearvelocity",
       "title": "linearVelocity • Rigidbody • 6000.3 • Unity Editor",
@@ -1369,7 +1456,7 @@
       "lessons": [
         "l032"
       ],
-      "checkedAt": "2026-11-12T05:17:47.264Z",
+      "checkedAt": "2026-11-24T11:53:01.455Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody/addforce",
       "title": "AddForce • Rigidbody • 6000.3 • Unity Editor",
@@ -1381,7 +1468,7 @@
       "lessons": [
         "l031"
       ],
-      "checkedAt": "2026-11-12T05:17:46.873Z",
+      "checkedAt": "2026-11-24T11:53:01.172Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody",
       "title": "Rigidbody • UnityEngine • 6000.3 • Unity Editor",
@@ -1393,7 +1480,7 @@
       "lessons": [
         "l032"
       ],
-      "checkedAt": "2026-11-12T05:17:47.702Z",
+      "checkedAt": "2026-11-24T11:53:01.540Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody/moveposition",
       "title": "MovePosition(Vector3) • Rigidbody • 6000.3 • Unity Editor",
@@ -1405,11 +1492,11 @@
       "lessons": [
         "l040"
       ],
-      "checkedAt": "2026-11-12T04:51:30.102Z",
+      "checkedAt": "2026-11-24T11:53:10.120Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody2d/interpolation",
       "title": "interpolation • Rigidbody2D • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Rigidbody2D interpolation Physics interpolation used between updates. Read time 1 minute Last updated 13 days ago Definition Type: Property "
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Rigidbody2D interpolation Physics interpolation used between updates. Read time 1 minute Last updated 25 days ago Definition Type: Property "
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Rigidbody2D-linearVelocity.html",
@@ -1417,7 +1504,7 @@
       "lessons": [
         "l039"
       ],
-      "checkedAt": "2026-11-12T04:51:29.703Z",
+      "checkedAt": "2026-11-24T11:53:08.545Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody2d/linearvelocity",
       "title": "linearVelocity • Rigidbody2D • 6000.3 • Unity Editor",
@@ -1430,7 +1517,7 @@
         "l036",
         "l037"
       ],
-      "checkedAt": "2026-11-12T04:51:27.795Z",
+      "checkedAt": "2026-11-24T11:53:06.279Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody2d",
       "title": "Rigidbody2D • UnityEngine • 6000.3 • Unity Editor",
@@ -1442,7 +1529,7 @@
       "lessons": [
         "l036"
       ],
-      "checkedAt": "2026-11-12T04:51:27.957Z",
+      "checkedAt": "2026-11-24T11:53:07.880Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbody2d/moveposition",
       "title": "MovePosition(Vector2) • Rigidbody2D • 6000.3 • Unity Editor",
@@ -1454,7 +1541,7 @@
       "lessons": [
         "l035"
       ],
-      "checkedAt": "2026-11-12T05:17:52.520Z",
+      "checkedAt": "2026-11-24T11:53:06.029Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/rigidbodyconstraints",
       "title": "RigidbodyConstraints • UnityEngine • 6000.3 • Unity Editor",
@@ -1464,10 +1551,9 @@
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/RuntimeInitializeOnLoadMethodAttribute.html",
       "label": "RuntimeInitializeOnLoadMethodAttribute",
       "lessons": [
-        "l009",
         "l068"
       ],
-      "checkedAt": "2026-11-12T04:51:26.229Z",
+      "checkedAt": "2026-11-24T11:53:34.011Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/runtimeinitializeonloadmethodattribute",
       "title": "RuntimeInitializeOnLoadMethodAttribute • UnityEngine • 6000.3 • Unity Editor",
@@ -1479,7 +1565,7 @@
       "lessons": [
         "l068"
       ],
-      "checkedAt": "2026-11-12T05:10:53.270Z",
+      "checkedAt": "2026-11-24T11:53:34.184Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/scenemanagement/scenemanager/sceneloaded",
       "title": "sceneLoaded • SceneManager • 6000.3 • Unity Editor",
@@ -1492,7 +1578,7 @@
         "l066",
         "l067"
       ],
-      "checkedAt": "2026-11-12T05:10:51.158Z",
+      "checkedAt": "2026-11-24T11:53:31.026Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/scenemanagement/scenemanager/loadsceneasync",
       "title": "LoadSceneAsync • SceneManager • 6000.3 • Unity Editor",
@@ -1504,7 +1590,7 @@
       "lessons": [
         "l066"
       ],
-      "checkedAt": "2026-11-12T05:10:51.523Z",
+      "checkedAt": "2026-11-24T11:53:31.216Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/scenemanagement/scenemanager/setactivescene",
       "title": "SetActiveScene(Scene) • SceneManager • 6000.3 • Unity Editor",
@@ -1516,7 +1602,7 @@
       "lessons": [
         "l066"
       ],
-      "checkedAt": "2026-11-12T05:10:51.829Z",
+      "checkedAt": "2026-11-24T11:53:31.246Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/scenemanagement/scenemanager/unloadsceneasync",
       "title": "UnloadSceneAsync • SceneManager • 6000.3 • Unity Editor",
@@ -1528,7 +1614,7 @@
       "lessons": [
         "l072"
       ],
-      "checkedAt": "2026-11-12T04:51:32.906Z",
+      "checkedAt": "2026-11-24T11:53:36.108Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/scriptableobject",
       "title": "ScriptableObject • UnityEngine • 6000.3 • Unity Editor",
@@ -1540,7 +1626,7 @@
       "lessons": [
         "l090"
       ],
-      "checkedAt": "2026-11-12T05:10:59.352Z",
+      "checkedAt": "2026-11-24T11:53:46.583Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/selection/gameobjects",
       "title": "gameObjects • Selection • 6000.3 • Unity Editor",
@@ -1552,7 +1638,7 @@
       "lessons": [
         "l086"
       ],
-      "checkedAt": "2026-11-12T05:10:56.603Z",
+      "checkedAt": "2026-11-24T11:53:43.080Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/serializedobject",
       "title": "SerializedObject • UnityEditor • 6000.3 • Unity Editor",
@@ -1566,11 +1652,11 @@
         "l007",
         "l071"
       ],
-      "checkedAt": "2026-11-12T04:51:23.749Z",
+      "checkedAt": "2026-11-24T11:52:38.968Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/serializefield",
       "title": "SerializeField • UnityEngine • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine SerializeField Force Unity to serialize a private field. Read time 4 minutes Last updated a month ago Definition Type: Class Namespace: Unit"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine SerializeField Force Unity to serialize a private field. Read time 4 minutes Last updated 2 months ago Definition Type: Class Namespace: Uni"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/SerializeReference.html",
@@ -1578,11 +1664,11 @@
       "lessons": [
         "l075"
       ],
-      "checkedAt": "2026-11-12T04:51:34.371Z",
+      "checkedAt": "2026-11-24T11:53:38.180Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/serializereference",
       "title": "SerializeReference • UnityEngine • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine SerializeReference Marks a field to be serialized as a reference instead of as a value. Read time 11 minutes Last updated 13 days ago Defini"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine SerializeReference Marks a field to be serialized as a reference instead of as a value. Read time 11 minutes Last updated 25 days ago Defini"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Sprite.html",
@@ -1591,11 +1677,11 @@
         "l041",
         "l042"
       ],
-      "checkedAt": "2026-11-12T04:51:30.790Z",
+      "checkedAt": "2026-11-24T11:53:10.339Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/sprite",
       "title": "Sprite • UnityEngine • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Sprite Represents a Sprite object for use in 2D gameplay. Read time 6 minutes Last updated 13 days ago Definition Type: Class Namespace: Uni"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Sprite Represents a Sprite object for use in 2D gameplay. Read time 6 minutes Last updated 25 days ago Definition Type: Class Namespace: Uni"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/TextureImporter.html",
@@ -1605,7 +1691,7 @@
         "l045",
         "l089"
       ],
-      "checkedAt": "2026-11-12T04:51:30.685Z",
+      "checkedAt": "2026-11-24T11:53:10.169Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/textureimporter",
       "title": "TextureImporter • UnityEditor • 6000.3 • Unity Editor",
@@ -1615,15 +1701,14 @@
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-deltaTime.html",
       "label": "Time.deltaTime",
       "lessons": [
-        "l010",
         "l021",
         "l024"
       ],
-      "checkedAt": "2026-11-12T04:51:27.604Z",
+      "checkedAt": "2026-11-24T11:52:54.484Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/time/deltatime",
       "title": "deltaTime • Time • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Time deltaTime The interval in seconds from the last frame to the current one (Read Only). Read time 3 minutes Last updated a month ago Defi"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Time deltaTime The interval in seconds from the last frame to the current one (Read Only). Read time 3 minutes Last updated 2 months ago Def"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-fixedDeltaTime.html",
@@ -1632,7 +1717,7 @@
         "l001",
         "l021"
       ],
-      "checkedAt": "2026-11-12T05:10:31.530Z",
+      "checkedAt": "2026-11-24T11:52:33.142Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/time/fixeddeltatime",
       "title": "fixedDeltaTime • Time • 6000.3 • Unity Editor",
@@ -1644,7 +1729,7 @@
       "lessons": [
         "l025"
       ],
-      "checkedAt": "2026-11-12T05:10:35.129Z",
+      "checkedAt": "2026-11-24T11:52:59.260Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/time/fixedtime",
       "title": "fixedTime • Time • 6000.3 • Unity Editor",
@@ -1658,7 +1743,7 @@
         "l021",
         "l024"
       ],
-      "checkedAt": "2026-11-12T07:21:21.840Z",
+      "checkedAt": "2026-11-24T11:52:47.043Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/time/maximumdeltatime",
       "title": "maximumDeltaTime • Time • 6000.3 • Unity Editor",
@@ -1671,7 +1756,7 @@
         "l024",
         "l030"
       ],
-      "checkedAt": "2026-11-12T05:10:34.751Z",
+      "checkedAt": "2026-11-24T11:52:57.965Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/time/timeasdouble",
       "title": "timeAsDouble • Time • 6000.3 • Unity Editor",
@@ -1683,11 +1768,11 @@
       "lessons": [
         "l021"
       ],
-      "checkedAt": "2026-11-12T05:10:31.022Z",
+      "checkedAt": "2026-11-24T11:52:53.118Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/time/timescale",
       "title": "timeScale • Time • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Time timeScale The rate at which in-game time passes relative to real time. Read time 2 minutes Last updated a month ago Definition Type: Pr"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Time timeScale The rate at which in-game time passes relative to real time. Read time 2 minutes Last updated 2 months ago Definition Type: P"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-unscaledDeltaTime.html",
@@ -1695,7 +1780,7 @@
       "lessons": [
         "l021"
       ],
-      "checkedAt": "2026-11-12T05:10:31.105Z",
+      "checkedAt": "2026-11-24T11:52:54.431Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/time/unscaleddeltatime",
       "title": "unscaledDeltaTime • Time • 6000.3 • Unity Editor",
@@ -1707,7 +1792,7 @@
       "lessons": [
         "l065"
       ],
-      "checkedAt": "2026-11-12T05:10:49.977Z",
+      "checkedAt": "2026-11-24T11:53:29.255Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/time/unscaledtime",
       "title": "unscaledTime • Time • 6000.3 • Unity Editor",
@@ -1719,7 +1804,7 @@
       "lessons": [
         "l020"
       ],
-      "checkedAt": "2026-11-12T05:10:30.389Z",
+      "checkedAt": "2026-11-24T11:52:52.878Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/transform/lossyscale",
       "title": "lossyScale • Transform • 6000.3 • Unity Editor",
@@ -1731,11 +1816,11 @@
       "lessons": [
         "l006"
       ],
-      "checkedAt": "2026-11-12T04:51:25.717Z",
+      "checkedAt": "2026-11-24T11:52:40.877Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/transform/position",
       "title": "position • Transform • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Transform position The world space position of the Transform. Read time 1 minute Last updated 4 days ago Definition Type: Property Namespace"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference UnityEngine Transform position The world space position of the Transform. Read time 1 minute Last updated 16 days ago Definition Type: Property Namespac"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Transform.SetParent.html",
@@ -1743,7 +1828,7 @@
       "lessons": [
         "l016"
       ],
-      "checkedAt": "2026-11-12T05:10:25.316Z",
+      "checkedAt": "2026-11-24T11:52:48.717Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/transform/setparent",
       "title": "SetParent • Transform • 6000.3 • Unity Editor",
@@ -1755,7 +1840,7 @@
       "lessons": [
         "l020"
       ],
-      "checkedAt": "2026-11-12T05:10:30.130Z",
+      "checkedAt": "2026-11-24T11:52:52.719Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/transform/transformdirection",
       "title": "TransformDirection • Transform • 6000.3 • Unity Editor",
@@ -1769,7 +1854,7 @@
         "l020",
         "l088"
       ],
-      "checkedAt": "2026-11-12T05:10:25.832Z",
+      "checkedAt": "2026-11-24T11:52:49.383Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/transform/transformpoint",
       "title": "TransformPoint • Transform • 6000.3 • Unity Editor",
@@ -1781,7 +1866,7 @@
       "lessons": [
         "l020"
       ],
-      "checkedAt": "2026-11-12T05:10:30.203Z",
+      "checkedAt": "2026-11-24T11:52:52.758Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/transform/transformvector",
       "title": "TransformVector • Transform • 6000.3 • Unity Editor",
@@ -1793,7 +1878,7 @@
       "lessons": [
         "l060"
       ],
-      "checkedAt": "2026-11-12T05:10:46.258Z",
+      "checkedAt": "2026-11-24T11:53:25.025Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/uielements/listview",
       "title": "ListView • UnityEngine.UIElements • 6000.3 • Unity Editor",
@@ -1805,7 +1890,7 @@
       "lessons": [
         "l059"
       ],
-      "checkedAt": "2026-11-12T05:10:46.246Z",
+      "checkedAt": "2026-11-24T11:53:23.932Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/uielements/uidocument",
       "title": "UIDocument • UnityEngine.UIElements • 6000.3 • Unity Editor",
@@ -1817,7 +1902,7 @@
       "lessons": [
         "l059"
       ],
-      "checkedAt": "2026-11-12T05:10:45.960Z",
+      "checkedAt": "2026-11-24T11:53:23.903Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/uielements/visualelement",
       "title": "VisualElement • UnityEngine.UIElements • 6000.3 • Unity Editor",
@@ -1829,7 +1914,7 @@
       "lessons": [
         "l087"
       ],
-      "checkedAt": "2026-11-12T05:10:57.363Z",
+      "checkedAt": "2026-11-24T11:53:43.373Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityeditor/undo",
       "title": "Undo • UnityEditor • 6000.3 • Unity Editor",
@@ -1842,7 +1927,7 @@
         "l092",
         "l094"
       ],
-      "checkedAt": "2026-11-12T05:11:00.216Z",
+      "checkedAt": "2026-11-24T11:53:48.291Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unity/jobs/ijob",
       "title": "IJob • Unity.Jobs • 6000.3 • Unity Editor",
@@ -1854,7 +1939,7 @@
       "lessons": [
         "l093"
       ],
-      "checkedAt": "2026-11-12T05:11:01.476Z",
+      "checkedAt": "2026-11-24T11:53:50.470Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unity/jobs/ijobparallelfor",
       "title": "IJobParallelFor • Unity.Jobs • 6000.3 • Unity Editor",
@@ -1866,7 +1951,7 @@
       "lessons": [
         "l092"
       ],
-      "checkedAt": "2026-11-12T05:11:00.515Z",
+      "checkedAt": "2026-11-24T11:53:48.525Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unity/jobs/jobhandle/complete",
       "title": "Complete() • JobHandle • 6000.3 • Unity Editor",
@@ -1879,11 +1964,11 @@
         "l081",
         "l085"
       ],
-      "checkedAt": "2026-11-12T05:10:55.825Z",
+      "checkedAt": "2026-11-24T11:53:41.377Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unity/profiling/profilermarker",
       "title": "ProfilerMarker • Unity.Profiling • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference Unity.Profiling ProfilerMarker Performance marker used for profiling arbitrary code blocks. Read time 2 minutes Last updated 13 days ago Definition Type"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference Unity.Profiling ProfilerMarker Performance marker used for profiling arbitrary code blocks. Read time 2 minutes Last updated 25 days ago Definition Type"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Unity.Profiling.ProfilerRecorder.html",
@@ -1891,11 +1976,11 @@
       "lessons": [
         "l082"
       ],
-      "checkedAt": "2026-11-12T05:10:55.999Z",
+      "checkedAt": "2026-11-24T11:53:41.627Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unity/profiling/profilerrecorder",
       "title": "ProfilerRecorder • Unity.Profiling • 6000.3 • Unity Editor",
-      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference Unity.Profiling ProfilerRecorder Records the Profiler metric data that a Profiler marker or counter produces. Read time 3 minutes Last updated 13 days a"
+      "excerpt": "id=\"page-content-container\" data-sentry-element=\"Stack\" data-sentry-source-file=\"content-renderer.tsx\"> Unity Engine documentation Script Reference Unity.Profiling ProfilerRecorder Records the Profiler metric data that a Profiler marker or counter produces. Read time 3 minutes Last updated 25 days a"
     },
     {
       "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Vector3.ClampMagnitude.html",
@@ -1903,7 +1988,7 @@
       "lessons": [
         "l017"
       ],
-      "checkedAt": "2026-11-12T05:10:26.213Z",
+      "checkedAt": "2026-11-24T11:52:49.438Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/vector3/clampmagnitude",
       "title": "ClampMagnitude • Vector3 • 6000.3 • Unity Editor",
@@ -1915,7 +2000,7 @@
       "lessons": [
         "l017"
       ],
-      "checkedAt": "2026-11-12T05:10:27.111Z",
+      "checkedAt": "2026-11-24T11:52:49.591Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/vector3/dot",
       "title": "Dot • Vector3 • 6000.3 • Unity Editor",
@@ -1927,7 +2012,7 @@
       "lessons": [
         "l025"
       ],
-      "checkedAt": "2026-11-12T05:10:35.040Z",
+      "checkedAt": "2026-11-24T11:52:58.165Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/vector3/lerp",
       "title": "Lerp • Vector3 • 6000.3 • Unity Editor",
@@ -1939,7 +2024,7 @@
       "lessons": [
         "l017"
       ],
-      "checkedAt": "2026-11-12T05:10:27.245Z",
+      "checkedAt": "2026-11-24T11:52:49.777Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/vector3/projectonplane",
       "title": "ProjectOnPlane • Vector3 • 6000.3 • Unity Editor",
@@ -1951,7 +2036,7 @@
       "lessons": [
         "l022"
       ],
-      "checkedAt": "2026-11-12T05:10:32.083Z",
+      "checkedAt": "2026-11-24T11:52:54.674Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/waitforseconds",
       "title": "WaitForSeconds • UnityEngine • 6000.3 • Unity Editor",
@@ -1963,7 +2048,7 @@
       "lessons": [
         "l022"
       ],
-      "checkedAt": "2026-11-12T05:10:32.616Z",
+      "checkedAt": "2026-11-24T11:52:54.774Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/waitforsecondsrealtime",
       "title": "WaitForSecondsRealtime • UnityEngine • 6000.3 • Unity Editor",
@@ -1975,7 +2060,7 @@
       "lessons": [
         "l022"
       ],
-      "checkedAt": "2026-11-12T05:10:32.826Z",
+      "checkedAt": "2026-11-24T11:52:55.016Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/script-reference/unityengine/waituntil",
       "title": "WaitUntil • UnityEngine • 6000.3 • Unity Editor",
@@ -1987,7 +2072,7 @@
       "lessons": [
         "l069"
       ],
-      "checkedAt": "2026-11-12T05:29:52.697Z",
+      "checkedAt": "2026-11-24T11:53:35.434Z",
       "status": 200,
       "finalURL": "https://docs.unity3d.com/Packages/com.unity.addressables@2.7/manual/memory-assets.html",
       "title": "Managing Addressable asset memory | Addressables | 2.7.6",
@@ -1999,11 +2084,11 @@
       "lessons": [
         "l091"
       ],
-      "checkedAt": "2026-11-12T05:10:59.535Z",
+      "checkedAt": "2026-11-24T11:53:46.889Z",
       "status": 200,
       "finalURL": "https://docs.unity3d.com/Packages/com.unity.ai.navigation@2.0/manual/index.html",
-      "title": "AI Navigation | AI Navigation | 2.0.16",
-      "excerpt": "AI Navigation | AI Navigation | 2.0.16 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents AI Navigation The navigation system allows you to create characters that can intelligently move around the game world. These characters use navigation meshes that are create"
+      "title": "AI Navigation | AI Navigation | 2.0.17",
+      "excerpt": "AI Navigation | AI Navigation | 2.0.17 Toggle navigation docs.unity3d.com --> Search Results for Show / Hide Table of Contents AI Navigation The navigation system allows you to create characters that can intelligently move around the game world. These characters use navigation meshes that are create"
     },
     {
       "url": "https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/index.html",
@@ -2012,7 +2097,7 @@
         "l093",
         "l095"
       ],
-      "checkedAt": "2026-11-12T05:11:01.403Z",
+      "checkedAt": "2026-11-24T11:53:48.711Z",
       "status": 200,
       "finalURL": "https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/index.html",
       "title": "Burst compiler | Burst | 1.8.31",
@@ -2025,7 +2110,7 @@
         "l094",
         "l095"
       ],
-      "checkedAt": "2026-11-12T05:11:01.741Z",
+      "checkedAt": "2026-11-24T11:53:50.498Z",
       "status": 200,
       "finalURL": "https://docs.unity3d.com/Packages/com.unity.entities@1.4/manual/index.html",
       "title": "Entities package | Entities | 1.4.8",
@@ -2038,7 +2123,7 @@
         "l027",
         "l030"
       ],
-      "checkedAt": "2026-11-12T05:17:44.919Z",
+      "checkedAt": "2026-11-24T11:53:00.294Z",
       "status": 200,
       "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/api/UnityEngine.InputSystem.InputAction.html",
       "title": "Class InputAction | Input System | 1.20.1",
@@ -2050,7 +2135,7 @@
       "lessons": [
         "l029"
       ],
-      "checkedAt": "2026-11-12T05:17:46.228Z",
+      "checkedAt": "2026-11-24T11:53:00.925Z",
       "status": 200,
       "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/api/UnityEngine.InputSystem.InputActionRebindingExtensions.html",
       "title": "Class InputActionRebindingExtensions | Input System | 1.20.1",
@@ -2062,7 +2147,7 @@
       "lessons": [
         "l026"
       ],
-      "checkedAt": "2026-11-12T07:21:21.841Z",
+      "checkedAt": "2026-11-24T11:53:00.231Z",
       "status": 200,
       "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/api/UnityEngine.InputSystem.InputActionType.html",
       "title": "Enum InputActionType | Input System | 1.20.1",
@@ -2074,7 +2159,7 @@
       "lessons": [
         "l028"
       ],
-      "checkedAt": "2026-11-12T05:17:44.919Z",
+      "checkedAt": "2026-11-24T11:53:00.304Z",
       "status": 200,
       "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/api/UnityEngine.InputSystem.PlayerInput.html",
       "title": "Class PlayerInput | Input System | 1.20.1",
@@ -2088,7 +2173,7 @@
         "l027",
         "l028"
       ],
-      "checkedAt": "2026-11-12T05:17:44.880Z",
+      "checkedAt": "2026-11-24T11:52:59.276Z",
       "status": 200,
       "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/Actions.html",
       "title": "Actions | Input System | 1.20.1",
@@ -2100,7 +2185,7 @@
       "lessons": [
         "l029"
       ],
-      "checkedAt": "2026-11-12T05:17:45.907Z",
+      "checkedAt": "2026-11-24T11:53:00.871Z",
       "status": 200,
       "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/rebind-action-runtime.html",
       "title": "Rebind an action at runtime | Input System | 1.20.1",
@@ -2113,7 +2198,7 @@
         "l028",
         "l030"
       ],
-      "checkedAt": "2026-11-12T05:17:44.920Z",
+      "checkedAt": "2026-11-24T11:53:00.852Z",
       "status": 200,
       "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/Settings.html",
       "title": "| Input System | 1.20.1",
@@ -2125,7 +2210,7 @@
       "lessons": [
         "l026"
       ],
-      "checkedAt": "2026-11-12T05:17:44.917Z",
+      "checkedAt": "2026-11-24T11:52:59.596Z",
       "status": 200,
       "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/using-actions-workflow.html",
       "title": "Workflow Overview - Actions | Input System | 1.20.1",
@@ -2138,7 +2223,7 @@
         "l026",
         "l039"
       ],
-      "checkedAt": "2026-11-12T05:17:44.918Z",
+      "checkedAt": "2026-11-24T11:52:59.960Z",
       "status": 200,
       "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/using-direct-workflow.html",
       "title": "Workflow Overview - Directly Reading Device States | Input System | 1.20.1",
@@ -2150,7 +2235,7 @@
       "lessons": [
         "l058"
       ],
-      "checkedAt": "2026-11-12T05:29:52.697Z",
+      "checkedAt": "2026-11-24T11:53:23.219Z",
       "status": 200,
       "finalURL": "https://docs.unity3d.com/Packages/com.unity.inputsystem@1.20/manual/using-ui-input-module.html",
       "title": "Using UI Input Module for UI support | Input System | 1.20.1",
@@ -2162,7 +2247,7 @@
       "lessons": [
         "l052"
       ],
-      "checkedAt": "2026-11-12T05:10:40.380Z",
+      "checkedAt": "2026-11-24T11:53:17.086Z",
       "status": 200,
       "finalURL": "https://docs.unity.com/en-us/engine/6000.3/manual/render-pipelines/universal-render-pipeline/urp-introduction",
       "title": "Introduction to the Universal Render Pipeline • Using the Universal Render Pipeline • 6000.3 • Unity Editor",
@@ -2176,7 +2261,7 @@
         "l080",
         "l098"
       ],
-      "checkedAt": "2026-11-12T04:51:36.325Z",
+      "checkedAt": "2026-11-24T11:53:40.261Z",
       "status": 200,
       "finalURL": "https://docs.unity3d.com/Packages/com.unity.test-framework@1.6/manual/index.html",
       "title": "Unity Test Framework scripting reference | Test Framework | 1.6.0",
@@ -2188,7 +2273,7 @@
       "lessons": [
         "l058"
       ],
-      "checkedAt": "2026-11-12T05:10:44.835Z",
+      "checkedAt": "2026-11-24T11:53:22.892Z",
       "status": 200,
       "finalURL": "https://docs.unity3d.com/Packages/com.unity.ugui@2.0/manual/EventSystem.html",
       "title": "Event System | uGUI | 2.0.0",

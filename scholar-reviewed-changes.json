@@ -450,6 +450,71 @@
         "https://docs.unity3d.com/Packages/com.unity.entities@1.4/manual/index.html",
         "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Unity.Jobs.IJob.html"
       ]
+    },
+    {
+      "lesson": "l007",
+      "fields": [
+        "code",
+        "references"
+      ],
+      "before": "6ba07c6f842ade1f9bc1d86478f96c3e4ee286368204fb2df9fbdd63870dfc13",
+      "after": "c1e04e843df89a32f90fe31de1cef103304b456dc0d1e39aa96b3c7c4f8da5dc",
+      "reason": "补齐原课程要求读者自行创建却未提供的 SpeedCaller，并改用 Inspector 明确赋值，避免在组件获取课程之前依赖 GetComponent。",
+      "reviewDocument": "BEGINNER-CONTINUITY-REVIEW.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/SerializeField.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ContextMenu.html"
+      ]
+    },
+    {
+      "lesson": "l008",
+      "fields": [
+        "code",
+        "references"
+      ],
+      "before": "20c7b0062d93b712d4f62dafaea322461abef78389ff972cfb0259a207382932",
+      "after": "b451ab3caa5510a5b13ff7caccb67cd6f03a9d237f9015fa51c08ef6990c7568",
+      "reason": "将零散的单数子级查找扩为七种常用组件获取入口，新增完整层级探针，并逐项说明起点、方向、数量、未激活对象和失败结果。",
+      "reviewDocument": "BEGINNER-CONTINUITY-REVIEW.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponent.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.TryGetComponent.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponents.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponentInChildren.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponentsInChildren.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponentInParent.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponentsInParent.html"
+      ]
+    },
+    {
+      "lesson": "l009",
+      "fields": [
+        "code",
+        "references"
+      ],
+      "before": "3d9c31e847c5e62c8d9bb814d00fd49191a7919557554533ac9bf97b81375ecf",
+      "after": "41684dd29688b2baae2890b956f268865d2db0e278bc74be6b3e0e8ed15b5877",
+      "reason": "移除生命周期课程之前的 static 事件与域重载负担，改用 Inspector 指定发布者和可见菜单命令解释事件四个基本角色及重复订阅。",
+      "reviewDocument": "BEGINNER-CONTINUITY-REVIEW.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ContextMenu.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.OnDisable.html"
+      ]
+    },
+    {
+      "lesson": "l010",
+      "fields": [
+        "code",
+        "references"
+      ],
+      "before": "e12d2fd0eab68cdf1cc203deaa925440e96972bd9eb13e26d673db784035e12d",
+      "after": "40ae9e0cc5569fae230c6620b8a509b0cc4e287fc5bbcfec9cf604ab20f4df04",
+      "reason": "移除与列表寿命无关的冷却模型，改为完整 List 探针，分别观察 Count、有效引用、Destroy、RemoveAt、Clear 和相邻删除。",
+      "reviewDocument": "BEGINNER-CONTINUITY-REVIEW.md",
+      "references": [
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Object.Destroy.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Object-operator_eq.html"
+      ]
     }
   ]
 }

@@ -9,6 +9,7 @@
     "audit:sources": "node scripts/audit-sources.mjs",
     "audit:visuals": "node scripts/audit-visuals.mjs",
     "audit:editorial": "node scripts/audit-editorial.mjs",
+    "audit:beginner": "node scripts/audit-beginner-continuity.mjs",
     "test:browser": "node scripts/test-browser.mjs",
     "test:context-browser": "node scripts/test-context-browser.mjs",
     "test:visual-browser": "node scripts/test-visual-browser.mjs",

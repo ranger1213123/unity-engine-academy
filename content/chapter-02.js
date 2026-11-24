@@ -3,7 +3,7 @@ window.COURSE_MODULES.push({
   "number": 2,
   "title": "Unity 中的 C#",
   "subtitle": "理解托管代码与引擎对象的交界",
-  "description": "聚焦最影响引擎使用的语言机制：值与引用、Unity 对象空值、序列化字段、组件查找、事件和集合所有权。",
+  "description": "先补齐 Unity 脚本真正会用到的 C# 基础：数值与对象、Inspector 字段、组件获取、事件关系和对象列表。每课只解决一个核心问题，术语第一次出现时都配具体对象和可运行实验。",
   "accent": "#527c63",
   "lessons": [
     {
@@ -36,59 +36,58 @@ window.COURSE_MODULES.push({
         "l005"
       ],
       "goals": [
-        "预测结构体数值与对象引用复制后的差别",
-        "解释Unity空值与普通引用空值为何不同",
-        "在等待后重新检查目标是否可用"
+        "看懂变量、值、类型和对象这四个词分别指什么",
+        "预测 Vector3 数值复制与 Transform 引用复制的不同结果",
+        "解释 Unity 对象销毁后两种空值判断为何可能不同"
       ],
       "theory": [
         {
-          "title": "先分清复制的是什么",
+          "title": "先把四个词放进一行代码里",
           "paragraphs": [
-            "令 Vector3 a 为 (1,2,3)，执行 b=a 后，b 获得这三个数值的副本。再把 b.x 改成9，a.x 仍为1。Vector3 是结构体，属于值类型。这里没有让两个变量共同管理一份可变位置数据。",
-            "再让 Transform first 和 second 都引用同一场景对象。修改 first.position 后，通过 second 读取也会得到新位置，因为改的是共同指向的对象。复制引用不会自动复制场景对象；需要独立对象时，必须明确创建另一个实例。"
+            "看 `Vector3 position = new Vector3(1, 2, 3);`：`position` 是变量名，也就是代码里用来找到这份数据的名字；`Vector3` 是类型，规定这份数据由 x、y、z 三个数值组成；右侧创建出的 `(1,2,3)` 是当前值。类型决定能保存什么、能调用什么，变量只是你在这段代码中使用它的入口。",
+            "再看 `Transform target = transform;`。`target` 仍是变量，`Transform` 仍是类型，但变量里保存的不是一整份场景对象副本，而是指向某个 Transform 组件的引用。初学时不要先背“栈”和“堆”；先问这次赋值复制的是数值本身，还是通往同一个对象的引用。"
           ]
         },
         {
-          "title": "局部变量改变与对象改变不同",
+          "title": "值类型复制一份数值",
           "paragraphs": [
-            "把 second 重新赋为另一个 Transform，只改变 second 指向哪里，不会让 first 跟着换目标。相反，经 second 修改它当前目标的成员，改变的就是目标对象。调试时画两条箭头，往往比记住“引用类型会共享”更准确。",
-            "这种区别也适用于普通 C# 类。引用可以有多个，实例可以只有一个。先看赋值是在换引用，还是在修改被引用的内容，再预测其他变量会不会观察到变化，不要只根据变量名是否不同判断。"
+            "令 `Vector3 a=(1,2,3)`，再执行 `Vector3 b=a`。`Vector3` 是结构体，属于值类型，所以 b 得到一份独立的三个数值。随后只写 `b.x=9`，结果是 a 仍为 `(1,2,3)`，b 变为 `(9,2,3)`。两个变量的内容起初相同，不代表以后会自动同步。",
+            "数值复制最容易混淆的地方，是“相同”与“同一个”并不是一回事。两张纸都写着 5，它们的内容相同；改掉第二张纸，不会改第一张纸。Vector2、Vector3、Color 和 Quaternion 等 Unity 结构体，在普通赋值时都应先按这个模型理解。"
           ]
         },
         {
-          "title": "Unity 对象还有引擎内部的生命期",
+          "title": "引用类型可以共同指向一个对象",
           "paragraphs": [
-            "GameObject、Transform 等对象由 Unity 管理。C# 变量持有的是托管包装引用，包装所对应的原生对象则存在于引擎内部。调用 Destroy 并完成销毁后，引擎对象已失效，C# 变量却不一定马上变成真正的空引用。",
-            "因此示例等待一帧后，target == null 可以为真，而 ReferenceEquals(target,null) 为假。前者使用 Unity 的比较规则，也检查对应引擎对象；后者只问托管引用是不是空。这不是矛盾，而是两者回答的问题不同。"
+            "让 `Transform first=transform`，再执行 `Transform second=first`。此时复制的是引用，两条引用都通向同一个 Transform 组件。通过 second 修改 `position`，first 随后读到的新位置也会变化，因为被修改的是两者共同指向的对象。",
+            "如果把 second 重新赋为另一个 Transform，只是让 second 改指向，first 不会跟着换目标。调试时可以画变量框和箭头：赋值引用是复制箭头，经引用修改成员是改箭头所指的对象。把这两种动作分开，便不会把“换目标”和“改目标”混成一件事。"
           ]
         },
         {
-          "title": "属性返回的结构体常是副本",
+          "title": "Unity 对象还有引擎内部的一层",
           "paragraphs": [
-            "读取 transform.position 得到 Vector3 值。将它存进 local 后修改 local.x，只改变局部副本，尚未写回 Transform。需要先取值、修改副本，再把整个结果赋回 position。这能解释为什么“我改了数值，画面却没变”。",
-            "不要把这个规则简化成所有属性都不能修改。关键是属性返回什么类型、调用了哪个写入接口。看清数据在哪一步复制，在哪一步真正写回引擎对象，就能逐行预测结果，而不是依靠试错记某种写法。"
+            "GameObject、Transform 等 Unity 对象在 C# 一侧有托管包装，真正的引擎对象由 Unity 管理。调用 `Destroy(target)` 后，销毁通常在当前 Update 循环结束后生效；引擎对象失效时，C# 变量仍可能保留包装引用。变量里还有一条引用，不等于引用所对应的引擎对象仍可使用。",
+            "因此销毁完成后，`target == null` 可能为 true，而 `ReferenceEquals(target, null)` 为 false。前者会使用 UnityEngine.Object 的特殊比较，连对应引擎对象是否仍存在也纳入判断；后者只检查 C# 包装引用本身是不是普通 null。两行代码回答的问题不同，所以结果不同并不矛盾。"
           ]
         },
         {
-          "title": "便捷空值语法不能替代有效性检查",
+          "title": "读取 position 得到的是 Vector3 值",
           "paragraphs": [
-            "对于 UnityEngine.Object，== null 使用特殊规则，而 ?. 和 ?? 按普通 C# 空引用规则工作。原生对象已经销毁但包装仍存在时，这些简写不一定像你想象的那样跳过访问。不能因为语句更短就认为检查更完整。",
-            "变量的静态类型也重要。如果先转成普通 object，再比较空值，可能不再使用相同的重载。一般场景逻辑应保留明确的 Unity 类型，并用相应检查。普通纯 C# 类没有这个原生对象层，仍按照普通语言规则理解。",
-            "is null 和 ReferenceEquals 一样，不能代替 Unity 的原生对象有效性判断。可做一张对照表：以正常对象、真正的 C# null、已完成 Destroy 但仍留有包装引用作为三行，以 == null、is null、ReferenceEquals 作为三列，分别预测结果。第三行最能解释差别：变量还指向包装，并不表示引擎对象仍可使用。"
+            "`transform.position` 的类型是 Vector3。把它读到 `local` 后，local 是一个数值副本；修改 `local.x` 只改副本，还没有把结果写回 Transform。正确过程是先读取完整位置、修改副本，再执行 `transform.position=local`。",
+            "这里不是说“属性都不能改”，而是要看属性返回的类型和真正的写入发生在哪里。遇到“数值已经变了，物体却没动”，先打印 local 和 transform.position，再检查是否漏了最后一次完整赋值。这样能指出断在哪一步，而不是靠换一种语法碰运气。"
           ]
         },
         {
-          "title": "等待之后重新确认目标",
+          "title": "空值简写不等于 Unity 对象有效性检查",
           "paragraphs": [
-            "假设协程保存了敌人的 Transform，然后等待受击动画结束。等待期间敌人可能被销毁。开始时的检查只能证明当时有效，不能保证恢复执行时仍有效。因此应在使用处重新确认，必要时结束这次操作。",
-            "缓存引用能减少重复查找，却不会延长 Unity 对象寿命。测试时分别覆盖正常目标、等待中销毁和对象只被禁用三种情况，记录它们的差别。禁用通常保留实例，销毁则使引擎对象失效，两者不应使用同一种恢复假设。"
+            "对普通 C# 引用，`?.`、`??`、`is null` 都有各自明确的空引用语义。UnityEngine.Object 还叠加了引擎对象寿命；已经 Destroy 的对象可能不是普通 C# null，却会被 Unity 的 `== null` 判断为失效。因此不要因为写法更短，就假设它检查了同一件事。",
+            "可以把“正常对象、真正的 C# null、已销毁但包装引用仍在”写成三行，再分别预测 `== null`、`is null` 和 `ReferenceEquals`。这张表的目的不是让你以后到处写三种判断，而是弄清楚它们为何不同。场景逻辑通常应保留明确的 Unity 类型，并在每次真正使用目标的边界检查它是否仍有效。"
           ]
         },
         {
-          "title": "用图检查你理解的是哪一层",
+          "title": "等待之后要重新检查当时的事实",
           "paragraphs": [
-            "画两个变量框和一个场景对象框。复制引用时增加一条指向同一目标的箭头；创建新对象时增加一个目标框；销毁时划掉引擎对象，但不要擅自把每个变量框都擦掉。这样就能看出为什么引用仍在，却不能继续正常访问成员。",
-            "再对照数值复制：两个 Vector3 框里各写一组数字，修改其中一组不会改另一组。把两种图并排放，遇到赋值语句先判断复制了数值还是引用，再追踪写入动作，往往比背一串类型名称更有效。"
+            "假设协程先取得敌人的 Transform，确认它有效，然后等待一帧。等待期间，另一个脚本可能销毁敌人。等待前的判断只证明当时的状态，不能替恢复后的访问提供保证；继续读取 position 前应重新检查。",
+            "对象被禁用和对象被销毁也不是同一状态。禁用通常保留实例，只是改变参与哪些系统和回调；销毁则让引擎对象失效。实验要分别覆盖正常目标、等待中禁用和等待中销毁，并记录每种情况下变量与对象发生了什么，不要用一句“引用丢了”概括三种不同结果。"
           ]
         }
       ],
@@ -222,12 +221,12 @@ window.COURSE_MODULES.push({
         }
       ],
       "summary": [
-        "复制引用不等于复制被引用的对象。",
-        "引擎对象已经销毁，托管包装仍可能被变量持有。"
+        "赋值前先判断复制的是数值还是指向对象的引用。",
+        "Unity 对象的包装引用仍在，不代表对应引擎对象仍可使用。"
       ],
       "teaching": {
-        "question": "复制一个 Vector3 后改副本，原值没变；复制一个 Transform 引用后移动它，为什么两个变量都看到新位置？",
-        "keyIdea": "值类型赋值复制数值，引用类型赋值复制指向对象的引用。Unity 对象还要分清 C# 包装引用与引擎内部对象是否仍存在。",
+        "question": "同样是赋值，为什么改 Vector3 副本不影响原值，改 Transform 指向的对象却能被两个变量同时看到？",
+        "keyIdea": "值类型变量直接保存并复制数值；引用类型变量保存并复制通往对象的引用。UnityEngine.Object 还要额外检查引用背后的引擎对象是否已经销毁。",
         "walkthrough": [
           {
             "title": "复制一个数值",
@@ -248,7 +247,7 @@ window.COURSE_MODULES.push({
           "scenario": "某个流程取得 Transform target 并检查它有效，然后等待一帧。等待期间另一个脚本可能调用 Destroy(target.gameObject)，之后原流程将继续执行。"
         },
         "scenario": "本课比较两次赋值：Vector3 a=(1,2,3)，b=a；另有 first、second 两个 Transform 变量，都指向场景中的同一个对象。最后 UnityNullProbe 在 Start 中创建 Temporary、请求销毁并等一帧，比较两种空值检查。",
-        "purpose": "区分复制数值、复制引用与对象销毁，避免把“变量仍有包装引用”误认为目标还能使用。"
+        "purpose": "看懂脚本中的变量究竟保存了什么，并在对象经过等待或销毁后做出正确判断。"
       }
     },
     {
@@ -281,63 +280,77 @@ window.COURSE_MODULES.push({
         "l006"
       ],
       "goals": [
-        "让私有字段参与保存，同时控制外部修改入口",
-        "测试设置方法如何拒绝非法数值",
-        "区分实例状态、静态共享与属性读取"
+        "区分字段、属性、方法和 Inspector 输入框",
+        "让私有字段参与 Unity 序列化，同时控制其他脚本的修改入口",
+        "用完整调用脚本验证合法值与非法值的处理结果"
       ],
       "theory": [
         {
-          "title": "先把编辑配置与代码访问分开",
+          "title": "先认识组件里的三个入口",
           "paragraphs": [
-            "设计者要在 Inspector 输入速度，其他脚本却不该随意写入负值。如果直接声明 public 字段，通常既让编辑器显示它，也允许其他代码直接赋值。两个需求被绑在一起，后面增加限制就不方便。",
-            "使用私有字段加 SerializeField，可以让符合规则的字段参与 Unity 序列化，同时保持 C# 的私有访问范围。外部通过 Speed 属性读取，通过 TrySetSpeed 尝试修改。这样编辑器配置和运行修改各有清楚入口。"
+            "字段是对象保存数据的位置，例如 `float speed`。属性是代码读取或设置数据的入口，例如 `public float Speed => speed`。方法是一段可以被调用的行为，例如 `TrySetSpeed(3f)`。Inspector 中看见的输入框通常对应可序列化字段，并不是“脚本中所有变量和方法的窗口”。",
+            "本课有两个脚本。`SpeedSettings` 保存速度并决定哪些值允许写入；`SpeedCaller` 负责提供测试输入。只把第一个脚本挂到对象上，不会有人自动调用 `TrySetSpeed`，物体也不会自己移动。必须有调用者或编辑器测试命令，方法才会执行。"
           ]
         },
         {
-          "title": "序列化只保存符合规则的数据",
+          "title": "代码访问和 Inspector 保存是两个问题",
           "paragraphs": [
-            "序列化是把特定数据保存成之后能够还原的形式。Unity 不会把整个 C# 内存原样复制到场景。它有字段类型、访问修饰与属性标记等规则，普通属性与 static 字段也不能按普通实例字段的方式期待保存。",
-            "实验可分别写普通私有字段、SerializeField 字段、公开字段和属性。先看 Inspector，再保存并重开场景，对比哪些值保留下来。看到某字段不显示，不代表它不能在代码使用；看到属性能读取，也不表示它自动成为存档。",
-            "Inspector 直接编辑被序列化的字段，不会为了赋值而调用你写的 Speed 属性或 TrySetSpeed 方法。因此“运行修改经过验证”和“Inspector 配置经过验证”必须分别检查。本例的 Min 帮助编辑，TrySetSpeed 保护代码调用；若增加跨字段限制，还需安排轻量编辑校验和运行前检查，不能只在属性 setter 中实现后就以为两条路径都被覆盖。"
+            "`public float speed` 同时让其他代码能直接赋值，并通常让 Unity 序列化这个字段。很多初学代码因此误以为 public 的意思就是“显示在 Inspector”。其实 public 是 C# 访问权限；Unity 是否保存字段还要看序列化规则。",
+            "写成 `[SerializeField] private float speed` 后，speed 仍是私有字段，其他类不能直接写它，但 Unity 可以把符合规则的值显示并保存到场景或 Prefab。这样便能把“设计者需要配置”和“任意脚本能否绕过规则修改”分开。"
           ]
         },
         {
-          "title": "只读属性并不等于只读对象",
+          "title": "序列化保存的是配置，不是整块运行内存",
           "paragraphs": [
-            "Speed => speed 提供只有读取入口的属性，调用者不能通过它直接赋新值。这限制的是这个入口，并没有让组件内部永远不能修改 speed。组件的方法仍可更新字段，Inspector 也可能编辑被序列化的配置。",
-            "属性的 getter 本质上可以执行代码。有的只是返回字段，有的会查找对象或计算结果，所以只读不代表零成本。当前示例很简单，但以后高频调用陌生属性时，仍应检查实现，不能只根据语法短就断言没有开销。"
+            "序列化可以理解为：Unity 把符合规则的字段值写进场景、Prefab 或资源，之后再还原。它不会把脚本运行时的所有内存原样保存。普通属性、局部变量和 static 字段，都不能因为代码里存在就自动成为场景配置。",
+            "测试时分别声明普通 private 字段、`[SerializeField] private` 字段、public 字段、只读属性和 static 字段。先看 Inspector 中出现哪些，再保存并重新打开场景。每一项都记录“其他脚本能否直接访问”和“Unity 是否保存”，不要只用“看得见”替代这两个问题。"
           ]
         },
         {
-          "title": "把验证放在真正的修改入口",
+          "title": "属性可以限制入口，但不会冻结对象",
           "paragraphs": [
-            "TrySetSpeed 先检查 NaN、Infinity 与负值，不满足条件就返回 false，并保留原速度。合法时才赋值并返回 true。调用者因此能区分修改成功和被拒绝，而不必修改后再猜当前数据是否可用。",
-            "Inspector 的 Min 提示对编辑方便，却不能保证所有运行代码都经过同一检查。把规则放进方法，才能保护从其他系统来的调用。若需要将超范围值自动限制而非拒绝，也应明确设计；返回 false 与悄悄截断对调用者的意义不同。"
+            "`public float Speed => speed` 只提供 getter，所以外部代码可以读取 `settings.Speed`，不能通过这个属性写入。组件内部仍可修改 speed，Inspector 也仍能编辑被序列化的字段。只读属性限制的是这条公开入口，不是让整个组件从此不可改变。",
+            "属性 getter 也是代码。有的只返回字段，有的会计算或查找对象，所以“写起来像字段”不等于永远没有成本。当前 Speed 只是返回一个 float，先按最简单情况理解；以后高频读取陌生属性时，再查看其定义和实际调用频率。"
           ]
         },
         {
-          "title": "普通字段与 static 字段属于不同范围",
+          "title": "修改规则放在真正会被调用的方法里",
           "paragraphs": [
-            "A、B 两个角色各有 SpeedSettings，实例 speed 默认各自保存。将 A 改为3，B 不会自动改变。若改成 static，则数值属于类型层面的共享状态，不再是每个组件自己的那份。",
-            "共享并非总是错误，例如公共统计可能需要它，但当前生命这类每角色状态通常应跟随实例。决定字段放哪里时，先问这个数值是某个对象的，还是全体共用的。不要为了让别的脚本访问方便，就把原本独立的数据改成全局共享。"
+            "`TrySetSpeed` 先检查 NaN、Infinity 和负数。输入不合法时返回 false，并保留原 speed；合法时才赋值并返回 true。Try 前缀在这里表示“尝试做一件可能失败的事”，调用者必须读取布尔结果，不能假设请求一定成功。",
+            "`[Min(0f)]` 主要帮助 Inspector 输入，不会拦住所有 C# 调用。`SpeedCaller` 在播放模式通过组件菜单依次传入 -2、3、NaN 和正无穷，并同时打印参数、返回值与最终 Speed。这样既能看见方法说成功还是失败，也能确认失败后旧数据没有被污染。"
           ]
         },
         {
-          "title": "用调用结果说明规则是否成立",
+          "title": "实例字段与 static 字段回答不同的归属问题",
           "paragraphs": [
-            "测试时先记录当前速度，再依次传入负值、正常值和非数值。每次同时记录返回结果和读取值。只记录“没有异常”不够，因为方法可能悄悄接受错误数据；只记录返回 false 也不够，还要确认旧值没有被污染。",
-            "之后再接入实际移动组件，区分两个问题：设置方法能正确保护数值，移动组件是否正确使用它。前者可以独立检查，后者还要看更新阶段和单位。把数据与使用者分开，不是为了增加类的数量，而是让每个失败有明确检查位置。"
+            "场景中有 SettingsA 和 SettingsB 两个组件实例时，普通 speed 字段各有一份。修改 A 不会自动修改 B。static 字段则属于类型本身，所有实例看到同一份共享值，所以不适合直接保存每个角色各自的当前生命或速度。",
+            "static 并不是坏语法，关键是数据本来属于谁。全局统计可能需要共享，每个角色的当前状态通常应跟随角色实例。决定字段放哪里前，先把句子补完整：“这是哪一个对象的值，还是所有实例共同的值？”"
+          ]
+        },
+        {
+          "title": "Inspector 赋值不会自动调用你的修改方法",
+          "paragraphs": [
+            "设计者直接改 Inspector 中的 speed 时，Unity 写入序列化字段，不会自动改成调用 `TrySetSpeed`。因此 Inspector 辅助、运行时代码入口和加载旧数据是不同路径。简单下限可以用 Min 帮助输入，真正不能破坏的运行规则仍要在使用边界验证。",
+            "本课先把这几条路径分开，不急着把全部校验塞进一个技巧。后续遇到跨字段约束、旧数据迁移或编辑器校验时，再学习 OnValidate 等工具。此时最重要的是能指出某个值从哪里进入、经过了哪条检查、最后保存在谁身上。"
           ]
         }
       ],
       "code": {
-        "title": "受控的速度配置",
+        "title": "速度配置与完整测试调用者",
         "language": "csharp",
-        "filename": "SpeedSettings.cs",
-        "source": "using UnityEngine;\npublic sealed class SpeedSettings : MonoBehaviour\n{\n    [SerializeField, Min(0f)] float speed = 5f;\n    public float Speed => speed;\n    public bool TrySetSpeed(float value)\n    {\n        if (float.IsNaN(value) || float.IsInfinity(value) || value < 0f) return false;\n        speed = value;\n        return true;\n    }\n}",
+        "files": [
+          {
+            "filename": "SpeedSettings.cs",
+            "source": "using UnityEngine;\n\npublic sealed class SpeedSettings : MonoBehaviour\n{\n    [SerializeField, Min(0f)] private float speed = 5f;\n\n    public float Speed => speed;\n\n    public bool TrySetSpeed(float value)\n    {\n        if (float.IsNaN(value) || float.IsInfinity(value) || value < 0f)\n            return false;\n\n        speed = value;\n        return true;\n    }\n}"
+          },
+          {
+            "filename": "SpeedCaller.cs",
+            "source": "using UnityEngine;\n\npublic sealed class SpeedCaller : MonoBehaviour\n{\n    [SerializeField] private SpeedSettings settings;\n\n    [ContextMenu(\"Run speed tests\")]\n    private void RunSpeedTests()\n    {\n        if (!Application.isPlaying)\n        {\n            Debug.LogWarning(\"Enter Play Mode before running the tests.\", this);\n            return;\n        }\n\n        if (settings == null)\n        {\n            Debug.LogError(\"Assign Speed Settings in the Inspector.\", this);\n            return;\n        }\n\n        Test(-2f);\n        Test(3f);\n        Test(float.NaN);\n        Test(float.PositiveInfinity);\n    }\n\n    private void Test(float value)\n    {\n        bool accepted = settings.TrySetSpeed(value);\n        Debug.Log($\"input={value}, accepted={accepted}, speed={settings.Speed}\", this);\n    }\n}"
+          }
+        ],
         "explanation": [
-          "挂组件后在 Inspector 配置 speed。外部读取 Speed，修改时调用 TrySetSpeed 并检查布尔结果。该组件只管理速度设置，不会自行移动对象。",
-          "测试方法需要调用者：把 SpeedCaller 挂到同一对象，在 Start 通过 GetComponent<SpeedSettings>() 取得设置组件后，调用 TrySetSpeed 并打印返回值和 Speed。仅在 Inspector 看见字段，不会自动执行这些方法；本课实验准备给出具体输入。"
+          "把两个脚本挂到同一个 Settings 对象。将该对象上的 SpeedSettings 组件拖进 SpeedCaller 的 Settings 槽；拖的是组件引用，不是脚本文件。",
+          "进入 Play，打开 SpeedCaller 组件右上角三点菜单，选择 Run speed tests。菜单命令才是本例调用入口；SpeedSettings 本身不会自动移动对象或自动运行测试。"
         ]
       },
       "lab": [
@@ -368,9 +381,9 @@ window.COURSE_MODULES.push({
           "result": "验证修改入口，并观察实例数据与共享数据。",
           "purpose": "验证方法拒绝非法值后保留原状态，而不是只看函数返回。",
           "setup": [
-            "创建 SpeedCaller.cs 挂到 Settings 同一对象；在 Start 先用 GetComponent<SpeedSettings>() 取得引用，检查非空后再调用 TrySetSpeed。",
-            "在 Start 中逐项传入 -2f、3f、float.NaN、float.PositiveInfinity；每次调用后用 Debug.Log 同时记录本次参数、布尔返回值和 settings.Speed。不要直接访问私有 speed。",
-            "复制 Settings 为 SettingsB，每个调用脚本应读取自身的 SpeedSettings；在日志加 name 区分实例。static 对照仅放实验副本，结束后还原。"
+            "把本课两个完整文件放进 Assets/Scripts，等待 Console 没有编译错误。创建空对象 Settings，给它依次添加 SpeedSettings 和 SpeedCaller。",
+            "在 SpeedCaller 的 Settings 槽中，把同一对象上的 SpeedSettings 组件拖入。进入 Play 后，从 SpeedCaller 组件三点菜单选择 Run speed tests。",
+            "Console 关闭 Collapse。逐行记录 input、accepted 和 speed；复制 Settings 为 SettingsB 时，也分别拖好各自的 Settings 槽，并在日志对象上下文中区分实例。"
           ]
         }
       ],
@@ -456,8 +469,12 @@ window.COURSE_MODULES.push({
           "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/SerializeField.html"
         },
         {
-          "label": "MonoBehaviour.OnValidate",
-          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.OnValidate.html"
+          "label": "MinAttribute",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MinAttribute.html"
+        },
+        {
+          "label": "ContextMenu",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ContextMenu.html"
         }
       ],
       "summary": [
@@ -486,8 +503,49 @@ window.COURSE_MODULES.push({
           "answer": "仍要检查。Inspector 辅助限制不等于所有运行调用都经过验证；实际修改入口应保证自己的条件。",
           "scenario": "SpeedSettings 的 speed 声明带 Min(0)，外部调用者打算执行 TrySetSpeed(-2)。这次输入来自 C# 方法调用，未经过 Inspector 控件。"
         },
-        "scenario": "SpeedSettings 有一个 Inspector 可编辑的私有 speed 字段、只供读取的 Speed 属性，以及允许外部请求修改的 TrySetSpeed。它只保存设置，不移动物体；我们用另一个调用组件传入正常值和非法值，检查返回结果。",
-        "purpose": "把数据是否保存、代码能否直接访问以及允许怎样修改三个问题分开，给组件设计可理解的使用入口。"
+        "scenario": "Settings 对象上同时挂 SpeedSettings 和 SpeedCaller。SpeedSettings 保存 speed；SpeedCaller 通过 Inspector 槽取得这个组件，并由组件菜单传入四个测试值。没有调用者时，TrySetSpeed 不会自己执行。",
+        "purpose": "分清字段、属性、方法和 Inspector 的职责，并能亲手运行一个不会缺调用脚本的完整实验。",
+        "comparison": {
+          "caption": "同一个“速度”可以通过不同成员暴露；先看访问和保存，再决定写法。",
+          "headers": [
+            "写法",
+            "其他脚本可直接访问",
+            "默认是否显示并保存",
+            "本课用途"
+          ],
+          "rows": [
+            [
+              "private float speed",
+              "不可以",
+              "不可以",
+              "只供组件内部使用的运行数据"
+            ],
+            [
+              "[SerializeField] private float speed",
+              "不可以",
+              "可以",
+              "Inspector 配置，同时保留私有访问"
+            ],
+            [
+              "public float speed",
+              "可以读写",
+              "通常可以",
+              "确实允许外部任意写入时才使用"
+            ],
+            [
+              "public float Speed => speed",
+              "只可读取",
+              "属性本身不按字段保存",
+              "给外部提供受控读取入口"
+            ],
+            [
+              "static float speed",
+              "取决于访问修饰符",
+              "不按普通实例字段保存",
+              "所有实例共享的一份类型状态"
+            ]
+          ]
+        }
       }
     },
     {
@@ -515,185 +573,199 @@ window.COURSE_MODULES.push({
         }
       ],
       "id": "l008",
-      "title": "GetComponent：找到并保存正确的组件引用",
+      "title": "GetComponent 家族：从哪里找、找一个还是找全部",
       "prerequisites": [
         "l007"
       ],
       "goals": [
-        "按组件所在位置选择查找范围",
-        "解释RequireComponent与运行验证各解决什么",
-        "缓存目标失效后明确停止或重新绑定"
+        "看懂 GetComponent<T>() 中调用对象、类型参数和返回值",
+        "按当前对象、子级、父级以及单个、全部选择获取方法",
+        "区分 GetComponent、TryGetComponent、Inspector 引用和保存结果"
       ],
       "theory": [
         {
-          "title": "先问需要哪个对象的组件",
+          "title": "先逐段读懂最常见的一行",
           "paragraphs": [
-            "GetComponent 在当前对象上寻找指定类型。父对象没有 SpriteRenderer，而子对象有时，父级调用不会自动得到任意子对象上的那个组件。看到返回空值，先确认查找范围，而不是马上怀疑类型名字写错。",
-            "GetComponentInChildren、GetComponentInParent 与显式引用表达不同关系。选择哪个，应由你的结构决定。若有多个显示子对象，单说“找一个 Renderer”仍不够清楚；最好明确需要身体、武器还是特效的那个，避免层级稍改就找错目标。",
-            "名字里的 InChildren 不代表只查子对象：GetComponentInChildren 会先检查调用对象本身，再向下查找，默认不遍历未激活的子对象；需要这些子对象时要明确传 includeInactive=true。多个候选还会让“第一个找到的”与“业务上要的”不同。先在 Root 自身也放一个候选，再开关 View，能看出查找范围和活动状态如何共同改变结果。"
+            "`Rigidbody2D body = GetComponent<Rigidbody2D>();` 可以拆成四部分：左侧 `Rigidbody2D` 是变量类型，`body` 是变量名，`GetComponent` 是要调用的方法，尖括号里的 `Rigidbody2D` 是要寻找的组件类型。返回值找到时是一份组件引用，当前对象没有这种组件时则是 null。",
+            "脚本继承 MonoBehaviour，而 MonoBehaviour 本身也是 Component，所以可以直接写 `GetComponent<T>()`。没有写调用对象时，调用者就是挂载这段脚本的那个组件，搜索目标是该组件所在的 GameObject。也可以写 `gameObject.GetComponent<T>()`，意思更显式，但搜索范围相同。"
           ]
         },
         {
-          "title": "声明依赖帮助搭建，验证确认现状",
+          "title": "当前对象：一个用 GetComponent，全部用 GetComponents",
           "paragraphs": [
-            "RequireComponent 可以在添加脚本时帮助补上同对象需要的组件。示例声明 SpriteRenderer，表达这个脚本希望与显示组件放在一起，初学者不必每次手动记住添加顺序。",
-            "但声明不等于证明任何已有场景都正确。旧对象、预制配置和之后的改动仍需检查。Awake 中 TryGetComponent 同时完成尝试获取与结果判断：没有得到必要组件时，报告缺少什么并停止无效逻辑，使问题在建立依赖时就暴露。"
+            "`GetComponent<T>()` 只检查当前 GameObject，并返回一个匹配组件。它不会自动向子级、父级或整个场景扩大范围。对象上允许存在多个同类型组件时，“得到一个”也不等于“已经确认是业务想要的那个”。",
+            "`GetComponents<T>()` 同样只检查当前 GameObject，但返回全部匹配项。数组长度为 0 表示没有找到。若一个对象有两个 Collider2D，需要逐个检查，就应使用复数形式；不要连续调用单数方法并期待它自动给出下一个。"
           ]
         },
         {
-          "title": "缓存只是不再重复寻找",
+          "title": "当前对象的可读失败分支：TryGetComponent",
           "paragraphs": [
-            "在 Awake 找到 view 并保存在字段中，之后 SetVisible 可以直接使用它。这叫缓存引用，也就是记住一次查找结果。它减少重复访问，却不会给目标复制一个备份，更不会阻止其他代码销毁目标。",
-            "假设外部系统删除 View，缓存不可能凭空创建新的 Renderer。使用前是否检查、何时重新绑定，应根据对象寿命决定。长期固定的同对象依赖与随场景替换的外部目标，不能一律套用同一种缓存策略。"
+            "`TryGetComponent<T>(out T component)` 也只检查当前 GameObject。找到时把引用写入 out 变量并返回 true，找不到时把变量设为 null 并返回 false。`out` 表示方法除了返回布尔值，还会给调用者写出一个结果变量。",
+            "它与 GetComponent 的搜索范围相同，区别主要在调用形状：`if (TryGetComponent(out body))` 把“尝试获取”和“是否成功”写在同一个条件里。它不会搜索子对象，也不会在失败时自动添加组件。想让缺失组件自动补上，要讨论的是 RequireComponent 或明确的创建逻辑。"
           ]
         },
         {
-          "title": "引用失效时要有明确反应",
+          "title": "向下找：InChildren 也会先检查自己",
           "paragraphs": [
-            "必要依赖不存在时，每帧报一次空引用只会淹没 Console。更容易处理的方式是说明对象、所缺组件以及当前操作为什么停止。错误应靠近引用建立或实际使用的位置，而不是在很远的地方才表现成画面异常。",
-            "如果依赖是可选的，例如没有装饰特效时仍允许玩法继续，就应把“允许缺失”写清。不要用返回随便一个场景对象来掩盖失败；那会让代码表面不报错，却控制错误目标，后续比空引用更难解释。"
+            "`GetComponentInChildren<T>()` 先检查调用对象自身，再按层级向下搜索子孙对象，返回第一个匹配项。名字里的 InChildren 很容易让人误以为会跳过自己，官方说明明确指出调用对象自身始终会被检查。",
+            "默认调用不包含未激活的子对象；传入 `true` 可以包含它们，例如 `GetComponentsInChildren<SpriteRenderer>(true)`。复数版本返回自身和后代中的全部匹配项。单数版本遇到多个候选时只给出一个，而且同一对象上多个组件的检查顺序没有业务保证，因此关键目标不应依赖“碰巧先找到谁”。"
           ]
         },
         {
-          "title": "层级改变会改变查找含义",
+          "title": "向上找：InParent 也从自己开始",
           "paragraphs": [
-            "原来只有一个 View，后来加入武器与影子，子级查找可能面对更多候选。即使它仍返回非空，也不表示选中了你想要的那个。记录返回组件所在对象，有助于发现查找成功但对象错误的情况。",
-            "Inspector 直接引用让关系更明显，但也需要正确赋值和保存。运行时替换对象时，旧引用仍需主动更新。查找与显式引用没有永远优胜的一方，关键是结构变化时，哪种关系更容易被发现、验证和维护。"
+            "`GetComponentInParent<T>()` 先检查调用对象自身，再沿父级向上寻找，返回第一个匹配项。`GetComponentsInParent<T>()` 返回自身与父级链上的全部匹配项。它们适合表达“从武器找到所属角色”或“从界面子元素找到外层控制器”这类层级关系。",
+            "带 `includeInactive` 的重载可以决定是否把未激活父对象纳入遍历。无论选哪种方法，都要先画出实际 Hierarchy，再说“向上”究竟经过哪些对象。若对象运行时会被换父，查找结果也可能随结构变化。"
           ]
         },
         {
-          "title": "按功能确认依赖是否真的够用",
+          "title": "泛型、Type 和字符串是同一目的的不同重载",
           "paragraphs": [
-            "拿到 SpriteRenderer 后，SetVisible 只修改其 enabled。它没有关闭 Collider，也没有暂停脚本，更没有保证相机会绘制这个 Sprite。代码只完成自己负责的显示开关，其他显示条件仍需分别检查。",
-            "实验应先验证组件获取，再验证开关数值，最后观察相机画面。若字段已改变而画面没变，下一步应看图片、材质、相机和排序，而不是重复调用 GetComponent。将“引用正确”和“功能全部成立”分开，才能逐层找到剩余问题。"
+            "官方 API 还提供 `GetComponent(typeof(Rigidbody2D))` 这样的 Type 重载，以及接受类型名称字符串的旧式重载。它们都在表达“找某种组件”，但返回类型和类型检查方式不同。初学阶段优先写泛型 `GetComponent<Rigidbody2D>()`：结果类型明确，重命名类型时也更容易由编译器发现问题。",
+            "知道其他重载存在，是为了看官方文档时不困惑，不是要求把每种写法都混进项目。Type 重载常见于运行时才拿到 System.Type 的工具代码；字符串写法效率更低，也更容易把拼写错误拖到运行时，普通玩法脚本没有必要优先使用。"
           ]
         },
         {
-          "title": "为查找结果加上可核对的身份",
+          "title": "组件家族不等于场景全局查找",
           "paragraphs": [
-            "一次查找返回非空以后，输出组件所在对象的名称和上下文。场景同时存在身体与武器时，要验证返回的是预期对象，不能把“找到一个”当作“找对一个”。",
-            "接着把候选子对象换个层级再测试。若结果改变，就说明实现依赖层级结构；若设计不允许这种变化，应将结构要求写清，或者改为显式引用。这样查找策略的限制就来自具体实验，而不是一句模糊的“缓存比较快”。"
+            "GetComponent 家族围绕“当前对象及它的父子层级”工作。它不会从整个场景任意挑一个同类型对象。Unity 另有按场景查找对象的 API，但那是范围更大的另一类工具，不能把它们都简称成 GetComponent。",
+            "如果脚本只应控制一个明确的 Body，最清楚的做法有时是在 Inspector 暴露 `SpriteRenderer body`，由设计者把指定组件拖入，而不是每次从多个子级猜一个。获取方法与 Inspector 引用都不是永远更好的答案；要看关系是“同对象固定依赖”“稳定层级关系”还是“人为指定目标”。"
+          ]
+        },
+        {
+          "title": "只在这里正式讨论保存查找结果",
+          "paragraphs": [
+            "同一组件会反复使用固定 Rigidbody2D 时，可以在 Awake 获取一次并保存到字段，之后直接使用这份引用。这通常叫缓存组件引用。它避免重复查找，也让缺失依赖能在初始化附近暴露。",
+            "保存引用不会复制组件，也不会阻止别的系统销毁目标。若目标会被替换或销毁，就要规定由谁重新赋值、何时停止使用。第 6 课讲的是引用与对象寿命；本课只把那条规则应用到组件获取，不再把“缓存”当成每一课都要重新讲的独立主题。"
           ]
         }
       ],
       "code": {
-        "title": "验证并缓存必需组件",
+        "title": "一次输出七种获取结果的完整探针",
         "language": "csharp",
-        "filename": "RendererDependency.cs",
-        "source": "using UnityEngine;\n[RequireComponent(typeof(SpriteRenderer))]\npublic sealed class RendererDependency : MonoBehaviour\n{\n    SpriteRenderer view;\n    void Awake()\n    {\n        if (!TryGetComponent(out view))\n        {\n            Debug.LogError(\"SpriteRenderer required on this object.\", this);\n            enabled = false;\n        }\n    }\n    public void SetVisible(bool value) { if (view != null) view.enabled = value; }\n}",
+        "files": [
+          {
+            "filename": "ComponentLookupProbe.cs",
+            "source": "using UnityEngine;\n\npublic sealed class ComponentLookupProbe : MonoBehaviour\n{\n    [ContextMenu(\"Report component lookups\")]\n    private void Report()\n    {\n        Rigidbody2D current = GetComponent<Rigidbody2D>();\n        bool foundCurrent = TryGetComponent<Rigidbody2D>(out Rigidbody2D currentViaTry);\n        Collider2D[] currentColliders = GetComponents<Collider2D>();\n        SpriteRenderer firstBelow = GetComponentInChildren<SpriteRenderer>();\n        SpriteRenderer[] allBelow = GetComponentsInChildren<SpriteRenderer>(true);\n        AudioSource firstAbove = GetComponentInParent<AudioSource>(true);\n        AudioSource[] allAbove = GetComponentsInParent<AudioSource>(true);\n\n        Debug.Log($\"GetComponent: {Label(current)}\", this);\n        Debug.Log($\"TryGetComponent: {foundCurrent}, {Label(currentViaTry)}\", this);\n        Debug.Log($\"GetComponents: {Labels(currentColliders)}\", this);\n        Debug.Log($\"GetComponentInChildren: {Label(firstBelow)}\", this);\n        Debug.Log($\"GetComponentsInChildren(true): {Labels(allBelow)}\", this);\n        Debug.Log($\"GetComponentInParent(true): {Label(firstAbove)}\", this);\n        Debug.Log($\"GetComponentsInParent(true): {Labels(allAbove)}\", this);\n    }\n\n    private static string Label(Component item)\n    {\n        return item == null ? \"not found\" : $\"{item.GetType().Name} on {item.gameObject.name}\";\n    }\n\n    private static string Labels<T>(T[] items) where T : Component\n    {\n        if (items.Length == 0) return \"none\";\n\n        string[] labels = new string[items.Length];\n        for (int i = 0; i < items.Length; i++)\n            labels[i] = Label(items[i]);\n\n        return string.Join(\", \", labels);\n    }\n}"
+          },
+          {
+            "filename": "RendererDependency.cs",
+            "source": "using UnityEngine;\n\n[RequireComponent(typeof(SpriteRenderer))]\npublic sealed class RendererDependency : MonoBehaviour\n{\n    private SpriteRenderer view;\n\n    private void Awake()\n    {\n        if (!TryGetComponent<SpriteRenderer>(out view))\n        {\n            Debug.LogError(\"SpriteRenderer is required on this GameObject.\", this);\n            enabled = false;\n        }\n    }\n\n    public void SetVisible(bool value)\n    {\n        if (view != null)\n            view.enabled = value;\n    }\n}"
+          }
+        ],
         "explanation": [
-          "RendererDependency 挂到空对象时会要求同对象有 SpriteRenderer。SetVisible 只控制显示组件，不会关闭碰撞或其他脚本；示例也没有自动指定图片。",
-          "正文的 Root/View 是查找范围对照，RendererDependency 则要求同对象依赖，不能把它直接挂在只有子级 SpriteRenderer 的 Root 上再当作子级查找示例。显示 Sprite 还需要为 SpriteRenderer 指定 Sprite，查找实验可以先不指定图片。"
+          "ComponentLookupProbe 是查找范围实验。按说明搭好 Actors/Player/Body/Shadow，把探针挂 Player，进入 Play 后从组件三点菜单执行 Report component lookups；Console 每行都会给出类型和对象名。",
+          "RendererDependency 是另一个独立实验：它要求 SpriteRenderer 与脚本在同一对象上，用来比较 RequireComponent 与 TryGetComponent。不要把它挂到只有子级 SpriteRenderer 的 Player 后，误以为它会展示子级查找。"
         ]
       },
       "lab": [
         {
-          "title": "确定查找范围与结果身份",
+          "title": "把七种方法放进同一棵层级验证",
           "minutes": 60,
           "steps": [
-            "在父级、当前对象和子级分别放置同类测试组件，给对象不同名字。",
-            "比较GetComponent与子级查找，每次输出找到的对象上下文。",
-            "移动子级后重测，再比较Inspector直接引用，说明各自依赖哪种结构。"
+            "按准备说明建立对象和组件，先画出预期：每种方法应返回哪些对象。",
+            "运行完整 ComponentLookupProbe，从组件菜单执行报告，把七行结果与方法选择表逐项对照。",
+            "依次激活 Shadow、给 Player 添加 SpriteRenderer、移除一个 Collider2D；每次只改一项并重新报告。"
           ],
-          "result": "能找到组件，也能说明为什么是这个实例。",
-          "purpose": "用已知层级验证查找范围和返回对象身份。",
+          "result": "每种结果都能由起点、方向、数量和活动状态解释，并能指出组件所在对象。",
+          "purpose": "用一套固定 Hierarchy 对照当前、向下、向上以及单数、复数结果。",
           "setup": [
-            "创建空对象 Ancestor、Root、View；在 Hierarchy 拖成 Ancestor/Root/View。分别通过 Add Component 给三者添加 SpriteRenderer，并记录名字。Sprite 槽可以暂空，查找不依赖画面是否可见。",
-            "另建 ComponentLookupProbe 挂 Root，在 Start 中分别调用 GetComponent<SpriteRenderer>()、GetComponentInChildren<SpriteRenderer>()；打印结果对象名与上下文。先保留 Root 组件，再移除 Root 组件重做，避免误以为子级查找必定跳过自身。",
-            "若有多个候选，预先说明想要哪个 View；新增一个 [SerializeField] SpriteRenderer 槽，从 Hierarchy 将指定 View 拖进去作为直接引用对照。"
+            "创建空对象 Actors，再创建子对象 Player；在 Player 下创建 Body 和 Shadow。最终 Hierarchy 为 Actors/Player/Body 与 Actors/Player/Shadow。",
+            "给 Actors 添加 AudioSource；给 Player 添加 Rigidbody2D、BoxCollider2D、CircleCollider2D 和 ComponentLookupProbe；给 Body、Shadow 各添加 SpriteRenderer。先取消 Shadow 对象左侧活动勾选。",
+            "SpriteRenderer 的 Sprite 槽可以为空，因为本实验只查组件是否存在。进入 Play，选中 Player，在 ComponentLookupProbe 右上角三点菜单选择 Report component lookups，Console 关闭 Collapse。"
           ]
         },
         {
-          "title": "测试依赖缺失和引用失效",
+          "title": "比较自动补依赖、失败分支和显式引用",
           "minutes": 60,
           "steps": [
-            "给空对象添加RendererDependency，观察RequireComponent的辅助效果。",
-            "另写需要外部引用的探针，故意漏赋，核对一次错误是否明确说明对象与原因。",
-            "取得外部目标后销毁它，再使用缓存，加入安全停止或明确重新绑定。"
+            "给新空对象添加 RendererDependency，观察 Unity 同时添加同对象 SpriteRenderer；再核对 Awake 的 TryGetComponent 只查当前对象。",
+            "建立一个带 [SerializeField] SpriteRenderer 槽的对照脚本，分别拖入 Body 与 Shadow，确认显式引用不会因为候选顺序改变而换目标。",
+            "在实验副本销毁被引用对象，等销毁生效后再使用引用；记录失败并选择停止操作或由明确流程重新赋值。"
           ],
-          "result": "缺失与失效都有可解释处理，不依赖缓存自动恢复。",
-          "purpose": "区分添加时辅助、外部必需引用和已经缓存后的失效。",
+          "result": "能说明添加时辅助、运行时获取、人工指定和对象销毁是四个不同问题。",
+          "purpose": "分清 RequireComponent、TryGetComponent 和 Inspector 指定目标各自解决什么。",
           "setup": [
-            "另建空对象 RequiredView，添加本课 RendererDependency，观察 Inspector 自动出现同对象 SpriteRenderer；此实验不沿用只有子级 Renderer 的布置。",
-            "需要外部引用的对照可沿用第5课 ReferenceProbe，将 Target 槽留空并重新 Play，检查一次诊断。",
-            "销毁后检查用另外一个始终活动的持有者保存目标引用；只销毁目标、不销毁持有者。通过 Play 中 Hierarchy 的删除操作制造失效，再由持有者检查并停止使用缓存。"
+            "另建空对象 RequiredView，添加 RendererDependency，观察 Inspector 是否自动出现同对象 SpriteRenderer。这个对象不沿用 Player 的父子查找层级。",
+            "显式引用对照脚本可只含 [SerializeField] private SpriteRenderer target 和一个报告 target.gameObject.name 的 ContextMenu 方法；把 Body 或 Shadow 的组件拖入 Target 槽。",
+            "销毁实验必须在 Play 中进行，并由另一个仍活动的持有者保存引用。销毁目标后至少等待到当前 Update 循环结束，再检查 Unity 对象有效性。"
           ]
         }
       ],
       "pitfalls": [
         {
-          "symptom": "子对象有组件，当前对象GetComponent却返回空",
-          "cause": "这个方法只查当前对象，没有自动扩大到子级。",
-          "fix": "确认所需组件的位置，使用对应范围或直接赋引用，并打印返回对象身份。"
+          "symptom": "子对象有组件，GetComponent 却返回 null",
+          "cause": "GetComponent 只查调用对象自身，没有向下搜索",
+          "fix": "先确认组件位置；需要层级搜索时选 InChildren，目标固定时考虑 Inspector 引用"
         },
         {
-          "symptom": "缓存过的目标后来仍报MissingReferenceException",
-          "cause": "其他逻辑销毁了目标，缓存没有延长它的寿命。",
-          "fix": "使用时检查目标；按需求停止或明确绑定新对象，不假定缓存会自愈。"
+          "symptom": "GetComponentInChildren 返回非空，却控制了错误对象",
+          "cause": "自身或多个子级都有匹配组件，单数方法只返回其中一个",
+          "fix": "输出对象身份；改用明确结构、复数筛选或显式引用，不把非空当作找对"
         }
       ],
       "exercise": {
-        "brief": "制作可替换显示目标的控制组件，不依赖固定子对象名字；缺少必要显示目标时说明原因并停止无效操作。",
+        "brief": "建立 Equipment/Character/Visual/Shadow 四层对象，并写出一张“组件需求表”：每项先注明起点、方向、数量和是否包含未激活对象，再实现获取与身份报告。",
         "deliverables": [
-          "引用关系图",
-          "组件源码",
-          "层级调整与目标销毁两项测试"
+          "组件需求表",
+          "完整查找探针源码",
+          "四种层级变化前后的结果记录"
         ],
         "rubric": [
           {
-            "item": "引用范围清晰",
+            "item": "每次调用的起点与方向明确",
             "points": 25
           },
           {
-            "item": "必要依赖有验证",
+            "item": "单数与复数选择符合需求",
             "points": 25
           },
           {
-            "item": "缓存寿命有处理",
+            "item": "未激活对象规则经过验证",
             "points": 25
           },
           {
-            "item": "层级变化无隐式失效",
+            "item": "返回对象身份和失败分支可检查",
             "points": 25
           }
         ]
       },
       "quiz": [
         {
-          "question": "GetComponent 会自动查找任意子对象吗？",
+          "question": "Player 的 SpriteRenderer 只在子对象 Body 上，Player.GetComponent<SpriteRenderer>() 会得到什么？",
           "options": [
-            "不会，它只查当前对象",
-            "会遍历任意深度的所有子对象",
-            "同名时自动扩大到子对象",
-            "找不到时自动创建目标组件"
+            "null，因为它只查 Player 自身",
+            "Body 的组件，因为会自动遍历全部子级",
+            "场景中任意一个 SpriteRenderer",
+            "自动在 Player 上添加一个组件"
           ],
           "answer": 0,
-          "explanation": "查找范围由方法决定，需要子级时应选择相应接口或明确引用。",
-          "scenario": "脚本挂在 Root，SpriteRenderer 只挂在它的子对象 View；Root 本身没有该组件。现在仅调用 Root.GetComponent<SpriteRenderer>()。"
+          "explanation": "GetComponent 只检查调用对象自身。父子方向必须由 InChildren 或显式引用表达。",
+          "scenario": "探针挂在 Player。Player 本身没有 SpriteRenderer，直接子对象 Body 有一个；当前只调用 Player.GetComponent<SpriteRenderer>()。"
         },
         {
-          "question": "缓存 Transform 后，目标能被别人销毁吗？",
+          "question": "需要取得 Player 及其后代的全部 SpriteRenderer，包括未激活的 Shadow，应选哪种写法？",
           "options": [
-            "不能，缓存会锁住对象",
-            "能，引用缓存不延长原生对象寿命",
-            "只要字段非空就会自动恢复",
-            "缓存会留下独立复制的目标"
+            "GetComponent<SpriteRenderer>()",
+            "GetComponentsInChildren<SpriteRenderer>(true)",
+            "TryGetComponent<SpriteRenderer>(out value)",
+            "GetComponentInParent<SpriteRenderer>()"
           ],
           "answer": 1,
-          "explanation": "记住引用不等于拥有目标的创建和销毁权。",
-          "scenario": "组件把另一个对象的 Transform 存入字段 cachedTarget；该对象的拥有者仍可在之后调用 Destroy。缓存操作没有复制或接管目标。"
+          "explanation": "复数 InChildren 表示自身和后代的全部匹配项，true 表示把未激活子对象也纳入搜索。",
+          "scenario": "Player 自身、Body 和未激活 Shadow 都可能有 SpriteRenderer；需求明确要求取得全部三个范围中的组件。"
         },
         {
-          "question": "必需依赖缺失时更好的反馈是？",
+          "question": "TryGetComponent<Rigidbody2D>(out body) 返回 false 说明什么？",
           "options": [
-            "持续重试并忽略全部异常",
-            "找另一个同类型对象临时顶替",
-            "一次明确报告并停止当前无效逻辑",
-            "把引用改 static 就保证存在"
+            "它会继续每帧重试",
+            "它已在子对象创建刚体",
+            "当前 GameObject 没找到该类型，body 为 null",
+            "把字段改成 static 就能找到"
           ],
           "answer": 2,
-          "explanation": "必要条件失败应明确暴露，随机替换会把故障变成错误对象控制。",
-          "scenario": "一个必须有目标才能工作的组件在初始化时发现目标缺失。随便找另一个同类对象可能控制错人，也没有证据表明稍后一定会补齐。"
+          "explanation": "TryGetComponent 只检查当前 GameObject，以布尔值表示成功与否，并通过 out 给出结果。",
+          "scenario": "脚本从自己所在的 Player 调用 TryGetComponent<Rigidbody2D>(out body)。Player 没有 Rigidbody2D，父级和子级即使有也不在这次搜索范围。"
         }
       ],
       "references": [
@@ -702,42 +774,123 @@ window.COURSE_MODULES.push({
           "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponent.html"
         },
         {
-          "label": "RequireComponent",
-          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/RequireComponent.html"
+          "label": "Component.TryGetComponent",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.TryGetComponent.html"
+        },
+        {
+          "label": "Component.GetComponents",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponents.html"
         },
         {
           "label": "Component.GetComponentInChildren",
           "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponentInChildren.html"
+        },
+        {
+          "label": "Component.GetComponentsInChildren",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponentsInChildren.html"
+        },
+        {
+          "label": "Component.GetComponentInParent",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponentInParent.html"
+        },
+        {
+          "label": "Component.GetComponentsInParent",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Component.GetComponentsInParent.html"
+        },
+        {
+          "label": "RequireComponent",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/RequireComponent.html"
         }
       ],
       "summary": [
-        "找到非空组件以后，还要确认是不是预期实例。",
-        "缓存减少查找，不会延长目标寿命。"
+        "先定起点和方向，再选单数或复数；TryGet 只改变失败分支，不扩大范围。",
+        "InChildren 与 InParent 都先检查调用对象自身，找到非空后还要核对对象身份。"
       ],
       "teaching": {
-        "question": "脚本需要子对象上的 SpriteRenderer，为什么在父对象调用 GetComponent 却找不到？缓存后目标又为什么会失效？",
-        "keyIdea": "查找方法决定查找范围。缓存只是记住找到的引用，不会自动复制目标或保证目标一直存在。",
+        "scenario": "在 Hierarchy 建立 Actors/Player/Body 和 Actors/Player/Shadow。探针挂在 Player：Player 自己有 Rigidbody2D 和两个 Collider2D；Body 有 SpriteRenderer；Shadow 也有 SpriteRenderer，但对象先设为未激活；Actors 有 AudioSource。现在每个问题都有明确范围和预期数量。",
+        "question": "脚本要取得这些组件时，怎样根据“当前、向下、向上”和“一个、全部”选择正确方法？",
+        "purpose": "看到任何 GetComponent 家族调用，都能说清从哪个对象开始、搜索哪一段层级、返回一个还是多个，以及找不到时得到什么。",
+        "keyIdea": "先确定搜索范围，再确定结果数量，最后决定失败分支。方法名不是要背的七个孤立单词，而是“方向 + 单复数 + 获取方式”的组合。",
         "walkthrough": [
           {
-            "title": "明确组件在哪",
-            "text": "在 Root 下建立 View，只把 SpriteRenderer 放在 View。先在 Root 调用 GetComponent，记录没有找到的结果。"
+            "title": "先查 Player 自身",
+            "text": "在 Player 上调用 GetComponent<Rigidbody2D>() 应取得 Player 的刚体；调用 GetComponents<Collider2D>() 应取得 Player 上全部二维碰撞组件，不查看 Body。"
           },
           {
-            "title": "改变查找方式",
-            "text": "改用明确的子级查找或 Inspector 引用，记录实际得到哪个对象，避免场景里有多个候选时靠猜测。"
+            "title": "再比较活动与未活动子级",
+            "text": "调用 GetComponentInChildren<SpriteRenderer>() 时先查 Player，再向下找活动子级；Shadow 未激活时默认不计入。复数版本传 true 后，Body 与 Shadow 都应出现在结果里。"
           },
           {
-            "title": "检查引用寿命",
-            "text": "保存 View 的引用后销毁 View，再检查缓存。缓存仍可能保留托管引用，但对应引擎对象已经失效。"
+            "title": "最后沿父级向上",
+            "text": "从 Player 调用 GetComponentInParent<AudioSource>(true)，先检查 Player，再检查 Actors，最终取得 Actors 上的 AudioSource。输出组件类型和所在对象名，不能只写“找到了”。"
           }
         ],
-        "prediction": {
-          "question": "加上 RequireComponent 后，运行时可以完全不检查现有依赖吗？",
-          "answer": "不能把声明当作所有历史配置的证明。它帮助添加依赖，但已有对象或后来变化仍要按实际需求验证。",
-          "scenario": "某脚本类型写了 RequireComponent(typeof(SpriteRenderer))。你面对的是项目里实际存在的对象，可能有历史配置或运行时变化，尚未逐一检查这些对象的依赖。"
+        "comparison": {
+          "caption": "GetComponent 家族选择表。这里的“自身”都是调用方法的那个 GameObject。",
+          "headers": [
+            "方法",
+            "搜索范围",
+            "结果数量",
+            "未激活对象",
+            "未找到"
+          ],
+          "rows": [
+            [
+              "GetComponent<T>()",
+              "仅自身",
+              "一个",
+              "自身活动状态不影响取得自身组件",
+              "null"
+            ],
+            [
+              "TryGetComponent<T>(out value)",
+              "仅自身",
+              "一个",
+              "自身活动状态不影响取得自身组件",
+              "false，value 为 null"
+            ],
+            [
+              "GetComponents<T>()",
+              "仅自身",
+              "全部",
+              "自身活动状态不影响取得自身组件",
+              "空数组"
+            ],
+            [
+              "GetComponentInChildren<T>()",
+              "自身，再向下",
+              "第一个",
+              "默认跳过未激活子级；可传 true",
+              "null"
+            ],
+            [
+              "GetComponentsInChildren<T>()",
+              "自身和全部后代",
+              "全部",
+              "默认跳过未激活子级；可传 true",
+              "空数组"
+            ],
+            [
+              "GetComponentInParent<T>()",
+              "自身，再向上",
+              "第一个",
+              "可用 includeInactive 重载控制父级",
+              "null"
+            ],
+            [
+              "GetComponentsInParent<T>()",
+              "自身和父级链",
+              "全部",
+              "可用 includeInactive 重载控制父级",
+              "空数组"
+            ]
+          ]
         },
-        "scenario": "先做查找实验：Root 下有 View，SpriteRenderer 只加在 View。再单独做依赖实验：RendererDependency 要求 SpriteRenderer 与自己在同一个对象上。前一个问题是去哪里找，后一个问题是声明同对象依赖，两者不能混用。",
-        "purpose": "能解释查到哪个组件、为什么是它，以及缓存以后由谁保证目标仍可使用。"
+        "prediction": {
+          "scenario": "Player 自己后来也添加了 SpriteRenderer，Body 仍保留另一个 SpriteRenderer。探针继续从 Player 调用单数 GetComponentInChildren<SpriteRenderer>()。",
+          "question": "它还会跳过 Player，直接返回 Body 上的 SpriteRenderer 吗？",
+          "answer": "不会。InChildren 会先检查调用对象自身；Player 已有匹配组件时，单数方法会先返回它。若业务明确需要 Body，应使用可核对的显式引用，或让层级与查找规则能唯一确定目标。"
+        }
       }
     },
     {
@@ -765,122 +918,136 @@ window.COURSE_MODULES.push({
         }
       ],
       "id": "l009",
-      "title": "事件、委托与启用周期：订阅也是一种资源",
+      "title": "事件入门：谁发布、谁监听、何时断开",
       "prerequisites": [
         "l008"
       ],
       "goals": [
-        "解释订阅如何形成对处理方法的引用",
-        "让启用期订阅与禁用期退订成对出现",
-        "用通知次数发现重复订阅和残留关系"
+        "用具体对象解释发布者、事件、监听者和处理方法",
+        "看懂 Action、event、+=、-= 与 Invoke 在示例中的作用",
+        "通过重复连接实验发现同一处理方法被加入多次"
       ],
       "theory": [
         {
-          "title": "事件先解决通知谁的问题",
+          "title": "先把四个名词对应到两个对象",
           "paragraphs": [
-            "假设计数器变化后，多个面板都要更新。计数器可以逐一查找面板并调用，也可以发出“数值变了”的事件，让关心它的面板自己订阅。发布者因此不必了解每种显示组件，新增监听者也不必改发布逻辑。",
-            "订阅并不神秘：它把一个处理方法放入委托列表。普通 C# 事件被调用时，处理方法默认沿当前调用链同步执行，不会自动推迟到下一帧或后台线程。因此处理方法仍应避免长时间阻塞，也要考虑处理期间是否再次触发其他通知。",
-            "普通多播事件默认沿当前线程依次调用处理方法。若某个处理方法抛出异常，且调用链没有处理它，这次调用不会自动继续执行列表后面的处理方法。于是“面板B没收到”除了漏订阅，也可能是面板A先失败了。日志应同时记发布开始、各处理入口和异常；不要把普通 C# event 想成会独立投递、彼此隔离的消息队列。"
+            "场景里有 SignalHub 和 ListenerA。SignalHub 是发布者，因为事实发生时由它发出通知；它公开的 Signal 是事件；ListenerA 是监听者；ListenerA 中收到通知后执行的 HandleSignal 是处理方法。先记住这四个角色，再读语法。",
+            "事件适合“某件事发生后，可能有零个、一个或多个对象想知道”的情景。发布者不必逐个保存所有界面和音效脚本，只负责发出语义清楚的通知；监听者自己决定是否建立联系。事件不是自动出现的全局消息，也不会替你寻找场景对象。"
           ]
         },
         {
-          "title": "监听多久就配对管理多久",
+          "title": "Action 描述处理方法的形状",
           "paragraphs": [
-            "一个面板只在显示期间需要通知，可在 OnEnable 注册、OnDisable 移除。打开时加一次，关闭时减一次，再打开时重新加入。这样十次开关以后，列表里仍只有当前需要的一份处理方法。",
-            "若每次启用都 +=，却从不 -=，一次发布可能执行多次。对象看不见并不等于委托列表已经删除它。对需要从创建一直监听到销毁的对象，边界可以不同，但仍要说明何时加入、何时移除，而不是机械套用某两个函数。"
+            "`Action` 是一种委托类型。当前示例的 `Action` 表示可以引用“没有参数、没有返回值”的方法，所以 `HandleSignal()` 与它匹配。若事件需要携带分数，可以使用 `Action<int>`，相应处理方法就必须接收一个 int。",
+            "委托可以理解为可调用的方法引用。`event Action Signal` 在此基础上限制了谁能从外部直接触发或覆盖列表：其他对象可以订阅和退订，真正 Invoke 事件的责任仍留在发布者内部。初学时先用这个边界，不要把 event 与 UnityEvent、Input Action 或协程混成同一种东西。"
           ]
         },
         {
-          "title": "退订需要对应同一方法身份",
+          "title": "+= 建立联系，-= 移除同一联系",
           "paragraphs": [
-            "命名方法 Handle 便于在两处使用同一个处理目标和方法。匿名函数也可以订阅，但之后重新写一个看起来相同的 lambda，不能被当作可靠的同一委托。需要移除时，应保留最初订阅的委托引用。",
-            "这里重要的是关系身份，不是两段文字长得是否一样。捕获局部变量的匿名函数还会持有相关数据。写完订阅后，立刻问“以后用什么移除它”，能比等重复通知出现后再寻找原因更早暴露问题。"
+            "`hub.Signal += HandleSignal` 把当前对象的 HandleSignal 加入 hub 的调用列表。`hub.Signal -= HandleSignal` 移除对应的处理方法。这里的“同一”包含目标对象和方法身份，不是只看两段文字长得像不像。",
+            "若连续执行三次 += 而没有 -=，同一次 Publish 就可能调用三次。重复十次不是 Unity 的规定，只是故意把错误放大，方便数日志。正确代码可以用 connected 状态防止重复连接，并在不再需要监听时断开。"
           ]
         },
         {
-          "title": "发布者可能比监听对象活得更久",
+          "title": "Invoke 是当前调用链中的普通调用",
           "paragraphs": [
-            "长期服务或静态事件可以继续持有处理方法引用。若面板不再使用却未退订，发布者可能仍尝试通知它，也可能让托管对象和捕获数据继续被引用。垃圾回收不能替你决定这条业务关系何时不再需要。",
-            "Unity 对象销毁又有原生与托管包装之分，所以不能靠“场景里已经没了”推断事件列表干净。将通知次数与对象身份打印出来，确认销毁之后不再收到不该有的处理，比只观察画面是否关闭更可靠。"
+            "SignalHub 执行 `Signal?.Invoke()` 时，`?.` 表示没有监听者就跳过调用；有监听者时依次调用当前列表中的处理方法。普通 C# 事件不会自动等待下一帧，也不会自动切换到后台线程。",
+            "因此处理方法仍是发布动作的一部分。某个处理方法执行很久，发布者也会被拖住；某个处理方法抛出未处理异常，后面的处理也可能收不到这次调用。事件解决的是对象之间怎样建立通知关系，不负责自动隔离错误或调度时间。"
           ]
         },
         {
-          "title": "静态事件需要考虑播放模式设置",
+          "title": "Inspector 槽决定监听哪一个发布者",
           "paragraphs": [
-            "示例用static事件让两个对象共享发布者。Domain Reload（域重载）通常会重建托管运行环境；关闭它时，不能假定每次按播放都会清掉上一轮静态状态。示例用运行初始化方法明确清空静态事件，而非依赖上一次停止。",
-            "本课比较域重载时，保持Scene Reload（场景重载）开启，让场景实例重新经历相应启用流程。如果两种重载都关闭，保留实例未必重走OnEnable；此时只清空静态列表，可能没有重新订阅。本例不保证支持这种组合，需要另行设计重置与重新注册。正式架构也不必全部使用全局事件。"
+            "本课不用 static 事件。ListenerProbe 有一个 `[SerializeField] SignalHub hub` 字段，你要把场景中的 Hub 对象拖进这个槽。这样每个监听者连接哪一个发布者在 Inspector 中可见，不需要先理解全局静态状态和域重载。",
+            "若 Hub 槽为空，Connect 会明确报告并停止；它不会从场景里随便找一个同类型对象。场景有两个 Hub 时，这个选择尤其重要。引用建立与事件订阅是两步：先让字段指向发布者，再执行 += 建立监听关系。"
           ]
         },
         {
-          "title": "用次数验证关系是否正确",
+          "title": "连接多久，要由功能寿命决定",
           "paragraphs": [
-            "测试按一次发布，记录期望收到的对象和每个对象次数。再禁用一个，确认它不再参与；重新启用后应恢复一次。最后销毁它再次发布，检查没有残留处理。这一组变化能直接检验订阅寿命。",
-            "若只是给处理方法加一个布尔开关防止重复结果，可能掩盖列表已经累积的问题。应先核对实际调用次数与注册位置，再决定是否需要业务防重。事件负责通知，业务是否接受这次请求仍由明确规则判断，两者不能混在一起。"
+            "示例提供 Connect 和 Disconnect 两个组件菜单命令，让你先看清每一步。它还在 OnDisable 中调用 Disconnect，避免组件停用后继续监听。OnDisable 是 Unity 生命周期函数，下一章会系统学习；本课只把它当作“组件退出启用状态时，结束这条关系”的清理入口。",
+            "不是所有订阅都必须机械地放在 OnEnable/OnDisable。若功能需要在禁用期间继续监听，边界就不同。正确问题是：这条关系从何时开始，到何时应该结束？本课场景规定监听只在组件启用期间存在，所以停用时断开。"
+          ]
+        },
+        {
+          "title": "用次数检查关系，而不是只看画面",
+          "paragraphs": [
+            "先给 ListenerA 和 ListenerB 各连接一次，再发布一次，期望各收到一条日志。随后对 B 执行 Disconnect，下一次发布应只有 A 收到。重新连接 B 后再发布，两者应各增加一次。",
+            "最后在实验副本暂时去掉 connected 防重，连续 Connect 十次，再 Publish 一次。若出现十条 B 日志，就证明列表中真的累积了十份处理关系。恢复完整代码后重复同样操作，次数应回到一份。这个实验说明为什么要重复，也说明你到底在数什么。"
           ]
         }
       ],
       "code": {
-        "title": "同一脚本文件中的发布者与观察者",
+        "title": "一个发布者和一个可明确连接的监听者",
         "language": "csharp",
-        "filename": "SignalProbe.cs",
-        "source": "using System;\nusing UnityEngine;\npublic sealed class SignalProbe : MonoBehaviour\n{\n    public static event Action Signal;\n    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]\n    static void ResetStatics() => Signal = null;\n    void OnEnable() => Signal += Handle;\n    void OnDisable() => Signal -= Handle;\n    void Handle() => Debug.Log($\"Received by {name}\", this);\n    [ContextMenu(\"Publish\")]\n    void Publish() => Signal?.Invoke();\n}",
+        "files": [
+          {
+            "filename": "SignalHub.cs",
+            "source": "using System;\nusing UnityEngine;\n\npublic sealed class SignalHub : MonoBehaviour\n{\n    public event Action Signal;\n\n    [ContextMenu(\"Publish\")]\n    private void Publish()\n    {\n        Debug.Log(\"Hub published\", this);\n        Signal?.Invoke();\n    }\n}"
+          },
+          {
+            "filename": "ListenerProbe.cs",
+            "source": "using UnityEngine;\n\npublic sealed class ListenerProbe : MonoBehaviour\n{\n    [SerializeField] private SignalHub hub;\n    private bool connected;\n\n    [ContextMenu(\"Connect\")]\n    private void Connect()\n    {\n        if (hub == null)\n        {\n            Debug.LogError(\"Assign a SignalHub in the Inspector.\", this);\n            return;\n        }\n\n        if (connected) return;\n\n        hub.Signal += HandleSignal;\n        connected = true;\n        Debug.Log($\"Connected {name}\", this);\n    }\n\n    [ContextMenu(\"Disconnect\")]\n    private void Disconnect()\n    {\n        if (!connected) return;\n\n        hub.Signal -= HandleSignal;\n        connected = false;\n        Debug.Log($\"Disconnected {name}\", this);\n    }\n\n    private void OnDisable()\n    {\n        Disconnect();\n    }\n\n    private void HandleSignal()\n    {\n        Debug.Log($\"Received by {name}\", this);\n    }\n}"
+          }
+        ],
         "explanation": [
-          "放两个空对象并挂SignalProbe，在播放模式从组件菜单Publish。static只用于演示共享发布者，正式设计不必使用全局事件。",
-          "比较Domain Reload（域重载）开关时保持Scene Reload（场景重载）开启。若两者都关闭，保留实例不一定重走OnEnable，清空静态事件后还需重新注册；这不属于本例保证。"
+          "创建 Hub、ListenerA、ListenerB 三个空对象。Hub 挂 SignalHub；A、B 各挂 ListenerProbe，并把 Hub 对象上的 SignalHub 组件拖入各自 Hub 槽。",
+          "进入 Play 后，通过组件三点菜单执行 Connect、Disconnect 和 Publish。OnDisable 只作为本例清理入口；下一章会从对象状态开始系统解释它何时调用。"
         ]
       },
       "lab": [
         {
-          "title": "用次数检查注册与移除",
+          "title": "逐步建立和断开两条监听关系",
           "minutes": 60,
           "steps": [
-            "创建两个SignalProbe，播放后Publish一次，确认各一条日志。",
-            "反复开关其中一个10次，再发布，比较每个有效对象次数。",
-            "在副本暂时移除退订，看次数怎样累积，记录后恢复正确代码。"
+            "A、B 各 Connect 一次，Publish 一次，确认两者各收到一条。",
+            "B Disconnect 后再次 Publish，确认只有 A 新增一条；B 重新 Connect 后再发布。",
+            "禁用 B 的 ListenerProbe 后发布，确认 OnDisable 已断开；重新启用不会自动 Connect，需手动建立新关系。"
           ],
-          "result": "用调用次数证明关系是否成对管理。",
-          "purpose": "通过同一次发布的接收数，检查订阅和退订是否配对。",
+          "result": "能用当前事件列表解释每次发布由哪些对象接收。",
+          "purpose": "让每一条日志都能对应到一次明确的 Connect、Disconnect 或 Publish。",
           "setup": [
-            "创建两个空对象 ListenerA、ListenerB，各添加 SignalProbe；Console 关闭 Collapse，以便数清 Received by ListenerA/B。",
-            "Play 后选中任一对象，在 SignalProbe 组件右上角三点菜单点 Publish。这里是测试命令，不是按键，也无需另建事件发布脚本。",
-            "只切换 ListenerB 的组件勾选，ListenerA 保持启用；每次恢复后发布一次。十次是重复操作的测试样本，看到累积趋势就应先检查注册代码。"
+            "创建 Hub、ListenerA、ListenerB 三个空对象，按代码说明添加组件。",
+            "把 Hub 上的 SignalHub 组件分别拖入 A、B 的 ListenerProbe/Hub 槽；进入 Play，Console 关闭 Collapse。",
+            "Connect、Disconnect 在 ListenerProbe 三点菜单；Publish 在 SignalHub 三点菜单。每次操作后先看 Connected/Disconnected/Hub published，再数 Received。"
           ]
         },
         {
-          "title": "测试对象结束与静态残留",
+          "title": "故意制造重复订阅并说明十次的用途",
           "minutes": 60,
           "steps": [
-            "销毁一个监听者后发布，确认不会继续执行它的不需要处理。",
-            "比较命名方法退订与重新写lambda，记录实际移除的是不是原处理身份。",
-            "查看Enter Play Mode设置，保持Scene Reload开启，对比Domain Reload开关。两者都关需要额外重新注册，不属于本例验证范围。"
+            "在实验副本暂时移除 `if (connected) return;`，让同一 Listener 连续 Connect 十次，再只 Publish 一次。",
+            "记录这一次发布产生多少条 Received，并把十次改成三次重做，检查响应数是否跟订阅数变化。",
+            "恢复防重代码和 Disconnect，再重复十次 Connect；确认一次 Publish 最多只让该监听者响应一次。"
           ],
-          "result": "区分对象启用、订阅关系和static状态的寿命。",
-          "purpose": "检查实例结束与重新进入 Play 时，共享事件是否仍符合当前监听者集合。",
+          "result": "能说明重复次数是人为建立的订阅数量，并用修复前后日志证明关系恢复。",
+          "purpose": "证明重复响应来自列表中累积的处理关系，而不是设备或 Update 自动重复。",
           "setup": [
-            "沿用 ListenerA/B 场景，Play 中在 Hierarchy 删除 ListenerB，再通过 A 的 Publish 发布。下一轮重新 Play 会恢复编辑场景，不要把删除前后的轮次混记。",
-            "lambda 对照在单独测试脚本中保存一个 Action handler 变量：先用原变量 +=、-=，再比较临时新建表达式；不改正式 SignalProbe 的配对代码。",
-            "域重载对照打开 Edit > Project Settings > Editor，在 Enter Play Mode Settings 的 When entering play mode 下拉中，比较 Reload Domain and Scene（重载域与场景）与 Reload Scene Only（只重载场景）。这样始终保留场景重载，只改变域重载。抄下原选项，实验后恢复。"
+            "只修改 ListenerProbe 的实验副本，正式代码保留 connected 防重；每轮从停止并重新 Play 的干净状态开始。",
+            "A 保持正常，只对 B 做重复 Connect，避免两个变量同时变化。",
+            "十次用于放大错误，三次用于验证响应数随订阅数变化；它们都不是 Unity 规定值。实验结束后恢复完整代码。"
           ]
         }
       ],
       "pitfalls": [
         {
-          "symptom": "每打开一次面板响应次数加一",
-          "cause": "启用时订阅而关闭时没有退订",
-          "fix": "匹配订阅边界并用重复启用测试验证"
+          "symptom": "一次 Publish 让同一对象响应多次",
+          "cause": "同一处理方法被重复 +=，而没有防重或配对 -=",
+          "fix": "记录 Connect 次数，保存连接状态，并在关系结束时移除同一处理方法"
         },
         {
-          "symptom": "匿名函数看似退订却仍收到通知",
-          "cause": "移除的不是原先注册的委托实例",
-          "fix": "改用命名方法或保存原委托"
+          "symptom": "Connect 后完全没有收到通知",
+          "cause": "Hub 槽未赋值、没有实际 Connect，或发布的是另一个 Hub",
+          "fix": "依次核对 Inspector 引用、Connected 日志和 Hub published 的对象上下文"
         }
       ],
       "exercise": {
-        "brief": "建立计数发布者和两个可独立开关的观察者，连续开关20次后，验证一次通知对每个有效观察者仍最多处理一次。 其中20次开关是重复操作的压力样本，不是事件机制规定的次数；每次发布分别统计当前监听者的接收增量。",
+        "brief": "制作 DoorHub 和两个 DoorIndicator：通过组件菜单连接、断开和发布“门状态变化”，连续连接 20 次后一次发布仍只让每个有效监听者响应一次。20 次只是压力样本。",
         "deliverables": [
-          "订阅寿命图",
-          "完整源码",
-          "重复启用与销毁后的计数证据"
+          "发布者/事件/监听者/处理方法关系图",
+          "两个完整脚本",
+          "正常连接、断开与重复连接三组日志"
         ],
         "rubric": [
           {
@@ -903,80 +1070,119 @@ window.COURSE_MODULES.push({
       },
       "quiz": [
         {
-          "question": "普通 C# 事件被 Invoke 时默认在哪里执行？",
+          "question": "Signal?.Invoke() 默认怎样执行已订阅的处理方法？",
           "options": [
-            "自动排队到下一帧",
-            "自动交给后台线程",
-            "在当前调用链同步执行",
-            "只在发布者收到 Update 时执行"
+            "自动排到下一帧",
+            "自动切到后台线程",
+            "在当前调用链中同步调用",
+            "只在发布者有 Update 时调用"
           ],
           "answer": 2,
-          "explanation": "普通事件只是方法调用列表，不自带异步调度。",
-          "scenario": "一个普通 C# event Action 有两个命名处理方法。发布者在当前方法里直接执行 Signal?.Invoke()，没有队列、协程或线程切换代码。"
+          "explanation": "普通 C# 事件调用是当前调用链中的方法调用，不自带队列、协程或线程切换。",
+          "scenario": "SignalHub 的 Publish 直接执行 Signal?.Invoke()；项目没有额外消息队列、协程或线程调度代码。"
         },
         {
-          "question": "长期发布者持有未退订订阅者可能造成什么？",
+          "question": "同一 Listener 连续三次 += HandleSignal，未做 -=，一次 Publish 可能发生什么？",
           "options": [
-            "保留引用并继续通知已经不需要的对象",
-            "自动删除被关闭的监听者",
-            "自动替监听者完成销毁",
-            "只影响内存，不会影响行为"
+            "HandleSignal 可能执行三次",
+            "事件会自动合并成一次",
+            "监听者会自动销毁",
+            "只影响内存，不影响调用次数"
           ],
           "answer": 0,
-          "explanation": "委托列表形成引用关系，也会造成重复调用或过期处理。",
-          "scenario": "一个长期存在的发布者保留面板处理函数。面板关闭后不再需要通知，但程序没有从发布者的委托列表移除该函数。"
+          "explanation": "每次 += 都向调用列表加入一条处理关系；事件不会按方法名称自动去重。",
+          "scenario": "connected 防重被移除，同一个对象对同一个 hub.Signal 连续执行三次 += HandleSignal，然后只发布一次。"
         },
         {
-          "question": "面板只在开启期间监听，最自然的一组边界是？",
+          "question": "监听需求只在组件启用期存在时，本例用哪组边界清理？",
           "options": [
             "每次 Update 加入、FixedUpdate 移除",
-            "OnEnable 加入、OnDisable 移除",
-            "只在构造器加入而从不移除",
-            "每次收到事件后再重复订阅"
+            "连接后在 OnDisable 断开",
+            "只连接而永不移除",
+            "每次收到事件后再重复连接"
           ],
           "answer": 1,
-          "explanation": "监听需求与启用期一致时，这一对边界最直接。",
-          "scenario": "面板的监听需求恰好等于组件启用期：每次启用开始听，停用立刻停止听。同一实例会被多次启用，没有跨停用继续监听的需求。"
+          "explanation": "本例规定关系随启用期结束，因此 OnDisable 调用 Disconnect；下一章会进一步学习生命周期条件。",
+          "scenario": "ListenerProbe 停用后不应继续接收 Hub 通知；它可能之后重新启用，但重新启用不应保留旧的重复关系。"
         }
       ],
       "references": [
         {
-          "label": "MonoBehaviour.OnEnable",
-          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.OnEnable.html"
+          "label": "ContextMenu",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ContextMenu.html"
         },
         {
-          "label": "RuntimeInitializeOnLoadMethodAttribute",
-          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/RuntimeInitializeOnLoadMethodAttribute.html"
+          "label": "MonoBehaviour.OnDisable",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/MonoBehaviour.OnDisable.html"
+        },
+        {
+          "label": "Debug.Log",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Debug.Log.html"
         }
       ],
       "summary": [
-        "普通事件默认同步调用处理方法，不自带线程调度。",
-        "退订要对应原来的处理身份，重复开关后仍应次数正确。"
+        "事件是处理方法列表，不是自动异步的全局消息。",
+        "重复次数来自建立了多少条关系；测试次数必须说明用途和预期观察。"
       ],
       "teaching": {
-        "question": "面板反复打开十次后，一次通知却执行十次，为什么关闭画面没有自动消除这些调用？",
-        "keyIdea": "订阅事件是把处理方法加入发布者的调用列表。需要在合适时间加入，也要在不再监听时移除同一个处理方法。",
+        "scenario": "场景有一个 Hub 和两个监听对象 ListenerA、ListenerB。Hub 挂 SignalHub；两个监听对象各挂 ListenerProbe，并在 Inspector 把同一个 Hub 拖入 Hub 槽。所有连接、断开和发布都通过组件三点菜单明确触发。",
+        "question": "一次 Publish 为什么能通知两个对象，而重复 Connect 又为什么可能让同一个对象收到多次？",
+        "purpose": "看懂事件语法背后的对象关系，知道每条订阅从哪里建立、由谁调用、在什么条件下移除。",
+        "keyIdea": "事件内部维护的是处理方法列表。+= 添加一条关系，-= 移除对应关系，Invoke 调用当前列表；对象隐藏或名字相同都不会自动替你管理这张列表。",
         "walkthrough": [
           {
-            "title": "建立通知关系",
-            "text": "场景放两个 SignalProbe，进入播放后执行一次 Publish，确认两个对象各收到一次通知。"
+            "title": "先明确两个对象的角色",
+            "text": "Hub 是发布者，ListenerA/B 是监听者。把 Hub 分别拖入两个监听者的 Hub 槽，此时只有字段引用，尚未订阅。"
           },
           {
-            "title": "开关一个监听者",
-            "text": "将其中一个禁用再启用十次，再发布一次。正确配对的订阅和退订不会让次数不断增长。"
+            "title": "连接后发布一次",
+            "text": "在两个 ListenerProbe 菜单各执行 Connect，再在 SignalHub 菜单执行 Publish。Console 应出现 Received by ListenerA 和 Received by ListenerB 各一条。"
           },
           {
-            "title": "检查共享状态",
-            "text": "保持Scene Reload开启，对照Domain Reload（域重载）开关的多次播放，比较静态重置；同时关闭两种重载不属于本例验证范围。"
+            "title": "断开一个再比较",
+            "text": "对 ListenerB 执行 Disconnect，再发布。只有 A 应新增一条；B 重新 Connect 后才恢复接收。日志次数直接对应当前订阅关系。"
           }
         ],
-        "prediction": {
-          "question": "写一个外观相同的新 lambda 去 -=，一定能移除原匿名订阅吗？",
-          "answer": "不能这样依赖。退订需要对应的委托身份；需要之后移除时，应保存原委托或使用明确的命名方法。",
-          "scenario": "代码先用一个 lambda 订阅事件，之后准备重新写一个外观相同的 lambda 并用 -= 退订；没有保存最初的委托变量。想知道第二段表达式能否代表原订阅身份。"
+        "comparison": {
+          "caption": "把事件代码中的词与当前场景对象对应起来。",
+          "headers": [
+            "术语",
+            "本例是谁",
+            "对应代码",
+            "负责什么"
+          ],
+          "rows": [
+            [
+              "发布者",
+              "Hub 对象上的 SignalHub",
+              "event Action Signal",
+              "保存事件并在事实发生时 Invoke"
+            ],
+            [
+              "事件",
+              "Signal",
+              "hub.Signal",
+              "维护当前处理方法列表"
+            ],
+            [
+              "监听者",
+              "ListenerA / ListenerB",
+              "ListenerProbe",
+              "决定何时加入或离开列表"
+            ],
+            [
+              "处理方法",
+              "每个监听者自己的 HandleSignal",
+              "+= / -= HandleSignal",
+              "通知发生时执行具体响应"
+            ]
+          ]
         },
-        "scenario": "场景中两个对象 ListenerA、ListenerB 都挂 SignalProbe，共同监听这个类型的 static Signal。通过任一组件的 Publish 菜单发布一次；反复开关 ListenerB，再比较每次发布各收到几条日志。十轮开关用于放大重复注册问题，并非 Unity 要求的次数。",
-        "purpose": "把事件订阅当作需要建立和结束的联系，通过调用次数检查开关后是否有残留。"
+        "prediction": {
+          "scenario": "实验副本去掉 connected 防重后，对 ListenerB 连续执行三次 Connect，没有执行 Disconnect，随后 Hub 只 Publish 一次。",
+          "question": "ListenerB 的 HandleSignal 最可能执行几次，为什么？",
+          "answer": "最可能执行三次，因为三次 += 向同一事件列表加入了三份处理关系。一次 Publish 会遍历当前列表。重复次数是实验制造的订阅数量，不是 Unity 对事件的固定规则。"
+        }
       }
     },
     {
@@ -1004,178 +1210,188 @@ window.COURSE_MODULES.push({
         }
       ],
       "id": "l010",
-      "title": "集合、异常与纯 C# 模型：把引擎依赖留在边界",
+      "title": "List 与场景对象：列表删掉了，物体为什么还在",
       "prerequisites": [
         "l009"
       ],
       "goals": [
-        "分别检查列表成员和场景对象是否存在",
-        "用可控时间验证冷却规则",
-        "删除列表元素时避免漏项"
+        "看懂 List<GameObject>、元素、索引和 Count 的具体含义",
+        "区分 Clear、RemoveAt 与 Destroy 分别改变什么",
+        "在删除相邻无效元素时避免正向遍历漏项"
       ],
       "theory": [
         {
-          "title": "先把规则从引擎调用中取出来",
+          "title": "List 是一张可变长度的成员清单",
           "paragraphs": [
-            "冷却规则可以描述为：剩余时间为零时允许使用，使用后设为2秒，之后按传入时间减少。它不必自己读取键盘、找对象或更新界面。示例的普通 Cooldown 类接收 Tick 的增量，组件只负责提供 Time.deltaTime。",
-            "这样就可以不等真实时间而验证。TryUse 成功后，Tick(1) 留下1秒，再次使用失败；再 Tick(1) 后剩余为零，使用恢复成功。规则正确和场景是否每帧调用它，是两个可以分别检查的问题。"
+            "`List<GameObject>` 表示一张只接收 GameObject 引用的列表。尖括号里的 GameObject 是元素类型；列表中的每一项叫元素；元素所在位置叫索引，第一项索引为 0；`Count` 表示当前有多少个元素。",
+            "若列表依次保存 One、Two、Three，Count 为 3，索引 1 对应 Two。列表保存的是引用，不是把三个场景对象复制进一个容器。Hierarchy 里的对象和 List 中的成员关系是两套状态，任何实验都应分别观察。"
           ]
         },
         {
-          "title": "可控输入让边界更容易检查",
+          "title": "Destroy 对象不会自动删除列表位置",
           "paragraphs": [
-            "等待真实2秒会受到操作和帧长影响，不方便重复测试边界。手动传入零增量、负增量或超过剩余的大增量，可以快速检查规则是否按设计限制数据。示例将负增量按零处理，并让剩余时间不低于零。",
-            "这不等于所有游戏系统都已确定，也不消除浮点误差。它只是让这段规则的输入更可控。接入引擎之后，仍需验证暂停时选了哪个时钟、组件是否有效、调用频率是否合适，不能用纯规则测试替代场景测试。"
+            "调用 `Destroy(Two)` 后，Unity 会安排销毁 Two 对应的引擎对象，通常在当前 Update 循环结束后生效。列表仍有原来的三个位置，所以 Count 通常仍是 3；其中一个元素只是变成了指向已销毁 Unity 对象的失效引用。",
+            "因此 Count 回答“列表有几个位置”，不回答“其中几个对象仍可使用”。报告时要同时输出 Count、有效成员数和每个索引的对象名或 `<destroyed>`。只看一个数字，很容易把容器状态误当成场景状态。"
           ]
         },
         {
-          "title": "普通类也要选择合适边界",
+          "title": "Clear、RemoveAt 和 Destroy 改变的对象不同",
           "paragraphs": [
-            "普通 C# 模型适合保存不依赖场景的状态与规则。它可以由组件创建，也可以独立测试。并非每一行代码都要拆类，关键在于拆开以后是否减少了不必要依赖，让问题更容易解释，而不是仅仅增加文件数量。",
-            "示例仍使用 Mathf 做简单限制，所以它不是完全脱离 Unity 程序集的库。这里强调的是不直接依赖 GameObject 生命周期和输入。如果需要移到独立程序集，还可以进一步改用普通数学接口，并明确对应引用。"
+            "`targets.Clear()` 清空列表的全部元素，Count 变成 0，但不会自动对每个场景对象调用 Destroy。`targets.RemoveAt(1)` 只删除索引 1 的列表元素，后面的元素向前移动，也不会销毁那个 GameObject。",
+            "`Destroy(targets[1])` 处理的是场景对象，却不自动移除列表元素。若需求是“删除对象并从清单移除”，代码要明确完成两步，并决定先保存引用再 Remove，还是先请求 Destroy 再清理失效项。方法名相似不代表管理的是同一层。"
           ]
         },
         {
-          "title": "集合记录成员，不管理全部寿命",
+          "title": "正向删除会让下一个元素前移",
           "paragraphs": [
-            "List<GameObject> 保存一组对象引用。Clear 会移除列表元素，但不会逐一 Destroy 场景对象。反过来，Destroy 一个成员对应的对象，也不会自动把列表位置删除。列表数量与实际有效对象数量可以不同。",
-            "因此一个池或管理器应分别说明谁维护列表、谁创建对象、谁销毁对象。看到 Count 为零不能证明场景对象已经清理；看到对象已经消失，也不能证明所有集合引用都已移除。分别观察两边，才不会把内存或状态问题隐藏起来。"
+            "列表 `[A, null, null, D]` 从索引 0 向后检查。到索引 1 时删除第一个 null，原索引 2 的 null 会前移到索引 1；如果循环随后把 i 增加到 2，就跳过了刚刚前移的元素。结果会残留一个本应删除的项。",
+            "倒序从最后一个索引向 0 检查时，删除较大索引不会改变尚未检查的较小索引，所以适合这种简单清理。实验必须制造两个相邻失效成员；只有一个失效项时，错误写法也可能碰巧通过。"
           ]
         },
         {
-          "title": "遍历时修改集合要考虑索引变化",
+          "title": "倒序不是所有修改的万能答案",
           "paragraphs": [
-            "列表 A、B、C 中删除 B 后，C 会前移。如果从前往后遍历并直接删除，再按原方式递增索引，就可能跳过新移到当前位置的元素。使用倒序删除，或者先记录待删除项再统一处理，能让变化过程更清楚。",
-            "foreach 遍历普通 List 时随意修改集合，还可能触发异常。不要捕获后直接忽略；那只会让部分清理没有完成。实验应包含连续两个无效成员，验证不会漏项，而不只是一个恰好没有暴露问题的例子。",
-            "倒序删除也有具体前提：删除索引 i 后，尚未检查的较小索引不变，所以继续 i-1 不会漏掉它们。若回调还会添加、重排或删除别的成员，单凭倒序就不再足够。此时可先收集待移除项，等本轮检查结束后统一修改，并写清回调能否改集合。算法的安全性来自允许哪些变化，不是“倒序”这两个字本身。"
+            "倒序安全依赖一个前提：本轮只删除当前索引，不会由回调同时添加、重排或删除别的位置。如果检查过程中还会触发其他代码修改列表，索引仍可能失去原含义。",
+            "复杂流程可以先遍历并记录待移除对象，等本轮检查结束后统一修改；也可以禁止回调在遍历期间改集合。先写清允许哪些变化，再选择算法，比背“删除一定倒序”更可靠。"
           ]
         },
         {
-          "title": "异常应保留可追查的原因",
+          "title": "谁拥有对象，谁决定是否销毁",
           "paragraphs": [
-            "异常说明某一步没有按预期完成。捕获它的意义是决定怎样恢复、停止或报告，而不是让 Console 看起来干净。若方法需要正常处理失败，可以像 TryUse 那样返回结果，让调用者按明确分支处理。",
-            "测试记录应同时写输入、返回值与剩余状态。遇到错误后检查对象和集合是否仍一致，再决定是否继续运行。规则模型、集合清理与场景接线分别留证据，可以避免一种测试通过后就误以为整个功能都正确。"
+            "列表能引用对象，不代表它拥有销毁权限。敌人管理器可能只观察由场景生成器创建的对象；界面列表可能只显示背包数据。清空观察列表时随意 Destroy，会误删仍被其他系统使用的对象。",
+            "为每张列表写一句责任说明：谁添加和移除成员，谁创建和销毁对象，失效成员何时清理。若同一个脚本确实同时负责创建与销毁，也应让两个动作在代码中分别可见，而不是把 Clear 想成隐含的销毁命令。"
+          ]
+        },
+        {
+          "title": "异常不是用空 catch 隐藏的噪声",
+          "paragraphs": [
+            "遍历普通 List 时直接在 foreach 中修改集合，可能抛出 InvalidOperationException。捕获后什么也不做，只会让剩余清理中断且原因消失；列表可能停在一半完成的状态。",
+            "应先选择允许的修改方式，例如倒序索引或两阶段处理。若确实捕获异常，要记录足够上下文并决定恢复、停止还是继续，而不是只为了让 Console 没有红字。本课的目标是让列表变化可预测，不是练习把错误藏起来。"
           ]
         }
       ],
       "code": {
-        "title": "显式推进的冷却模型",
+        "title": "分别报告列表成员和场景对象状态",
         "language": "csharp",
-        "filename": "CooldownProbe.cs",
-        "source": "using UnityEngine;\npublic sealed class CooldownProbe : MonoBehaviour\n{\n    readonly Cooldown cooldown = new Cooldown(2f);\n    void Update() => cooldown.Tick(Time.deltaTime);\n    [ContextMenu(\"Try use\")]\n    void TryUse() => Debug.Log(cooldown.TryUse() ? \"Used\" : \"Cooling\", this);\n}\npublic sealed class Cooldown\n{\n    readonly float duration;\n    float remaining;\n    public Cooldown(float duration) { this.duration = Mathf.Max(0f, duration); }\n    public void Tick(float dt) { remaining = Mathf.Max(0f, remaining - Mathf.Max(0f, dt)); }\n    public bool TryUse()\n    {\n        if (remaining > 0f) return false;\n        remaining = duration;\n        return true;\n    }\n}",
+        "files": [
+          {
+            "filename": "ListLifetimeProbe.cs",
+            "source": "using System.Collections;\nusing System.Collections.Generic;\nusing UnityEngine;\n\npublic sealed class ListLifetimeProbe : MonoBehaviour\n{\n    [SerializeField] private GameObject one;\n    [SerializeField] private GameObject two;\n    [SerializeField] private GameObject three;\n\n    private readonly List<GameObject> targets = new List<GameObject>();\n\n    private void Start()\n    {\n        ResetList();\n    }\n\n    [ContextMenu(\"Reset list\")]\n    private void ResetList()\n    {\n        targets.Clear();\n        targets.Add(one);\n        targets.Add(two);\n        targets.Add(three);\n        Report(\"reset\");\n    }\n\n    [ContextMenu(\"Destroy middle and report next frame\")]\n    private void DestroyMiddle()\n    {\n        if (!Application.isPlaying || targets.Count < 2) return;\n        Destroy(targets[1]);\n        StartCoroutine(ReportNextFrame());\n    }\n\n    private IEnumerator ReportNextFrame()\n    {\n        yield return null;\n        Report(\"after Destroy\");\n    }\n\n    [ContextMenu(\"Remove invalid\")]\n    private void RemoveInvalid()\n    {\n        for (int i = targets.Count - 1; i >= 0; i--)\n            if (targets[i] == null)\n                targets.RemoveAt(i);\n\n        Report(\"after RemoveInvalid\");\n    }\n\n    [ContextMenu(\"Clear list only\")]\n    private void ClearListOnly()\n    {\n        targets.Clear();\n        Report(\"after Clear\");\n    }\n\n    [ContextMenu(\"Report\")]\n    private void ReportNow()\n    {\n        Report(\"manual report\");\n    }\n\n    private void Report(string stage)\n    {\n        string[] labels = new string[targets.Count];\n        int valid = 0;\n\n        for (int i = 0; i < targets.Count; i++)\n        {\n            bool exists = targets[i] != null;\n            if (exists) valid++;\n            labels[i] = exists ? targets[i].name : \"<destroyed>\";\n        }\n\n        Debug.Log($\"{stage}: Count={targets.Count}, valid={valid}, [{string.Join(\", \", labels)}]\", this);\n    }\n}"
+          }
+        ],
         "explanation": [
-          "先手动调用 Cooldown 的 TryUse 与 Tick 验证规则，再挂 CooldownProbe 由 Update 提供时间。这里使用了 Mathf，但模型没有直接查找场景或读取设备。",
-          "Try use 在组件三点菜单中；只有 Play 后才由 Update 持续推进时间。手工序列应另建调用者只传入指定 Tick，不同时让 Update 额外推进，否则输入已经不再受控。原例不暴露 remaining，记录内部余量需要实验观察入口。"
+          "创建 ListHost、One、Two、Three，把脚本挂 ListHost，再把三个对象分别拖入同名槽。进入 Play 后 Start 会建立列表并输出 reset 报告。",
+          "按顺序执行 Destroy middle and report next frame、Remove invalid、Clear list only。每条日志同时给出 Count、有效对象数和索引内容，便于和 Hierarchy 对照。"
         ]
       },
       "lab": [
         {
-          "title": "不用真实等待测试冷却",
+          "title": "区分 Destroy、RemoveAt 与 Clear",
           "minutes": 60,
           "steps": [
-            "先预测TryUse、Tick(1)、TryUse、Tick(1)、TryUse的结果，再逐项调用。",
-            "测试零冷却、负增量与超过剩余的大增量，记录返回值和状态。",
-            "最后接入Update的deltaTime，分别说明纯规则和场景接线测试证明什么。"
+            "运行完整探针，保存 reset 的 Count、valid 和三项名称。",
+            "执行 Destroy middle and report next frame，对照 Hierarchy 与下一帧日志；再执行 Remove invalid。",
+            "从干净运行重新开始，只执行 Clear list only，确认 One、Two、Three 仍在 Hierarchy。"
           ],
-          "result": "能重做输入序列，并解释正常与边界结果。",
-          "purpose": "先不依赖真实等待，检查冷却规则的输入和输出。",
+          "result": "三种操作各自改变哪一层都有前后证据。",
+          "purpose": "把列表成员数、有效对象数和 Hierarchy 对象数分开记录。",
           "setup": [
-            "把本课 CooldownProbe.cs 完整保存：文件同时包含可挂组件 CooldownProbe 与普通类 Cooldown。只需要一个文件，不要再复制定义一份 Cooldown。",
-            "另建 CooldownSequenceProbe 挂空对象，在 Start 里 new Cooldown(2f)，依次调用 TryUse、Tick(1f)、TryUse、Tick(1f)、TryUse，每次 TryUse 用 Debug.Log 输出返回值。这个对照对象不要同时接 Update.Tick。",
-            "真实时间对照另建空对象挂原 CooldownProbe，Play 时在组件三点菜单选择 Try use；原例没有暴露 remaining 字段，若需记录内部余量，在实验副本增只读观察入口，不把不可见字段当 Inspector 已有控件。"
+            "创建空对象 ListHost、One、Two、Three，给 ListHost 添加 ListLifetimeProbe。",
+            "把 One、Two、Three 从 Hierarchy 分别拖入脚本的 One、Two、Three 槽；进入 Play，Console 关闭 Collapse。",
+            "每个对照从停止并重新 Play 的干净状态开始，避免上一轮已经销毁 Two 或清空列表影响结果。"
           ]
         },
         {
-          "title": "分开列表元素与场景对象",
+          "title": "证明正向删除为什么会漏掉相邻元素",
           "minutes": 60,
           "steps": [
-            "列表保存3个场景对象，销毁中间对象后查看Count与有效成员。",
-            "连续制造两个失效成员，倒序删除，检查没有跳过相邻元素。",
-            "仅Clear列表再看Hierarchy，随后由负责创建的逻辑另行销毁对象。"
+            "在实验副本建立 `[One, Two, Three, Four]`，让 Two、Three 都失效；先手算正向删除时索引怎样变化。",
+            "运行正向 `for` 中直接 RemoveAt 的版本，记录是否残留；再改为倒序版本对照。",
+            "增加一个会在检查期间修改其他位置的回调，说明为什么此时应改用两阶段收集，而不能只喊“倒序”。"
           ],
-          "result": "删除成员与销毁对象互不自动代替。",
-          "purpose": "分别观察列表计数、有效成员数与 Hierarchy 中实际对象。",
+          "result": "能用索引前移解释漏项，并写出所选算法成立的前提。",
+          "purpose": "用两个相邻失效成员检验遍历删除策略，而不是只测一个容易碰巧通过的成员。",
           "setup": [
-            "创建空对象 ListHost 和三个独立空对象 One、Two、Three。另建列表测试组件，提供三个 GameObject 槽，从 Hierarchy 拖入对应对象，再在 Start 建立列表。",
-            "在测试方法中销毁 Two 后等一帧再记录 Count 和用 Unity 空值检查得到的有效数，避免把延迟销毁尚未完成的时刻混入结果。",
-            "相邻失效测试新开一轮，销毁 Two 与 Three 后再清理；Clear 测试也新开一轮，只清列表再看 Hierarchy，最后由明确的创建/管理者销毁对象。"
+            "这个实验使用 ListLifetimeProbe 的副本，新建 Four 槽和对象；不要破坏第一组实验代码。",
+            "销毁 Two、Three 后等一帧再清理，确保比较的是两个相邻失效元素。",
+            "每轮记录删除前列表、每次 i、删除后的列表和最终结果；测试结束恢复完整倒序版本。"
           ]
         }
       ],
       "pitfalls": [
         {
-          "symptom": "删除列表项时漏掉相邻目标",
-          "cause": "正向索引移除后元素前移",
-          "fix": "使用倒序或明确的两阶段修改策略"
+          "symptom": "Destroy 中间对象后 Count 仍是 3",
+          "cause": "对象销毁不自动删除 List 中的成员位置",
+          "fix": "分别报告 Count 与有效成员，并由列表维护者明确清理失效项"
         },
         {
-          "symptom": "清空列表后场景对象仍在",
-          "cause": "移除引用不等于 Destroy 引擎对象",
-          "fix": "由拥有者分别处理容器与对象寿命"
+          "symptom": "连续两个无效元素只删掉一个",
+          "cause": "正向 RemoveAt 后后项前移，循环自增跳过新当前位置",
+          "fix": "在仅删除当前项的前提下倒序遍历，复杂修改使用两阶段处理"
         }
       ],
       "exercise": {
-        "brief": "用普通模型写3次充能规则，由组件传入时间。列出至少6组可重复的输入序列，不要求先搭测试框架。",
+        "brief": "制作 TargetRegistry：能登记四个场景目标、报告 Count 与有效数、清理相邻失效项，并用单独命令演示 Clear 不会销毁剩余对象。",
         "deliverables": [
-          "模型与适配组件",
-          "六组输入预期表",
-          "集合清理实验记录"
+          "完整列表探针",
+          "Destroy/RemoveAt/Clear 对照表",
+          "相邻失效项的索引变化记录"
         ],
         "rubric": [
           {
-            "item": "模型无场景隐式依赖",
+            "item": "列表术语与索引变化解释正确",
             "points": 25
           },
           {
-            "item": "边界情况有明确结果",
+            "item": "对象寿命和成员关系分开处理",
             "points": 25
           },
           {
-            "item": "组件只负责引擎适配",
+            "item": "相邻失效项不会漏删",
             "points": 25
           },
           {
-            "item": "对象与容器所有权清晰",
+            "item": "每个命令都有可复现前后证据",
             "points": 25
           }
         ]
       },
       "quiz": [
         {
-          "question": "List<GameObject>.Clear 会自动销毁场景对象吗？",
+          "question": "targets.Clear() 会自动 Destroy 列表里的场景对象吗？",
           "options": [
             "不会，只移除列表成员",
-            "会对每个成员调用 Destroy",
-            "只销毁没有其他引用的成员",
-            "会同时删除对应 Prefab 资源"
+            "会逐一调用 Destroy",
+            "只销毁没有其他引用的对象",
+            "会删除对应 Prefab 资源"
           ],
           "answer": 0,
-          "explanation": "清空集合不是场景对象销毁命令。对象寿命需要另行管理。",
-          "scenario": "targets 是 List<GameObject>，保存三个仍在场景中的对象。代码仅执行 targets.Clear()，没有执行 Destroy，也没有其他脚本清理这些对象。"
+          "explanation": "Clear 改变列表成员关系，不是 Unity 场景对象销毁命令。",
+          "scenario": "targets 保存 One、Two、Three。代码只执行 targets.Clear()，没有任何 Destroy 调用或其他清理系统。"
         },
         {
-          "question": "给冷却模型传入时间增量有什么价值？",
+          "question": "Destroy(Two) 生效后，没有 Remove 时 Count 最可能怎样？",
           "options": [
-            "保证全部引擎行为都确定",
-            "不真实等待也能验证冷却规则",
-            "自动消除浮点误差",
-            "替代所有场景验证"
+            "自动变成 2",
+            "仍为 3，但一个元素已失效",
+            "自动变成 0",
+            "Count 会抛异常而无法读取"
           ],
           "answer": 1,
-          "explanation": "可控增量让纯规则容易测试，但实际调用与暂停行为仍需场景检查。",
-          "scenario": "2秒冷却模型提供 Tick(dt) 接口。你希望验证使用后1秒拒绝、累计2秒后允许，以及零/负/大增量等边界。"
+          "explanation": "List 位置仍在；Destroy 不会自动替容器删除成员。",
+          "scenario": "列表为 `[One, Two, Three]`，只调用 Destroy(Two) 并等销毁生效，随后立即读取 Count。"
         },
         {
-          "question": "捕获异常后直接忽略为什么危险？",
+          "question": "正向遍历时 RemoveAt 为什么可能漏掉相邻失效元素？",
           "options": [
-            "任何 catch 都会导致编译失败",
-            "忽略异常会自动修复剩余数据",
-            "可能让错误状态继续流动并丢失原因",
-            "异常被忽略后所有代码都会重新执行"
+            "因为任何 for 都不能访问 List",
+            "因为 Destroy 会随机重排列表",
+            "删除后后项前移，而 i 随后又增加",
+            "因为 Count 永远不会变化"
           ],
           "answer": 2,
-          "explanation": "没有决定恢复方式就吞掉异常，会同时失去执行保障和定位证据。",
-          "scenario": "清理方法中发生异常后，catch 什么也不记录、不恢复，也不通知上层，随后程序继续使用可能只完成一半的状态。"
+          "explanation": "删除当前项后，下一项前移到当前索引；循环再自增会跳过它。",
+          "scenario": "列表中索引 1 和 2 连续失效。正向 for 在索引 1 RemoveAt 后仍按常规执行 i++。"
         }
       ],
       "references": [
@@ -1184,38 +1400,71 @@ window.COURSE_MODULES.push({
           "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Object.Destroy.html"
         },
         {
-          "label": "Time.deltaTime",
-          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Time-deltaTime.html"
+          "label": "Object.operator ==",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Object-operator_eq.html"
+        },
+        {
+          "label": "ContextMenu",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/ContextMenu.html"
         }
       ],
       "summary": [
-        "清空列表不自动销毁场景对象，销毁也不自动删成员。",
-        "规则测试与场景接线测试各自回答不同问题。"
+        "List 的 Count 统计元素位置，不等于仍有效的 Unity 对象数量。",
+        "Clear、RemoveAt 和 Destroy 分别修改列表或对象，任何一个都不会自动替另外两个完成工作。"
       ],
       "teaching": {
-        "question": "测试一个2秒冷却，能否不真的等2秒？清空保存对象的列表，场景对象会不会一起消失？",
-        "keyIdea": "纯数据规则可以接受明确输入来验证；引擎负责提供时间和显示。集合保存的是成员关系，清除关系不等于销毁对象。",
+        "scenario": "场景中有 ListHost、One、Two、Three 四个对象。ListHost 上的 ListLifetimeProbe 通过 Inspector 引用后三者，并在 Play 开始时建立 `[One, Two, Three]` 列表。所有实验命令都在 ListLifetimeProbe 组件三点菜单中。",
+        "question": "Destroy Two、RemoveAt(1) 和 Clear 看起来都像“删除”，为什么它们对 Count 与 Hierarchy 的影响完全不同？",
+        "purpose": "能分别观察列表成员和场景对象，写清每一步删的是引用位置还是引擎对象，并安全清理相邻失效元素。",
+        "keyIdea": "List 管理成员关系，Destroy 管理 Unity 对象寿命。一个动作不会自动替另一个动作完成；Count 也只统计列表元素，不验证对象是否仍有效。",
         "walkthrough": [
           {
-            "title": "直接推动规则",
-            "text": "新建2秒冷却，依次 TryUse、Tick(1)、TryUse、Tick(1)、TryUse，先写下三次尝试的预期结果。"
+            "title": "建立三个成员",
+            "text": "Reset list 后输出 Count=3，并逐项看到 One、Two、Three。此时列表和 Hierarchy 都包含对应关系。"
           },
           {
-            "title": "接入真实场景",
-            "text": "再由组件 Update 传入 Time.deltaTime，比较模型规则测试与场景接线测试各证明了什么。"
+            "title": "只销毁中间对象",
+            "text": "执行 Destroy middle and report next frame。等销毁生效后，Hierarchy 少了 Two，但列表 Count 仍为 3，中间元素报告为 destroyed。"
           },
           {
-            "title": "分开成员和对象",
-            "text": "列表放三个对象，Clear 后查看 Count 和 Hierarchy，确认列表清空不会自动调用 Destroy。"
+            "title": "再清理或只清列表",
+            "text": "Remove invalid 会让 Count 变为 2；Clear list only 会让 Count 变为 0，但剩余 One、Three 仍在 Hierarchy。每条命令只证明自己改变的那一层。"
           }
         ],
-        "prediction": {
-          "question": "销毁列表中间的对象，Count 会自动减少吗？",
-          "answer": "通常不会。列表仍保留该成员位置，需要明确清理失效引用；销毁引擎对象和删除列表元素是两件事。",
-          "scenario": "List<GameObject> targets 依次保存场景对象 One、Two、Three。调用 Destroy(Two)，等销毁生效，但尚未调用 Remove、RemoveAt 或 Clear；准备查看 targets.Count。"
+        "comparison": {
+          "caption": "三种“删除”作用在不同目标上。",
+          "headers": [
+            "操作",
+            "列表 Count",
+            "Hierarchy 对象",
+            "后续索引"
+          ],
+          "rows": [
+            [
+              "Destroy(target)",
+              "不会自动减少",
+              "对象在销毁生效后消失",
+              "原位置仍在，可能成为失效引用"
+            ],
+            [
+              "RemoveAt(index)",
+              "减少 1",
+              "对象仍在",
+              "后方元素向前移动"
+            ],
+            [
+              "Clear()",
+              "变为 0",
+              "对象仍在",
+              "列表中不再有索引"
+            ]
+          ]
         },
-        "scenario": "Cooldown 是不挂到 GameObject 的普通规则对象：新建2秒冷却，TryUse 尝试使用，Tick(dt) 明确推进时间。CooldownProbe 才负责把 Unity 的 Time.deltaTime 传入。另用 List<GameObject> 保存三个场景对象，比较列表与对象各自的变化。",
-        "purpose": "用可控输入验证规则，并学会分别管理容器成员与场景对象寿命。"
+        "prediction": {
+          "scenario": "targets 依次保存 One、Two、Three。调用 Destroy(Two)，等销毁生效，但还没有调用 Remove、RemoveAt 或 Clear。",
+          "question": "此时 targets.Count 最可能是多少？",
+          "answer": "仍是 3。Destroy 使 Two 的引擎对象失效，却不会自动删除 List 中原有的位置。需要另外清理失效元素，Count 才会减少。"
+        }
       }
     }
   ]
