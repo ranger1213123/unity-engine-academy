@@ -1,9 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import {root, loadContent} from './content-loader.mjs';
+import {root, loadContent, loadFoundations} from './content-loader.mjs';
 const errors=[];
 const warnings=[];
 const modules=loadContent();
+const foundations=loadFoundations();
 const lessons=modules.flatMap(module=>module.lessons);
 const ids=new Set(lessons.map(lesson=>lesson.id));
 const han=text=>(String(text).match(/\p{Script=Han}/gu)||[]).length;
@@ -12,6 +13,20 @@ function assert(condition,message){if(!condition)errors.push(message);}
 assert(modules.length===20,`期望20章，实际${modules.length}`);
 assert(lessons.length===100,`期望100课，实际${lessons.length}`);
 assert(ids.size===lessons.length,'课程id重复');
+const foundationIds=Object.keys(foundations);
+assert(foundationIds.length>=30,`前六章应至少有30份首次概念卡，实际${foundationIds.length}`);
+for(const lesson of lessons.slice(0,30)){
+  const foundation=foundations[lesson.id];
+  assert(foundation?.bridge?.trim(),`${lesson.id}缺少与前课衔接说明`);
+  assert(foundation?.concepts?.length>=2&&foundation.concepts.length<=5,`${lesson.id}首次概念应为2至5项`);
+  for(const concept of foundation?.concepts||[]){
+    assert(concept.term?.trim()&&concept.kind?.trim()&&concept.plain?.trim(),`${lesson.id}概念卡缺term/kind/plain`);
+    if(concept.api)for(const field of ['syntax','caller','input','output','doesNot'])assert(concept[field]?.trim(),`${lesson.id} API ${concept.term}缺少${field}`);
+  }
+}
+for(const id of foundationIds)assert(ids.has(id),`概念卡指向不存在的课程${id}`);
+const transformPointOwner=lessons.slice(0,30).find(lesson=>(foundations[lesson.id]?.concepts||[]).some(concept=>concept.term==='TransformPoint'))?.id;
+assert(transformPointOwner==='l016',`TransformPoint必须在l016首次完整定义，实际为${transformPointOwner||'未定义'}`);
 let hours=0,characters=0,codeSamples=0,quizCount=0,labCount=0;
 const contentCounts=[];
 for(const [index,module] of modules.entries()){

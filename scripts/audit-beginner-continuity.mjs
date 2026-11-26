@@ -1,9 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import {root, loadContent} from './content-loader.mjs';
+import {root, loadContent, loadFoundations} from './content-loader.mjs';
 
 const errors = [];
 const modules = loadContent();
+const foundations = loadFoundations();
 const chapter = modules.find(item => item.number === 2);
 const lessons = new Map((chapter?.lessons || []).map(item => [item.id, item]));
 
@@ -22,6 +23,8 @@ function codeFiles(lesson) {
 }
 
 check(chapter?.lessons?.length === 5, '第二章应保持 5 课');
+check(Object.keys(foundations).length>=30,'前六章应至少有30份首次概念卡');
+for(const lesson of modules.slice(0,6).flatMap(item=>item.lessons))check(foundations[lesson.id]?.concepts?.length>=2,`${lesson.id}缺首次概念卡`);
 
 const l006 = lessons.get('l006');
 const l007 = lessons.get('l007');
@@ -61,6 +64,11 @@ const chapterTheory = chapter?.lessons?.map(item => ({
   cacheMentions: (textOf(item.theory).match(/缓存/g) || []).length
 })) || [];
 check(chapterTheory.filter(item => item.cacheMentions > 0).every(item => item.id === 'l008'), '第二章“缓存”主题应集中在 l008');
+
+const transformPoint=(foundations.l016?.concepts||[]).find(item=>item.term==='TransformPoint');
+check(!!transformPoint,'l016必须首次定义TransformPoint');
+for(const field of ['kind','plain','syntax','caller','input','output','doesNot'])check(transformPoint?.[field]?.trim(),`TransformPoint概念卡缺${field}`);
+check(!Object.entries(foundations).some(([id,value])=>Number(id.slice(1))<16&&(value.concepts||[]).some(item=>item.term==='TransformPoint')),'l016之前不应提前使用TransformPoint概念卡');
 
 const report = {
   checkedAt: new Date().toISOString(),

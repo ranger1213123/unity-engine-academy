@@ -36,16 +36,17 @@ window.COURSE_MODULES.push({
         "l015"
       ],
       "goals": [
-        "用父子对象解释世界与局部位置",
+        "在 Inspector 找到 Transform，并区分世界位置与局部位置",
         "预测换父级时哪套数值需要改变",
         "明确挂点吸附和放下的局部姿态"
       ],
       "theory": [
         {
-          "title": "同一位置可以用不同参照来描述",
+          "title": "先在 Inspector 找到 Transform 和两套位置",
           "paragraphs": [
-            "想象角色站在移动平台上。相对于平台，角色没有挪脚；相对于场景地面，角色跟着平台移动。这就是局部坐标与世界坐标描述同一对象的两种方式。position 表示世界位置，localPosition 表示相对父对象的位置。",
-            "先只考虑平移：父级世界 x 为5，子级局部 x 为2，子级世界 x 为7。这个简单例子帮助理解两组数值为什么可以不同，但不能据此认为所有层级位置都能简单相加。后面加入旋转和缩放，换算过程就会改变。"
+            "在 Hierarchy 选中任意 GameObject，Inspector 最上方都会有 Transform 组件。它保存位置、旋转、缩放和父子关系。Transform 不只是三组输入框：它还定义了一套坐标系，原点在对象的位置，三条局部轴会随对象旋转和缩放。",
+            "对象没有父级时，Inspector 的 Position 直接以世界为参照；对象有父级时，Inspector 的 Position 表示相对父对象的局部位置，也就是代码里的 localPosition。代码里的 position 则始终表示世界位置。想象角色站在移动平台上：相对平台没有挪脚，localPosition 可以不变；相对整个场景，角色会跟随平台，position 因而改变。",
+            "先只考虑平移：Root 世界 x 为5，Child 的局部 x 为2，Child 世界 x 为7。这个相加只适用于当前没有旋转、缩放为1的简单条件。它是用来建立第一步直觉的例子，不是所有层级变换的通用公式。"
           ]
         },
         {
@@ -56,10 +57,11 @@ window.COURSE_MODULES.push({
           ]
         },
         {
-          "title": "点转换要包含整套父级变换",
+          "title": "逐段读懂 root.TransformPoint(localPoint)",
           "paragraphs": [
-            "一个局部位置点要转为世界位置，可以使用 TransformPoint。它考虑当前变换的平移、旋转与缩放。与之对应的逆变换能把世界点转换回局部坐标，适合检查某个世界目标在挂点坐标系中位于哪里。",
-            "使用前先明确点属于谁的局部空间。拿 A 的局部数值交给 B 转换，会得到数值上合法却意义错误的结果。转换方法不会知道你心里想的是哪个对象，所以记录时应同时写“这个点相对于谁”，不能只写三个数字。"
+            "看这一行：`Vector3 worldPoint = root.TransformPoint(localPoint);`。`TransformPoint` 是 Transform 组件的方法，因此点号左边的 `root` 不是装饰，它规定了采用谁的局部坐标系。若 root 指向平台，这一行就在问：“平台局部空间中的这个点，在世界中位于哪里？”",
+            "括号里的 `localPoint` 是输入，必须表示相对于 root 原点和局部轴的位置点。方法会把 root 所在层级的平移、旋转和缩放都纳入换算，并返回世界位置 `worldPoint`。拿 SocketA 的局部数值交给 SocketB 调用，C# 仍能算出 Vector3，但这个结果回答的是另一个问题。",
+            "TransformPoint 只计算数值，不会移动 root、Child 或任何其他对象。要让对象移动，还要把返回值明确赋给某个 Transform，或交给负责运动的系统。反方向换算使用 `root.InverseTransformPoint(worldPoint)`：输入世界点，返回它相对于 root 的局部位置。先用本课探针打印两组数值，再讨论怎样使用结果。"
           ]
         },
         {
@@ -93,12 +95,23 @@ window.COURSE_MODULES.push({
         }
       ],
       "code": {
-        "title": "挂点与世界位置保留",
+        "title": "先观察坐标换算，再测试挂点",
         "language": "csharp",
-        "filename": "ParentSpaceProbe.cs",
-        "source": "using UnityEngine;\npublic sealed class ParentSpaceProbe : MonoBehaviour\n{\n    [SerializeField] Transform socket;\n    [ContextMenu(\"Attach at socket\")]\n    void Attach()\n    {\n        if (socket == null) return;\n        transform.SetParent(socket, false);\n        transform.localPosition = Vector3.zero;\n        transform.localRotation = Quaternion.identity;\n    }\n    [ContextMenu(\"Detach keeping world\")]\n    void Detach() => transform.SetParent(null, true);\n}",
+        "files": [
+          {
+            "filename": "CoordinateSpaceProbe.cs",
+            "language": "csharp",
+            "source": "using UnityEngine;\n\npublic sealed class CoordinateSpaceProbe : MonoBehaviour\n{\n    [SerializeField] Transform root;\n    [SerializeField] Vector3 localPoint = new(2f, 0f, 0f);\n\n    [ContextMenu(\"Report point conversion\")]\n    void ReportPointConversion()\n    {\n        if (root == null)\n        {\n            Debug.LogError(\"Assign Root before reporting.\", this);\n            return;\n        }\n\n        Vector3 worldPoint = root.TransformPoint(localPoint);\n        Vector3 roundTrip = root.InverseTransformPoint(worldPoint);\n        Debug.Log(\n            $\"caller={root.name}, local={localPoint}, world={worldPoint}, backToLocal={roundTrip}\",\n            root);\n    }\n}",
+          },
+          {
+            "filename": "ParentSpaceProbe.cs",
+            "language": "csharp",
+            "source": "using UnityEngine;\npublic sealed class ParentSpaceProbe : MonoBehaviour\n{\n    [SerializeField] Transform socket;\n    [ContextMenu(\"Attach at socket\")]\n    void Attach()\n    {\n        if (socket == null) return;\n        transform.SetParent(socket, false);\n        transform.localPosition = Vector3.zero;\n        transform.localRotation = Quaternion.identity;\n    }\n    [ContextMenu(\"Detach keeping world\")]\n    void Detach() => transform.SetParent(null, true);\n}"
+          }
+        ],
         "explanation": [
-          "把 ParentSpaceProbe 挂到待挂接对象，socket 指向另一个挂点。从组件菜单执行 Attach 或 Detach。吸附由设父级、归零局部位置和旋转共同完成，不是 SetParent 单独完成。"
+          "先新建空对象 Probe，添加 CoordinateSpaceProbe，把 Hierarchy 中的 Root 拖到 Root 槽。组件菜单执行 Report point conversion。日志会同时写出调用者、局部输入、世界输出和逆变换结果；这个方法只打印数值，不会移动对象。",
+          "再把 ParentSpaceProbe 挂到待挂接对象，socket 指向另一个挂点。从组件菜单执行 Attach 或 Detach。吸附由设父级、归零局部位置和旋转共同完成，不是 SetParent 单独完成。"
         ]
       },
       "lab": [
@@ -108,14 +121,14 @@ window.COURSE_MODULES.push({
           "steps": [
             "建立父子对象，记录世界与局部位置；先让父级只有平移，再加入旋转和缩放。",
             "每次只改父级一项，保持子级localPosition不动，比较世界结果。",
-            "用父级TransformPoint转换子级局部位置，核对简单相加在哪些前提才成立。"
+            "在 Probe 的 CoordinateSpaceProbe 组件菜单执行 Report point conversion，逐项核对调用者、局部输入、世界输出和逆变换结果。"
           ],
           "result": "用具体数值说明参照系参与位置换算。",
           "purpose": "用具体父子坐标观察参照变换，避免直接相加推广过度。",
           "setup": [
             "创建空对象 Root、Child，将 Child 拖到 Root 下。设 Root Position=(5,0,0)、Rotation=(0,0,0)、Scale=(1,1,1)；Child Inspector 的 Position 设(2,0,0)。有父级时这组 Position 是局部值。",
-            "打开 Scene，选 Child 按 F 聚焦。世界值用一个观察脚本打印 transform.position，局部值打印 transform.localPosition；不要把 Inspector 局部字段误当第二套世界读数。",
-            "转换时使用 Root 的 TransformPoint(child.localPosition)，两者参照一致；再只改 Root 的旋转或缩放。"
+            "打开 Scene，选 Child 按 F 聚焦。Inspector 中 Child 的 Position 是局部值；世界结果由 CoordinateSpaceProbe 打印。不要把 Inspector 的局部字段误当第二套世界读数。",
+            "把 Root 拖到 CoordinateSpaceProbe 的 Root 槽，Local Point 设为(2,0,0)。先执行一次报告，再只改 Root 的旋转或缩放并重做；不要把 Child 的世界 position 填进 Local Point。"
           ]
         },
         {
@@ -219,6 +232,14 @@ window.COURSE_MODULES.push({
         {
           "label": "Transform.TransformPoint",
           "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Transform.TransformPoint.html"
+        },
+        {
+          "label": "Transform.InverseTransformPoint",
+          "url": "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Transform.InverseTransformPoint.html"
+        },
+        {
+          "label": "Transform component manual",
+          "url": "https://docs.unity.com/en-us/engine/6000.3/manual/class-transform"
         }
       ],
       "summary": [
@@ -226,20 +247,20 @@ window.COURSE_MODULES.push({
         "设父级与吸附归零不是同一操作。"
       ],
       "teaching": {
-        "question": "父对象向右移动5个单位，子对象的 localPosition 没变，为什么画面位置仍然变了？",
-        "keyIdea": "局部坐标以父对象为参照，世界坐标以整个场景为参照。换参照系时要说明希望保留哪一组结果。",
+        "question": "`root.TransformPoint(localPoint)` 里的 root、localPoint 和返回值分别是什么，为什么它能把局部点换成世界点？",
+        "keyIdea": "TransformPoint 是 Transform 组件的方法。调用者规定局部坐标系，参数是这个空间中的位置点，返回值是同一个点的世界位置；方法本身不会移动对象。",
         "walkthrough": [
           {
-            "title": "建立简单坐标",
-            "text": "先让父对象只有平移：世界 x 为5，子对象局部 x 为2，此时子对象世界 x 为7。"
+            "title": "先找到调用者",
+            "text": "在 Hierarchy 选 Root，Inspector 最上方的 Transform 就是调用者。它的位置、旋转、缩放和父级共同定义这套局部坐标系。"
           },
           {
-            "title": "加入父级旋转",
-            "text": "把父对象绕 Y 轴旋转90度，子对象局部坐标仍保持不变，但它在世界中的方向和位置会随父级变化。"
+            "title": "拆开一行调用",
+            "text": "`root.TransformPoint(localPoint)` 读取相对于 root 的局部位置点，并返回世界位置。root 世界 x=5、局部点 x=2、无旋转且缩放为1时，结果 x=7。"
           },
           {
-            "title": "明确吸附结果",
-            "text": "执行 Attach at socket，先设父级，再将局部位置归零、局部旋转设为单位旋转，明确让对象与挂点对齐。"
+            "title": "验证它只返回数值",
+            "text": "用 CoordinateSpaceProbe 打印 local、world 和逆变换结果。执行前后 Root 与 Child 都不会自己移动；再只改 Root 的旋转或缩放，观察返回值怎样变化。"
           }
         ],
         "prediction": {
@@ -247,8 +268,8 @@ window.COURSE_MODULES.push({
           "answer": "不一定。它保留局部变换数值，不会自动把已有 localPosition 归零；示例另有明确归零步骤。",
           "scenario": "Item 当前 localPosition=(2,0,0)，准备调用 Item.SetParent(socket,false)，调用后没有执行任何归零语句；socket 是另一个位置和旋转已设好的 Transform。"
         },
-        "scenario": "Root 世界位置为(5,0,0)、无旋转且缩放为1；Child 是它的子对象，局部位置为(2,0,0)。接着分别移动或旋转 Root。挂点实验另用 Item 与 SocketA/SocketB，明确换父时保留世界姿态还是局部数值。",
-        "purpose": "让每组坐标都带上参照对象，为跟随、装备挂点与放下物品建立可检查的规则。"
+        "scenario": "Hierarchy 中有 Root 和它的子对象 Child。Root 世界位置为(5,0,0)、无旋转且缩放为1；局部点 localPoint=(2,0,0)。在 Probe 的 CoordinateSpaceProbe 中把 Root 拖到 Root 槽，再执行 Report point conversion。",
+        "purpose": "读懂 TransformPoint 的调用者、输入和返回值，再把同一套空间判断用于父子跟随、装备挂点与放下物品。"
       }
     },
     {

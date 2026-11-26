@@ -13,3 +13,11 @@ export function loadContent() {
   }
   return context.window.COURSE_MODULES.sort((a,b) => a.number-b.number);
 }
+export function loadFoundations() {
+  const context = {window: {LESSON_FOUNDATIONS: {}}};
+  vm.createContext(context);
+  const filename = path.join(root, 'content', 'lesson-foundations.js');
+  if (!fs.existsSync(filename)) return {};
+  vm.runInContext(fs.readFileSync(filename, 'utf8'), context, {filename,timeout:3000});
+  return context.window.LESSON_FOUNDATIONS || {};
+}

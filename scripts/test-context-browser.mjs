@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {createRequire} from 'node:module';
-import {root,loadContent} from './content-loader.mjs';
+import {root,loadContent,loadFoundations} from './content-loader.mjs';
 const runtimeModules=process.env.UNITY_ATLAS_NODE_MODULES;
 const require=runtimeModules?createRequire(path.join(runtimeModules,'package.json')):createRequire(import.meta.url);
 const {chromium}=require('playwright');
@@ -14,6 +14,7 @@ const browser=await chromium.launch({headless:true,channel:'msedge'});
 const context=await browser.newContext({viewport:{width:1440,height:1050}});
 const page=await context.newPage();page.on('pageerror',error=>errors.push(error.message));
 const lessons=loadContent().flatMap(module=>module.lessons);
+const foundations=loadFoundations();
 try{
   await page.goto(base);
   check(await page.locator('.editor-entry a[href="#editor"]').isVisible(),'首页提供编辑器地图入口');
@@ -33,6 +34,21 @@ try{
     check(contexts.setup.length===lesson.lab.length&&contexts.setup.every((s,i)=>JSON.stringify(s)===JSON.stringify(lesson.lab[i].setup.map(plain)))&&contexts.labPurpose.length===lesson.lab.length&&contexts.labPurpose.every((s,i)=>s==='为什么做：'+plain(lesson.lab[i].purpose)),lesson.id+'实验准备与目的完整');
     check(contexts.order,lesson.id+'情景先于问题、准备先于操作');
   }
+  for(const lesson of lessons.slice(0,30)){
+    const foundation=foundations[lesson.id];await page.goto(base+'#lesson/'+lesson.id);
+    check(await page.locator('.foundation-concept').count()===foundation.concepts.length,lesson.id+'首次概念完整显示');
+    const order=await page.evaluate(()=>{const before=(a,b)=>!!(a.compareDocumentPosition(b)&Node.DOCUMENT_POSITION_FOLLOWING);return before(document.querySelector('#goals'),document.querySelector('#foundation'))&&before(document.querySelector('#foundation'),document.querySelector('#start'));});
+    check(order,lesson.id+'概念卡位于目标之后、具体问题之前');
+  }
+  await page.goto(base+'#lesson/l016');
+  const transformPoint=page.locator('.foundation-concept').filter({hasText:'TransformPoint'});
+  check(await transformPoint.count()===1,'l016首次定义TransformPoint');
+  const transformPointText=await transformPoint.textContent();
+  for(const phrase of ['Transform 组件的方法','谁在调用','传入什么','得到什么','不会做什么','root.TransformPoint(localPoint)'])check(transformPointText.includes(phrase),'TransformPoint说明包含 '+phrase);
+  check((await page.locator('.code-toolbar').allTextContents()).some(text=>text.includes('CoordinateSpaceProbe.cs')),'l016提供可运行坐标探针');
+  await page.locator('#open-search').click();await page.locator('#search-input').fill('不会移动 root localPoint');
+  check(await page.locator('.search-result[href="#lesson/l016"]').count()>0,'TransformPoint边界说明可搜索');await page.keyboard.press('Escape');
+  await page.emulateMedia({media:'print'});check(await transformPoint.isVisible(),'打印保留TransformPoint概念卡');await page.emulateMedia({media:'screen'});
   const first=lessons[0];await page.goto(base+'#lesson/'+first.id);
   check(await page.locator('.lesson-header + .editor-entry a').count()===1,'第一课开头提供地图入口');
   for(const [label,query] of [['开篇情景',first.teaching.scenario],['课程用途',first.teaching.purpose],['预测情景',first.teaching.prediction.scenario],['自测情景',first.quiz[0].scenario],['实验准备',first.lab[0].setup[0]],['实验目的',first.lab[0].purpose]]){
@@ -46,7 +62,7 @@ try{
   if(mixed){await page.goto(base+'#lesson/'+mixed.id);check(await page.locator('.code-block[data-language="csharp"]').count()===mixed.code.files.filter(file=>file.language==='csharp').length,'混合示例分别标识C#');check(await page.locator('.code-block[data-language="json"]').count()===mixed.code.files.filter(file=>file.language==='json').length,'混合示例分别标识JSON');}
   for(const width of [320,390,768,1024]){
     await page.setViewportSize({width,height:844});
-    for(const route of ['#home','#editor','#lesson/l001','#lesson/l078']){
+    for(const route of ['#home','#editor','#lesson/l001','#lesson/l016','#lesson/l020','#lesson/l078']){
       await page.goto(base+route);check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),width+'px无横向溢出 '+route);
     }
     if(width===390){await page.goto(base+'#editor');await page.screenshot({path:path.join(directory,'editor-map-mobile.png'),fullPage:true});}

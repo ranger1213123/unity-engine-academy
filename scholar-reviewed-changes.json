@@ -515,6 +515,22 @@
         "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Object.Destroy.html",
         "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Object-operator_eq.html"
       ]
+    },
+    {
+      "lesson": "l016",
+      "fields": [
+        "code",
+        "references"
+      ],
+      "before": "1847eecf662bd2a5f552f53bd95016d70a8a4b2ad7adabb719f4a1aa560129cf",
+      "after": "9e1e0b601910c025e5833dacf48e89a4a237b352979ba8a0b8c5f4469f29a956",
+      "reason": "补充可直接挂载的坐标空间探针，逐项输出TransformPoint调用者、局部输入、世界结果与逆变换，并增加Transform组件及InverseTransformPoint官方依据。",
+      "reviewDocument": "CONCEPT-FIRST-REVIEW.md",
+      "references": [
+        "https://docs.unity.com/en-us/engine/6000.3/manual/class-transform",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Transform.TransformPoint.html",
+        "https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Transform.InverseTransformPoint.html"
+      ]
     }
   ]
 }
